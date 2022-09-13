@@ -13,12 +13,28 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <!-- fontawesome -->
 <script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+<style type="text/css">
+*{padding:0; margin: 0;}
+.main{
+	width:830px; padding: 20px; display: block;
+	}
+.side-main{
+	width:280px; padding: 20px; display: block;
+	}
+</style>
 </head>
 <body>
 	<tiles:insertAttribute name="header"/>
-	<div class="container">        
-		<tiles:insertAttribute name="body" />
-	</div>                                                  
+	<div class="container clearfix" style="margin-top:101px;">
+		<div style="display:flex; min-width:1110px;">
+			<div class="main" style="min-height:1000px;">
+			 	<tiles:insertAttribute name="body" />
+			</div>
+			<div class="side-main">
+				<tiles:insertAttribute name="aside" />
+			</div>
+		</div>
+  </div>                                                          
 	<tiles:insertAttribute name="footer" />
 </body>
 </html>
