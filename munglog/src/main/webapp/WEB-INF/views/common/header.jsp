@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <head>
 	<meta charset="UTF-8">
@@ -52,7 +52,7 @@
 			<div class="box-account">
 				<ul class="account-list">
 					<li class="account-item">
-						<a href="#" class="account-link">회원가입</a>
+						<a href="<c:url value="/account/signup"></c:url>" class="account-link">회원가입</a>
 					</li>
 					<li class="account-item">
 						<a href="#" class="account-link">로그인</a>
@@ -63,7 +63,7 @@
 			<div class="box-menu">
 				<!-- 로고 -------------------------------------------------------- -->
 				<div class="logo" style="width:40%;">
-					<a href="#"><i class="fa-solid fa-paw"></i><span>멍멍일지</span></a>
+					<a href="<c:url value="/"></c:url>"><i class="fa-solid fa-paw"></i><span>멍멍일지</span></a>
 				</div>
 				<!-- 메뉴 -------------------------------------------------------- -->
 				<ul class="menu-list" style="width:60%;">

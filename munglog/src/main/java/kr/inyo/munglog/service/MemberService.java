@@ -1,7 +1,8 @@
 package kr.inyo.munglog.service;
 
+import kr.inyo.munglog.vo.MemberVO;
+
 public interface MemberService {
-
-	String getEmail();
-
+	
+	boolean isMember(MemberVO member);
 }
