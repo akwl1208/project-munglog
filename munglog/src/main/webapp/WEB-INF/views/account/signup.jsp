@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>회원가입</title>
-	<!-- style-------------------------------------------------------- -->
+<!-- css ************************************************************ -->
 	<style>
 		*{padding: 0; margin: 0; color: #52443b;}
 		a{text-decoration: none;}
@@ -24,18 +24,24 @@
 		.box-message{
 			font-size: 12px; text-align: center;
 		}
-		.box-input{
-			padding: 20px 0 20px;
-		}
-		button{
+		.box-input{padding: 20px 0 20px;}
+		.btn-verification,
+		.btn-signup{
 			font-size: 18px; font-weight: bold; padding: 5px 0;
 			border: none; background-color: #fb9600; margin-bottom: 10px;
-			box-shadow: 1px 1px 3px 0 rgba(73, 67, 60, 0.3);
 		}
-		button:hover{color:#fff7ed;}
+		.btn-verification:hover,
+		.btn-signup:hover{color:#fff7ed;}
 		.error{color: #fb9600; font-size: 12px;}
+		.btn-check,
+		.btn-send,
+		.btn-resend{
+			padding: 0 10px; background-color: #a04c00; 
+			border: none; color: #fff7ed;
+		}
 	</style>
 </head>
+<!-- html ************************************************************ -->
 <body>
 	<div style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
 		<form class="container" action="<%=request.getContextPath()%>/account/signup" method="post">
@@ -48,15 +54,34 @@
 						<a href="<c:url value="/"></c:url>"><i class="fa-solid fa-paw"></i><span>멍멍일지</span></a>
 					</div>
 					<!-- 안내문구 -------------------------------------------------------- -->
-					<div class="box-message">회원가입을 위해 개인정보를 입력해주세요. </div>
+					<div class="box-message">회원가입을 위해 개인정보 입력 및 본인인증 해주세요. </div>
 				</div>
 				<!-- box-input -------------------------------------------------------- -->
 				<div class="box-input">
 					<!-- 이메일 입력 -------------------------------------------------------- -->
 					<div class="form-group">
 						<label>이메일</label>
-						<input type="text" class="form-control" name="mb_email" id="mb_email">
-						<label class="error" for="mb_email" id="emailCheck"></label>
+						<div class="input-group">
+							<input type="text" class="form-control" name="mb_email" id="mb_email">
+							<div class="input-group-append">
+								<button type="button" class="btn-send">전송</button>
+								<button type="button" class="btn-resend" style="display: none;">재전송</button>
+							</div>
+						</div>
+						<label class="error emailError" for="mb_email"></label>
+					</div>
+					<!-- 본인인증번호 입력 -------------------------------------------------------- -->
+					<div class="box-verification" style="display: none;">
+						<div class="form-group">
+							<label>본인인증번호</label>
+							<div class="input-group">
+								<input type="text" class="form-control" name="vr_veri_number" id="veriNum">
+								<div class="input-group-append">
+									<button type="button" class="btn-check">확인</button>
+								</div>
+							</div>
+							<label class="error" for="veriNum"></label>
+						</div>
 					</div>
 					<!-- 비밀번호 입력 -------------------------------------------------------- -->
 					<div class="form-group">
@@ -84,11 +109,11 @@
 					</div>
 				</div>
 				<!-- button -------------------------------------------------------- -->
-				<button class="col-12">본인인증번호 전송</button>
+				<button class="btn-signup col-12">회원가입</button>
 			</div>
 		</form>
 	</div>
-	<!-- script -------------------------------------------------------- -->
+<!-- script ************************************************************ -->
 	<script>
 		<!-- validate -------------------------------------------------------- -->
 		$(function(){
@@ -97,6 +122,9 @@
 					mb_email: {
 						required : true,
 						email: true
+					},
+					veriNum: {
+						required : true
 					},
 					mb_pw: {
 						required : true,
@@ -121,6 +149,9 @@
 					required : "필수항목입니다.",
 					email : "이메일 형식에 맞게 작성해주세요."
 				},
+				veriNum : {
+					required : "필수항목입니다."
+				},
 				mb_pw: {
 					required : "필수항목입니다.",
 					regex : "영어, 숫자, 특수문자(!@#$%^&*)를 혼합한 8글자 이상 20자 이하로 입력해주세요."
@@ -137,15 +168,7 @@
 					required : "필수항목입니다.",
 					regex: "010-0000-0000 형식으로 입력해주세요."
 				}
-			},
-	    submitHandler : function(form){
-				if(!emailCheck){
-					$('#emailCheck').text('이미 사용 중인 이메일입니다.').show();
-					$('#mb_email').focus();
-					return false;
-				}
-				return true;			
-      }
+			}
 		});
 	})
 	$.validator.addMethod(
@@ -156,23 +179,51 @@
 		},
 		"Please check your input."
 	);
-	<!-- 이메일 중복확인 -------------------------------------------------------- -->
+	<!-- 이벤트 -------------------------------------------------------- -->
 	$(function(){
-		$('[name=mb_email]').on('input',function(){
-			emailCheck = false;
-			let mb_email = $(this).val();
-			if(mb_email.trim().length == 0)
+		//전송버튼 클릭-----------------------------------------------------
+		$('.btn-send').click(function(){
+			//형식에 맞는지 확인
+			$('#mb_email').click();
+			//형식에 맞지 않으면 이메일창 오류메세지만 보이도록 함
+			$(this).parents('.form-group').nextAll().find('.error').text('');
+			//이메일이 형식에 맞을 때 이메일 중복확인 
+			let mb_email = $('#mb_email').val();
+			let emailError = $('.emailError').text();
+			//이메일을 작성하지 않고 전송버튼 눌렀을 때
+			if(mb_email.length == 0 && emailError == '')
 				return;
-			let obj= {
-				mb_email
-			}
-			ajaxPost(false, obj, '/check/email',function(data){
-				console.log(data.res);
-				emailCheck = data.res;
-			})
+			//이메일 형식에 맞지 않을 때 
+			if(emailError != '')
+				return;
+			//이메일 중복된 아이디일 때
+			if(!checkDuplication(mb_email))
+				return;
+			//중복된 아이디가 아니면 이메일 보내기
+			
 		})
+		let emailCheck = false;
 	})
-	let emailCheck = false;
+	<!-- 함수 -------------------------------------------------------- -->
+	//이메일 중복검사
+	function checkDuplication(mb_email){
+		emailCheck = false;
+		let obj= {
+			mb_email
+		}
+		ajaxPost(false, obj, '/check/email',function(data){
+			emailCheck = data.res;
+			if(!emailCheck){
+				$('.emailError').text('이미 사용 중인 이메일입니다.').show();
+				$('#mb_email').focus();
+			}
+		})
+		return emailCheck;
+	}
+	//이메일 보내기
+	function sendEmail(mb_email){
+		
+	}
 	</script>
 </body>
 </html>
