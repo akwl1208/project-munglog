@@ -20,7 +20,7 @@
 		.container{
 			border: 2px solid #52443b; border-radius: 10px;
 			box-shadow: 3px 3px 10px 0 rgba(73, 67, 60, 0.2);
-			padding: 0 30px;
+			padding: 0 30px; width: 500px; min-width: 500px;
 		}
 		.box-signup{margin: 0 auto; padding: 54px 0;}
 		.box-logo{
@@ -32,19 +32,27 @@
 			font-size: 12px; text-align: center;
 		}
 		.box-input{
-			padding: 20px 0 0;
+			padding: 20px 0 20px;
 		}
-		button{
+		.btn-verification,
+		.btn-signup{
 			font-size: 18px; font-weight: bold; padding: 5px 0;
 			border: none; background-color: #fb9600; margin-bottom: 10px;
 		}
-		button:hover{color:#fff7ed;}
+		.btn-verification:hover,
+		.btn-signup:hover{color:#fff7ed;}
 		.error{color: #fb9600; font-size: 12px;}
+		.btn-check,
+		.btn-send,
+		.btn-resend{
+			padding: 0 10px; background-color: #a04c00; 
+			border: none; color: #fff7ed;
+		}
 	</style>
 </head>
 <body>
 	<div style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-		<form class="container" style="width: 500px;">
+		<form class="container">
 			<div class="box-signup">
 				<div class="box-title">
 					<div class="box-logo">
@@ -55,8 +63,25 @@
 				<div class="box-input">
 					<div class="form-group">
 						<label>이메일</label>
-						<input type="text" class="form-control" name="mb_email" id="mb_email">
+						<div class="input-group">
+							<input type="text" class="form-control" name="mb_email" id="mb_email">
+							<div class="input-group-append">
+								<button type="button" class="btn-send">전송</button>
+								<button type="button" class="btn-resend" style="display: none;">재전송</button>
+							</div>
+						</div>
 						<label class="error" for="mb_email"></label>
+					</div>
+					<div class="box-verification" style="display: none;">
+						<div class="form-group">
+							<label>본인인증번호</label>
+							<div class="input-group">
+								<input type="text" class="form-control" name="vr_veri_number" id="veriNum">
+								<div class="input-group-append">
+									<button type="button" class="btn-check">확인</button>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="form-group">
 						<label>비밀번호</label>
@@ -69,21 +94,20 @@
 						<label class="error" for="pwCheck"></label>
 					</div>
 					<div class="form-group">
-						<label for="mb_name">이름</label>
+						<label>이름</label>
 						<input type="text" class="form-control" name="mb_name" id="mb_name">
 						<label class="error" for="mb_name"></label>
 					</div>
 					<div class="form-group">
-						<label for="mb_phone">핸드폰번호</label>
+						<label>핸드폰번호</label>
 						<input type="text" class="form-control" name="mb_phone" id="mb_phone">
 						<label class="error" for="mb_phone"></label>
 					</div>
 				</div>
-				<button class="col-12">본인인증번호 전송</button>
+				<button type="button" class="btn-signup col-12">회원가입</button>
 			</div>
 		</form>
 	</div>
-
 	<script>
 		$(function(){
 			$("form").validate({
@@ -142,6 +166,13 @@
 		},
 		"Please check your input."
 	);
+	$(function(){
+		$('.btn-send').click(function(){
+			$(this).hide();
+			$('.btn-resend').show();
+			$('.box-verification').show();
+		})
+	})
 	</script>
 </body>
 </html>
