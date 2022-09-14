@@ -4,6 +4,12 @@
        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
  
 <tiles-definitions>
+ 	<!-- account 레이아웃 -->
+ 	<definition name="/account/*" template="/WEB-INF/views/layout/accountLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/account/{1}.jsp" />
+	</definition>
+	
+	<!-- 기본 레이아웃 -->
 	<definition name=".root" template="/WEB-INF/views/layout/baseLayout.jsp">
 	  <put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
 	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
