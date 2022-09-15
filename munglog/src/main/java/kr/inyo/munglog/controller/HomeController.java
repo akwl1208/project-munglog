@@ -41,11 +41,32 @@ public class HomeController {
 		return mv;
 	}
 /* ajax ***************************************************************/
+	/* 이메일 중복검사 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/check/email", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> checkEmail(@RequestBody MemberVO member) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		boolean res = memberService.isMember(member);
+		map.put("res", res);
+		return map;
+	}
+	
+	/* 이메일 보내기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/send/email", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> sendEmail(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		boolean res = memberService.sendEmail(member);
+		map.put("res", res);
+		return map;
+	}
+	
+	/* 본인인증 삭제하기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/delete/verification", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> deleteVerification(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		boolean res = memberService.deleteVerification(member);
 		map.put("res", res);
 		return map;
 	}

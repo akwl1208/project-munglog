@@ -65,23 +65,20 @@
 							<input type="text" class="form-control" name="mb_email" id="mb_email">
 							<div class="input-group-append">
 								<button type="button" class="btn-send">전송</button>
-								<button type="button" class="btn-resend" style="display: none;">재전송</button>
 							</div>
 						</div>
 						<label class="error emailError" for="mb_email"></label>
 					</div>
 					<!-- 본인인증번호 입력 -------------------------------------------------------- -->
-					<div class="box-verification" style="display: none;">
-						<div class="form-group">
-							<label>본인인증번호</label>
-							<div class="input-group">
-								<input type="text" class="form-control" name="vr_veri_number" id="veriNum">
-								<div class="input-group-append">
-									<button type="button" class="btn-check">확인</button>
-								</div>
+					<div class="form-group">
+						<label>본인인증코드</label>
+						<div class="input-group">
+							<input type="text" class="form-control" name="vr_code" id="vr_code">
+							<div class="input-group-append">
+								<button type="button" class="btn-check">확인</button>
 							</div>
-							<label class="error" for="veriNum"></label>
 						</div>
+						<label class="error" for="vr_code"></label>
 					</div>
 					<!-- 비밀번호 입력 -------------------------------------------------------- -->
 					<div class="form-group">
@@ -115,6 +112,8 @@
 	</div>
 <!-- script ************************************************************ -->
 	<script>
+	let sendCheck = false;
+	let mb_email ='';
 		<!-- validate -------------------------------------------------------- -->
 		$(function(){
 			$("form").validate({
@@ -123,8 +122,8 @@
 						required : true,
 						email: true
 					},
-					veriNum: {
-						required : true
+					vr_code: {
+						required : true,
 					},
 					mb_pw: {
 						required : true,
@@ -149,8 +148,8 @@
 					required : "필수항목입니다.",
 					email : "이메일 형식에 맞게 작성해주세요."
 				},
-				veriNum : {
-					required : "필수항목입니다."
+				vr_code: {
+					required : "필수항목입니다.",
 				},
 				mb_pw: {
 					required : "필수항목입니다.",
@@ -181,28 +180,54 @@
 	);
 	<!-- 이벤트 -------------------------------------------------------- -->
 	$(function(){
-		//전송버튼 클릭-----------------------------------------------------
+		//이메일 입력창에 change-----------------------------------------------------
+		$('#mb_email').change(function(){
+			//sendCheck가 true : 이미 메일을 보냈는데 값을 수정한 경우
+			if(sendCheck){
+				//이전에 작성한 메일을 삭제하고
+				deleteVerification(mb_email);
+				//sendCheck false로 하고
+				sendCheck = false;
+				//본인인증 readonly로
+				$('#vr_code').attr('readonly',true);
+			}
+		})
+		//전송버튼 클릭-----------------------------------------------------------------
 		$('.btn-send').click(function(){
-			//형식에 맞는지 확인
-			$('#mb_email').click();
-			//형식에 맞지 않으면 이메일창 오류메세지만 보이도록 함
-			$(this).parents('.form-group').nextAll().find('.error').text('');
+			mb_email = $('#mb_email').val();
+			//이미 메일이 전송된 경우(이메일 재전송하는 경우) 
+			if(sendCheck){
+				if(confirm('이미 코드가 전송되었습니다. 본인인증코드를 다시 전송하겠습니까?'))
+					sendEmail(mb_email);
+				return;					
+			}
 			//이메일이 형식에 맞을 때 이메일 중복확인 
-			let mb_email = $('#mb_email').val();
-			let emailError = $('.emailError').text();
+			let emailRegex = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 			//이메일을 작성하지 않고 전송버튼 눌렀을 때
-			if(mb_email.length == 0 && emailError == '')
+			if(mb_email.length == 0){
+				$('.emailError').text('필수항목입니다.').show();
 				return;
+			}
 			//이메일 형식에 맞지 않을 때 
-			if(emailError != '')
+			if(!emailRegex.test(mb_email))
 				return;
 			//이메일 중복된 아이디일 때
 			if(!checkDuplication(mb_email))
 				return;
 			//중복된 아이디가 아니면 이메일 보내기
-			
+			//이메일 못보냈으면
+			if(!sendEmail(mb_email))
+				return;
+			//메일 보내기 성공하면 화면 재구성
+			$('#vr_code').attr('readonly',false); //본인인증입력칸 입력 가능
+		})
+		//확인 버튼 클릭-----------------------------------------------------------------
+		$('.btn-verification').click(function(){
+			let vr_code = $('#vr_code').val();
+			console.log(vr_code)
 		})
 		let emailCheck = false;
+		
 	})
 	<!-- 함수 -------------------------------------------------------- -->
 	//이메일 중복검사
@@ -222,7 +247,34 @@
 	}
 	//이메일 보내기
 	function sendEmail(mb_email){
-		
+		//아이디 중복검사 안하거나 중복된 아이디면 메일 안보냄
+		if(!emailCheck)
+			return false;
+		let obj= {
+			mb_email
+		}
+		ajaxPost(false, obj, '/send/email',function(data){
+			sendCheck = data.res;
+			//메일전송에 실패했으면 다시 전송버튼 누르라고 알려줌
+			if(!data.res){
+				alert('이미 코드가 전송되었습니다. 이메일을 확인해주세요.');
+			}
+			else{
+				alert('본인인증코드 전송했습니다. 이메일을 확인해주세요.');
+			}
+		})
+		return sendCheck;
+	}
+	//본인인증 삭제
+	function deleteVerification(mb_email){
+		if(!sendCheck)
+			return false;
+		let obj= {
+			mb_email
+		}
+		ajaxPost(false, obj, '/delete/verification',function(data){
+			console.log(data.res);
+		})
 	}
 	</script>
 </body>

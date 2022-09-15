@@ -9,7 +9,26 @@
 	<select id="selectMember" resultType="kr.inyo.munglog.vo.MemberVO">
 		select * from member where mb_email = #{mb_email};
 	</select>
+	<!-- 이메일 주고 인증정보 가져오기 -->
+	<select id="hasVerification" resultType="kr.inyo.munglog.vo.VerificationVO">
+		select * from verification where vr_email = #{vr_email}
+	</select>
 	<!-- insert *********************************************************** -->
+	<!-- 본인인증 테이블에 회원메일, 본인인증코드 저장 -->
+	<insert id="insertVeriCode">
+		insert into verification(vr_email, vr_code) values(#{vr_email},#{vr_code})
+	</insert>
+	
 	<!-- update *********************************************************** -->
+	<!-- 본인인증 정보 수정 -->
+	<update id="updateVerifiCation">
+		update verification
+			set vr_code = #{vr_code}, vr_failure_count = #{vr_failure_count}
+			where vr_email = #{vr_email}
+	</update>
 	<!-- delete *********************************************************** -->
+	<!-- 회원 이메일 주고 본인인증 삭제 -->
+	<delete id="deleteVerification">
+		delete from verification where vr_email = #{vr_email}
+	</delete>
 </mapper>
