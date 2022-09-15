@@ -10,7 +10,7 @@
 		select * from member where mb_email = #{mb_email};
 	</select>
 	<!-- 이메일 주고 인증정보 가져오기 -->
-	<select id="hasVerification" resultType="kr.inyo.munglog.vo.VerificationVO">
+	<select id="selectVerification" resultType="kr.inyo.munglog.vo.VerificationVO">
 		select * from verification where vr_email = #{vr_email}
 	</select>
 	<!-- insert *********************************************************** -->

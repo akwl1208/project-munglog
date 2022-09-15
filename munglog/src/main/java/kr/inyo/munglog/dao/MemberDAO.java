@@ -14,7 +14,8 @@ public interface MemberDAO {
 	//회원 이메일을 주고 본인인증 삭제
 	boolean deleteVerification(String vr_email);
 	//회원 이메일을 주고 본인인증 정보 가져오기
-	VerificationVO hasVerification(String vr_email);
+	VerificationVO selectVerification(String vr_email);
 	//회원 이메일을 주고 본인인증 정보 수정
 	void updateVerifiCation(VerificationVO veri);
+	
 }

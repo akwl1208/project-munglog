@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.VerificationVO;
 
 @Controller
 public class HomeController {
@@ -68,6 +69,28 @@ public class HomeController {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		boolean res = memberService.deleteVerification(member);
 		map.put("res", res);
+		return map;
+	}
+	
+	/* 본인인증 일치하는지 확인하기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/check/code", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> checkCode(@RequestBody VerificationVO veri) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		boolean res = memberService.checkCode(veri);
+		map.put("res", res);
+		return map;
+	}
+	/* 본인인증번호 실패횟수 증가하고 실패횟수 반환 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/count/failure", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> countFailure(@RequestBody VerificationVO veri) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		//실패횟수 증가
+		memberService.countFailure(veri);
+		//실패횟수 반환
+		int count = memberService.getFailureCount(veri);
+		map.put("count", count);
 		return map;
 	}
 }

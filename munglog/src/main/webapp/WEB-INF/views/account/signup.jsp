@@ -65,6 +65,7 @@
 							<input type="text" class="form-control" name="mb_email" id="mb_email">
 							<div class="input-group-append">
 								<button type="button" class="btn-send">전송</button>
+								<button type="button" class="btn-validate" style="display:none"></button>
 							</div>
 						</div>
 						<label class="error emailError" for="mb_email"></label>
@@ -73,12 +74,12 @@
 					<div class="form-group">
 						<label>본인인증코드</label>
 						<div class="input-group">
-							<input type="text" class="form-control" name="vr_code" id="vr_code">
+							<input type="text" class="form-control" name="vr_code" id="vr_code" readonly>
 							<div class="input-group-append">
 								<button type="button" class="btn-check">확인</button>
 							</div>
 						</div>
-						<label class="error" for="vr_code"></label>
+						<label class="error codeError" for="vr_code"></label>
 					</div>
 					<!-- 비밀번호 입력 -------------------------------------------------------- -->
 					<div class="form-group">
@@ -112,8 +113,11 @@
 	</div>
 <!-- script ************************************************************ -->
 	<script>
-	let sendCheck = false;
-	let mb_email ='';
+	let sendCheck = false; //이메일 보냈는지 판별
+	let mb_email = ''; 
+	let codeCheck = false; //코드인증확인 했는지 판별
+	let count = 0; //실패 횟수
+	let emailRegex = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 		<!-- validate -------------------------------------------------------- -->
 		$(function(){
 			$("form").validate({
@@ -167,7 +171,16 @@
 					required : "필수항목입니다.",
 					regex: "010-0000-0000 형식으로 입력해주세요."
 				}
-			}
+			},
+      submitHandler : function(form){
+    	  //본인인증 했는지
+				if(!codeCheck){
+					$('.codeError').text('본인인증을 완료해주세요.').show();
+					$('#vr_code').focus();
+					return false;
+				}
+				return true;			
+	    }
 		});
 	})
 	$.validator.addMethod(
@@ -192,8 +205,12 @@
 				$('#vr_code').attr('readonly',true);
 			}
 		})
+		
 		//전송버튼 클릭-----------------------------------------------------------------
 		$('.btn-send').click(function(){
+			//이미 본인인증을 완료했으면
+			if(codeCheck)
+				return;
 			mb_email = $('#mb_email').val();
 			//이미 메일이 전송된 경우(이메일 재전송하는 경우) 
 			if(sendCheck){
@@ -202,35 +219,85 @@
 				return;					
 			}
 			//이메일이 형식에 맞을 때 이메일 중복확인 
-			let emailRegex = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 			//이메일을 작성하지 않고 전송버튼 눌렀을 때
-			if(mb_email.length == 0){
+			if(mb_email == '' || mb_email.length == 0){
 				$('.emailError').text('필수항목입니다.').show();
+				$('#mb_email').focus();
 				return;
 			}
 			//이메일 형식에 맞지 않을 때 
-			if(!emailRegex.test(mb_email))
+			if(!emailRegex.test(mb_email)){
+				$('.emailError').text('이메일 형식에 맞게 작성해주세요.').show();
+				$('#mb_email').focus();
 				return;
+			}
 			//이메일 중복된 아이디일 때
 			if(!checkDuplication(mb_email))
 				return;
 			//중복된 아이디가 아니면 이메일 보내기
 			//이메일 못보냈으면
-			if(!sendEmail(mb_email))
+			if(!sendEmail(mb_email)){
+				alert('전송버튼을 눌러주세요.');
 				return;
+			}
 			//메일 보내기 성공하면 화면 재구성
 			$('#vr_code').attr('readonly',false); //본인인증입력칸 입력 가능
 		})
+		
 		//확인 버튼 클릭-----------------------------------------------------------------
-		$('.btn-verification').click(function(){
+		$('.btn-check').click(function(){
+			//이미 본인인증을 완료했으면
+			if(codeCheck)
+				return;
+			let vr_email = $('#mb_email').val();
+			//이메일 입력 안하고
+			if(vr_email == '' || vr_email.length == 0){
+				$('.emailError').text('필수항목입니다.').show();
+				$('#mb_email').focus();
+				return;
+			}
+			//이메일 형식에 맞지 않을 때 
+			if(!emailRegex.test(vr_email)){
+				$('.emailError').text('이메일 형식에 맞게 작성해주세요.').show();
+				$('#mb_email').focus();
+				return;
+			}
+			//이메일 중복된 아이디일 때
+			if(!checkDuplication(vr_email))
+				return false;
+			//인증번호를 보내지 않고 확인버튼 누름
+			if(!sendCheck){
+				alert('전송버튼을 눌러주세요.');
+				return;
+			}
 			let vr_code = $('#vr_code').val();
-			console.log(vr_code)
+			//인증번호를 입력하지 않고 확인버튼 누름
+			if(vr_code == '' || vr_code.length == 0){
+				$('.codeError').text('필수항목입니다.').show();
+				$('#vr_code').focus();
+				return;
+			}
+			//본인인증코드 일치하는지 확인
+			if(!checkCode(mb_email,vr_code)){
+				$('.codeError').text('인증코드가 일치하지 않습니다').show();
+				$('#vr_code').focus();
+				//실패횟수가 5번 초과한 경우
+				if(count > 5){
+					//이메일로 인증번호 재전송
+					alert('인증실패횟수가 5번 초과했습니다. 이메일로 본인인증코드를 재전송합니다.');
+					sendEmail(mb_email);
+				}
+				return;
+			}
+			//화면 재구성
+			$('#mb_email').attr('readonly',true);
+			$('.emailError').text('본인인증이 완료되었습니다.').show();
+			$('#vr_code').attr('readonly',true);
 		})
 		let emailCheck = false;
-		
 	})
 	<!-- 함수 -------------------------------------------------------- -->
-	//이메일 중복검사
+	//이메일 중복검사----------------------------------------------------
 	function checkDuplication(mb_email){
 		emailCheck = false;
 		let obj= {
@@ -245,7 +312,7 @@
 		})
 		return emailCheck;
 	}
-	//이메일 보내기
+	//이메일 보내기----------------------------------------------------
 	function sendEmail(mb_email){
 		//아이디 중복검사 안하거나 중복된 아이디면 메일 안보냄
 		if(!emailCheck)
@@ -265,7 +332,7 @@
 		})
 		return sendCheck;
 	}
-	//본인인증 삭제
+	//본인인증 삭제----------------------------------------------------
 	function deleteVerification(mb_email){
 		if(!sendCheck)
 			return false;
@@ -273,8 +340,43 @@
 			mb_email
 		}
 		ajaxPost(false, obj, '/delete/verification',function(data){
-			console.log(data.res);
+			if(!data.res)
+				return;
 		})
+	}
+	//인증번호 확인----------------------------------------------------
+	function checkCode(vr_email, vr_code){
+		//이메일이나 코드가 없는 경우
+		if(vr_email == '' || vr_code == '')
+			return false;
+		let obj= {
+			vr_email,
+			vr_code,
+		}
+		ajaxPost(false, obj, '/check/code',function(data){
+			//일치하지 않으면
+			if(!data.res){
+				$('.codeError').text('인증번호가 일치하지 않습니다.').show();
+				$('#mb_email').focus();
+				//실패횟수 증가
+				count = countFailure(mb_email);
+			}
+			codeCheck = data.res;
+		})
+		return codeCheck;
+	}
+	//실패횟수 증가----------------------------------------------------
+	function countFailure(vr_email){
+		//이메일이나 코드가 없는 경우
+		if(vr_email == '')
+			return -1;
+		let obj= {
+			vr_email
+		}
+		ajaxPost(false, obj, '/count/failure',function(data){
+			count = data.count;
+		})
+		return count;
 	}
 	</script>
 </body>
