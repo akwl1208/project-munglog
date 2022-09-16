@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.inyo.munglog.dao.MemberDAO;
@@ -18,6 +19,8 @@ public class MemberServiceImp implements MemberService {
 	MemberDAO memberDao;
 	@Autowired
 	private JavaMailSender mailSender;
+	@Autowired
+	BCryptPasswordEncoder passwordEncoder;
 	
 /* 함수********************************************************************************************************************* */
 	//이메일 보내기-----------------------------------------------------------------------------
@@ -178,6 +181,14 @@ public class MemberServiceImp implements MemberService {
 		if(dbVeri == null)
 			return -1;	
 		return dbVeri.getVr_failure_count();
+	}
+	/* signup : 회원정보를 DB에 추가 ------------------------------------------------------------------*/
+	@Override
+	public boolean signup(MemberVO member) {
+		//member가 null이면
+		if(member == null)
+			return false;
+		return true;
 	}
 
 }
