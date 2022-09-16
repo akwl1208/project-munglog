@@ -37,6 +37,12 @@
 	  </beans:property>
 	</beans:bean>
 	
-	
-	
+	<!-- interceptor -->
+	<beans:bean id="loginInterceptor" class="kr.inyo.munglog.interceptor.LoginInterceptor"></beans:bean>
+	<interceptors>
+		<interceptor>
+			<mapping path="/account/login"/>
+			<beans:ref bean="loginInterceptor"/>
+		</interceptor>
+	</interceptors>
 </beans:beans>

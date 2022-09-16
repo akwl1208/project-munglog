@@ -20,12 +20,19 @@
 		.account-list>li{
 			display: inline-block; font-size: 12px;
 		}
-		.account-list>li:nth-child(1):after{
-			display: inline-block; content: ''; margin: 0 6px;
+		.account-list>li:last-child::before{
+			display: inline-block; content: ''; margin: 0 6px 3px;
 			width: 1px; height: 12px; background-color: #b9ab9a;
 			vertical-align: middle;
 		}
-		.box-menu{text-align: right; padding: 10px 0;}
+		.nickname{line-height: 24px;}
+		.nickname .fa-dog{color: #fb9600; margin-right: 6px;}
+		.nickname::after{
+			display: inline-block; content: ''; margin: 0 6px 6px;
+    	width: 3px; height: 3px; border-radius: 50%; background-color: #b9ab9a;
+    	vertical-align: middle;
+		}
+		.box-menu{text-align: right; padding: 10px 0 20px;}
 		.logo{
 			font-size: 24px; font-weight: 900; text-align: left;
 			line-height: 45px; padding-left: 20px;
@@ -51,12 +58,27 @@
 			<!-- box-account -------------------------------------------------------- -->
 			<div class="box-account">
 				<ul class="account-list">
-					<li class="account-item">
-						<a href="<c:url value="/account/signup"></c:url>" class="account-link">회원가입</a>
-					</li>
-					<li class="account-item">
-						<a href="#" class="account-link">로그인</a>
-					</li>
+					<!-- 비회원일 때 -------------------------------------------------------- -->
+					<c:if test="${user == null}">
+						<li class="account-item">
+							<a href="<c:url value="/account/signup"></c:url>" class="account-link">회원가입</a>
+						</li>
+						<li class="account-item">
+							<a href="<c:url value="/account/login"></c:url>" class="account-link">로그인</a>
+						</li>
+					</c:if>
+					<!-- 회원일 때 -------------------------------------------------------- -->
+					<c:if test="${user != null}">
+						<li class="account-item nickname">
+							<span><i class="fa-solid fa-dog"></i>${user.mb_nickname}님</span>
+						</li>
+						<li class="account-item">
+							<a href="<c:url value="/"></c:url>" class="account-link">마이페이지</a>
+						</li>
+						<li class="account-item">
+							<a href="<c:url value="/"></c:url>" class="account-link">로그아웃</a>
+						</li>
+					</c:if>
 				</ul>
 			</div>
 			<!-- box-menu -------------------------------------------------------- -->

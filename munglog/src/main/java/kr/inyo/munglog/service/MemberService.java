@@ -18,4 +18,8 @@ public interface MemberService {
 	int getFailureCount(VerificationVO veri);
 	//회원가입
 	int signup(MemberVO member);
+	//로그인
+	boolean login(MemberVO member);
+	//회원정보 가져옴
+	MemberVO getMember(MemberVO member);
 }

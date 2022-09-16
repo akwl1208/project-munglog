@@ -44,9 +44,6 @@ public class HomeController {
 	@RequestMapping(value = "/account/signup", method = RequestMethod.POST)
 	public ModelAndView signupPost(ModelAndView mv, MemberVO member,
 			HttpServletResponse response) {
-		System.out.println("-----------------------------------------------");
-		System.out.println("post:" + member);
-		System.out.println("-----------------------------------------------");
 		int res = memberService.signup(member);
 		if(res == 1) //회원가입 성공 -> 로그인 화면으로
 			messageService.message(response, "회원가입에 성공했습니다. 로그인해주세요.", "/munglog/");
@@ -56,6 +53,25 @@ public class HomeController {
 			messageService.message(response, "회원가입에 실패했습니다. 입력한 회원정보를 확인해주세요.", "/munglog/account/signup");
 		return mv;
 	}
+	
+	/* 로그인 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/account/login", method = RequestMethod.GET)
+	public ModelAndView loginGet(ModelAndView mv, MemberVO member) {	
+		mv.setViewName("/account/login");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/account/login", method = RequestMethod.POST)
+	public ModelAndView loginPost(ModelAndView mv, MemberVO member) {
+		MemberVO user = memberService.getMember(member);
+		mv.addObject("user", user);
+		if(user == null)
+			mv.setViewName("redirect:/account/login");
+		if(user != null)
+			mv.setViewName("redirect:/");
+		return mv;
+	}
+	
 /* ajax ***************************************************************/
 	/* 이메일 중복검사 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/check/email", method = RequestMethod.POST)
@@ -107,6 +123,16 @@ public class HomeController {
 		//실패횟수 반환
 		int count = memberService.getFailureCount(veri);
 		map.put("count", count);
+		return map;
+	}
+	
+	/* 회원인지 아닌지 확인 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/check/member", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> checkMember(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		boolean isUser = memberService.login(member);
+		map.put("res", isUser);
 		return map;
 	}
 }

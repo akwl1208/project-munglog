@@ -221,5 +221,41 @@ public class MemberServiceImp implements MemberService {
 		memberDao.insertPoint(dbMember.getMb_num(),"적립","회원가입",300);
 		return 1;
 	}
-
+	/* login : 이메일과 비밀번호가 일치하면 로그인 ------------------------------------------------------------------*/
+	@Override
+	public boolean login(MemberVO member) {
+		//값이 없으면
+		if(member == null)
+			return false;
+		if(member.getMb_email() == null || member.getMb_email().length() == 0)
+			return false;
+		if(member.getMb_pw() == null || member.getMb_pw().length() == 0)
+			return false;
+		//회원정보 가져오기
+		MemberVO dbMember = memberDao.selectMember(member.getMb_email());
+		//회원정보가 없으면
+		if(dbMember == null)
+			return false;
+		//활동정지된 회원이면
+		if(dbMember.getMb_activity() == 1)
+			return false;
+		//비번이 일치하는지 확인
+		if(!passwordEncoder.matches(member.getMb_pw(), dbMember.getMb_pw()))
+			return false;
+		return true;
+	}
+	/* getMember : 회원정보 가져옴 ------------------------------------------------------------------*/
+	@Override
+	public MemberVO getMember(MemberVO member) {
+		//값이 없으면
+		if(member == null)
+			return null;
+		if(member.getMb_email() == null || member.getMb_email().length() == 0)
+			return null;
+		//회원정보 가져오기
+		MemberVO dbMember = memberDao.selectMember(member.getMb_email());
+		if(dbMember == null)
+			return null;
+		return dbMember;
+	}
 }
