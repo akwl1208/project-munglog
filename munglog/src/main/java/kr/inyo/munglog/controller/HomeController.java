@@ -3,6 +3,8 @@ package kr.inyo.munglog.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.service.MemberService;
+import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
@@ -20,6 +23,9 @@ public class HomeController {
 	
 	@Autowired
 	MemberService memberService;
+	@Autowired
+	MessageService messageService;
+	
 /* ajax 아님 ***************************************************************/
 	/* 홈화면 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -36,9 +42,18 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/account/signup", method = RequestMethod.POST)
-	public ModelAndView signupPost(ModelAndView mv, MemberVO member) {
+	public ModelAndView signupPost(ModelAndView mv, MemberVO member,
+			HttpServletResponse response) {
+		System.out.println("-----------------------------------------------");
 		System.out.println("post:" + member);
-		mv.setViewName("/account/signup");
+		System.out.println("-----------------------------------------------");
+		int res = memberService.signup(member);
+		if(res == 1) //회원가입 성공 -> 로그인 화면으로
+			messageService.message(response, "회원가입에 성공했습니다. 로그인해주세요.", "/munglog/");
+		if(res == 0) //회원정보가 있음 -> 아이디 비번 찾기 화면으로
+			messageService.message(response, "이미 가입된 회원입니다. 아이디/비번찾기해주세요.", "/munglog/account/signup");
+		else //회원가입 실패
+			messageService.message(response, "회원가입에 실패했습니다. 입력한 회원정보를 확인해주세요.", "/munglog/account/signup");
 		return mv;
 	}
 /* ajax ***************************************************************/
@@ -81,6 +96,7 @@ public class HomeController {
 		map.put("res", res);
 		return map;
 	}
+	
 	/* 본인인증번호 실패횟수 증가하고 실패횟수 반환 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/count/failure", method = RequestMethod.POST)
 	@ResponseBody

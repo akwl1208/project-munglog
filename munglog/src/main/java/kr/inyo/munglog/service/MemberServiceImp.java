@@ -184,11 +184,40 @@ public class MemberServiceImp implements MemberService {
 	}
 	/* signup : 회원정보를 DB에 추가 ------------------------------------------------------------------*/
 	@Override
-	public boolean signup(MemberVO member) {
+	public int signup(MemberVO member) {
 		//member가 null이면
 		if(member == null)
-			return false;
-		return true;
+			return -1;	
+		//필수항목중 하나라도 값이 없으면
+		if(member.getMb_email() == null || member.getMb_email().length() == 0)
+			return -1;
+		if(member.getMb_pw() == null || member.getMb_pw().length() == 0)
+			return -1;
+		if(member.getMb_name() == null || member.getMb_name().length() == 0)
+			return -1;
+		if(member.getMb_phone() == null || member.getMb_phone().length() == 0)
+			return -1;
+		//이름과 핸드폰번호가 모두 동일한 회원이 있으면 안됨 -> 아이디 찾기
+		MemberVO isMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
+		if(isMember != null)
+			return 0;
+		//이미 가입된 아이디면
+		MemberVO dbMember = memberDao.selectMember(member.getMb_email());
+		if(dbMember != null)
+			return 0;
+		//비밀번호 암호화
+		String encPw =passwordEncoder.encode(member.getMb_pw()); 
+		member.setMb_pw(encPw);
+		//회원가입
+		memberDao.insertMember(member);
+		//닉네임 설정
+		dbMember = memberDao.selectMember(member.getMb_email());
+		String nickname = "MUNG" + dbMember.getMb_num();
+		dbMember.setMb_nickname(nickname);
+		memberDao.updateProfile(dbMember);
+		//본인인증 정보 삭제
+		memberDao.deleteVerification(dbMember.getMb_email());
+		return 1;
 	}
 
 }

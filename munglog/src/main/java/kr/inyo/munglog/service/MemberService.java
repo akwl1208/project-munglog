@@ -16,4 +16,6 @@ public interface MemberService {
 	void countFailure(VerificationVO veri);
 	//실패횟수를 가져옴
 	int getFailureCount(VerificationVO veri);
+	//회원가입
+	int signup(MemberVO member);
 }
