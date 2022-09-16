@@ -217,6 +217,8 @@ public class MemberServiceImp implements MemberService {
 		memberDao.updateProfile(dbMember);
 		//본인인증 정보 삭제
 		memberDao.deleteVerification(dbMember.getMb_email());
+		//포인트 지급
+		memberDao.insertPoint(dbMember.getMb_num(),"적립","회원가입",300);
 		return 1;
 	}
 

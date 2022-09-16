@@ -32,6 +32,11 @@
 			values(#{mb_email},#{mb_pw},#{mb_name},#{mb_phone})
 	</insert>
 	
+	<!-- 포인트 적립 -->
+	<insert id="insertPoint">
+		insert into point(pi_mb_num, pi_process, pi_history,pi_amount)
+			values(#{pi_mb_num},#{pi_process},#{pi_history},#{pi_amount})
+	</insert>
 	<!-- update *********************************************************** -->
 	<!-- 본인인증 정보 수정 -->
 	<update id="updateVerifiCation">
