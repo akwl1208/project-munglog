@@ -12,7 +12,10 @@
 		a{text-decoration: none; color: #52443b;}
 		a:hover{text-decoration: none; color: #52443b;}
 		ul,li{list-style-type: none; color: #52443b;}
-		.fixed-top{background-color: white; box-shadow: 0 1px 3px 0 rgba(73, 67, 60, 0.2);}
+		.fixed-top{
+			background-color: white; box-shadow: 0 1px 3px 0 rgba(73, 67, 60, 0.2);
+			min-width : 500px;
+		}
 		.box-menu{display: flex;}
 		.account-list{
 			text-align: right; margin-top: 10px;
@@ -49,7 +52,7 @@
 			display: inline-block; font-size: 18px; font-weight: bold;
 			margin-left: 40px;
 		}
-		.dropdown-menu{background-color: #fff7ed; margin-top: 23px}
+		.dropdown-menu{background-color: #fff7ed; margin-top: 34px}
 	</style>
 </head>
 <body>
@@ -76,7 +79,7 @@
 							<a href="<c:url value="/"></c:url>" class="account-link">마이페이지</a>
 						</li>
 						<li class="account-item">
-							<a href="<c:url value="/"></c:url>" class="account-link">로그아웃</a>
+							<a href="<c:url value="/logout"></c:url>" class="account-link">로그아웃</a>
 						</li>
 					</c:if>
 				</ul>
