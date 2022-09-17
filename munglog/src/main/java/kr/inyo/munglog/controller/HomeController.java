@@ -81,6 +81,14 @@ public class HomeController {
     return mv;
 	}
 	
+  /* 아이디/비번찾기 ---------------------------------------------------------------*/
+	@RequestMapping(value= "/account/find", method=RequestMethod.GET)
+	public ModelAndView findGet(ModelAndView mv, String type){
+		mv.addObject("type", type);
+		mv.setViewName("/account/find");
+    return mv;
+	}	
+	
 /* ajax ***************************************************************/
 	/* 이메일 중복검사 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/check/email", method = RequestMethod.POST)

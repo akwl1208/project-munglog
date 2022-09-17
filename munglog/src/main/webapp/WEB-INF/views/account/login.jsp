@@ -90,8 +90,8 @@
 					<!-- 계정 관련 링크 -------------------------------------------------------- -->
 					<div class="box-account float-right">
 						<a href="<c:url value="/account/signup"></c:url>" class="signup">회원가입</a>
-						<a href="#" class="find-id">아이디찾기</a>
-						<a href="#" class="find-pw">비밀번호찾기</a>
+						<a href="<c:url value="/account/find?type=id"></c:url>" class="find-id">아이디찾기</a>
+						<a href="<c:url value="/account/find?type=pw"></c:url>" class="find-pw">비밀번호찾기</a>
 					</div>
 				</div>
 				<!-- button -------------------------------------------------------- -->
@@ -100,6 +100,7 @@
 		</form>
 	</div>
 </body>
+<!-- script **************************************************************************** -->
 <script>
 	$(function(){
 	/* 이벤트 **************************************************************************** */
