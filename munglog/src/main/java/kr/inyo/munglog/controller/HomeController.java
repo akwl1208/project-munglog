@@ -131,8 +131,18 @@ public class HomeController {
 	@ResponseBody
 	public Map<Object, Object> checkMember(@RequestBody MemberVO member) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
-		boolean isUser = memberService.login(member);
-		map.put("res", isUser);
+		boolean isMember = memberService.login(member);
+		map.put("res", isMember);
+		return map;
+	}
+	
+	/* 세션 아이디로 이메일 가져오기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/get/email", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getEmail(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		String email = memberService.getEmail(member);
+		map.put("email", email);
 		return map;
 	}
 }

@@ -83,7 +83,7 @@
 					<div class="box-save">
 						<div class="form-check-inline float-left">
 							<label class="form-check-label">
-								<input type="checkbox" class="form-check-input save-id" name="idSave" value="true"><span>아이디 저장</span>
+								<input type="checkbox" class="form-check-input save-id" name="saveId" value="true"><span>이메일 저장</span>
 							</label>
 						</div>
 					</div>
@@ -102,8 +102,11 @@
 </body>
 <script>
 	$(function(){
+	/* 이벤트 **************************************************************************** */
 		//로그인 버튼 클릭-------------------------------------------------------
 		$('.btn-login').click(function(){
+			let saveId = $('[name=saveId]').val();
+			console.log('saveId : ' + saveId);
 			let mb_email = $('#mb_email').val();
 			let mb_pw = $('#mb_pw').val();
 			//이메일 작성 안하면
@@ -134,6 +137,46 @@
 				}
 			})
 		})
+		//아이디 저장-------------------------------------------------------
+		$(document).ready(function(){
+			//쿠키에서 세션 아이디 가져오기
+			let mb_session_id = getCookie('saveId');
+			//세션 아이디가 없으면
+			if(mb_session_id == null || mb_session_id.length == 0)
+				return;
+			//세션아이디로 이메일 가져오기
+			let obj = {
+				mb_session_id
+			}
+			ajaxPost(false, obj, '/get/email',function(data){
+				//이메일 정보가 있으면
+				if(data.email != '' || data.email != null){
+					//이메일 저장 체크
+					$('.save-id').attr('checked', true);
+					//이메일에 값 넣기
+					$('#mb_email').val(data.email)
+				}
+			}) 
+		})
 	})
+	/* 함수 **************************************************************************** */
+	// 쿠키 가져오기 ------------------------------------------------------
+	function getCookie(cookieName){
+	  cookieName = cookieName + '=';
+	  let cookie = document.cookie;
+		let startIndex = cookie.indexOf(cookieName);
+	  //쿠키가 없으면
+	  if(startIndex == -1)
+		  return '';
+		//쿠키가 있으면
+		startIndex += cookieName.length;
+		let endIndex = cookie.indexOf(';',startIndex);
+	  //;를 못찾았으면 쿠키길이로 설정
+	  if(endIndex == -1)
+		  endIndex = cookie.length;
+	  //값 추출
+	  let value = cookie.substring(startIndex, endIndex);
+		return unescape(value);   
+	}
 </script>
 </html>

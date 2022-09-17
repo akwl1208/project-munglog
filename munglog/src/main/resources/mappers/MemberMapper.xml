@@ -20,6 +20,11 @@
 		select * from member where mb_name = #{mb_name} and mb_phone = #{mb_phone};
 	</select>
 	
+	<!-- 세션아이디 주고 이메일 가져오기 -->
+	<select id="selectMemberEmail" resultType="String">
+		select mb_email from member where mb_session_id = #{mb_session_id} and mb_session_expir > now();
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 본인인증 테이블에 회원메일, 본인인증코드 저장 -->
 	<insert id="insertVeriCode">
@@ -55,6 +60,13 @@
 			where mb_num = #{mb_num}
 	</update>
 	
+	<!-- 세션 정보 수정 -->
+	<update id="updateSession">
+		update member
+			set mb_session_id = #{mb_session_id},
+				mb_session_expir = #{mb_session_expir}
+			where mb_num = #{mb_num}
+	</update>
 	<!-- delete *********************************************************** -->
 	<!-- 회원 이메일 주고 본인인증 삭제 -->
 	<delete id="deleteVerification">

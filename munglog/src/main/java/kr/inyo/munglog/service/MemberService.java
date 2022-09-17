@@ -22,4 +22,8 @@ public interface MemberService {
 	boolean login(MemberVO member);
 	//회원정보 가져옴
 	MemberVO getMember(MemberVO member);
+	//회원에 세션 정보 추가
+	void updateSession(MemberVO user);
+	//세션 아이디로 이메일 정보 가져오기
+	String getEmail(MemberVO member);
 }

@@ -256,6 +256,33 @@ public class MemberServiceImp implements MemberService {
 		MemberVO dbMember = memberDao.selectMember(member.getMb_email());
 		if(dbMember == null)
 			return null;
+		//아이디 저장 -> 회원가입
+		dbMember.setSaveId(member.isSaveId());
 		return dbMember;
+	}
+	/* updateSession : 회원의 세션 정보 수정 ------------------------------------------------------------------*/
+	@Override
+	public void updateSession(MemberVO user) {
+		//값이 없으면
+		if(user == null)
+			return;
+		if(user.getMb_email() == null || user.getMb_email().length() == 0)
+			return;
+		//세션 정보 수정
+		memberDao.updateSession(user);
+	}
+	/* getEmail : 세션아이디로 이메일 정보 가져오기 ------------------------------------------------------------------*/
+	@Override
+	public String getEmail(MemberVO member) {
+		//값이 없으면
+		if(member == null)
+			return "";
+		if(member.getMb_session_id() == null || member.getMb_session_id().length() == 0)
+			return "";
+		//이메일 정보 가져오기
+		String email = memberDao.selectMemberEmail(member.getMb_session_id());
+		if(email == null)
+			return "";
+		return email;
 	}
 }

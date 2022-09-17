@@ -26,11 +26,16 @@ public interface MemberDAO {
 	void insertMember(MemberVO member);
 	//이메일 정보주고 프로필 수정
 	void updateProfile(MemberVO member);
+	//세션 정보 수정
+	void updateSession(MemberVO user);
+	//세션 아이디 주고 이메일 정보 가져오기
+	String selectMemberEmail(String mb_session_id);
 	
 	/* 포인트 ----------------------------------------------------------------------------------- */
 	//포인트 적립
 	void insertPoint(@Param("pi_mb_num")int mb_num, @Param("pi_process")String pi_process, 
 			@Param("pi_history")String pi_history, @Param("pi_amount")int pi_amount);
+
 	
 	
 
