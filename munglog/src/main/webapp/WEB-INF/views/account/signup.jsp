@@ -24,7 +24,7 @@
 		.box-message{
 			font-size: 12px; text-align: center;
 		}
-		.box-input{padding: 20px 0 20px;}
+		.box-input{padding: 36px 0 20px;}
 		.btn-verification,
 		.btn-signup{
 			font-size: 18px; font-weight: bold; padding: 5px 0;

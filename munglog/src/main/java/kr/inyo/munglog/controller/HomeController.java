@@ -47,9 +47,9 @@ public class HomeController {
 			HttpServletResponse response) {
 		int res = memberService.signup(member);
 		if(res == 1) //회원가입 성공 -> 로그인 화면으로
-			messageService.message(response, "회원가입에 성공했습니다. 로그인해주세요.", "/munglog/");
+			messageService.message(response, "회원가입에 성공했습니다. 로그인해주세요.", "/munglog/account/login");
 		if(res == 0) //회원정보가 있음 -> 아이디 비번 찾기 화면으로
-			messageService.message(response, "이미 가입된 회원입니다. 아이디/비번찾기해주세요.", "/munglog/account/signup");
+			messageService.message(response, "이미 가입된 회원입니다. 아이디/비번찾기해주세요.", "/munglog/account/find");
 		else //회원가입 실패
 			messageService.message(response, "회원가입에 실패했습니다. 입력한 회원정보를 확인해주세요.", "/munglog/account/signup");
 		return mv;
