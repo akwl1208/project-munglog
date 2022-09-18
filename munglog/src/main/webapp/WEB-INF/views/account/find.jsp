@@ -89,20 +89,13 @@
 								<div class="form-group">
 									<label>핸드폰번호</label>
 									<input type="text" class="form-control" name="mb_phone" id="mb_phone">
-									<label class="error" for="#mb_phone"></label>
+									<label class="error phoneError"></label>
 								</div>
 								<!-- 아이디찾기 버튼 -------------------------------------------------------- -->
 								<button type="button" class="btn btn-id col-12">아이디 찾기</button>
 							</div>
 							<!-- box-result -------------------------------------------------------- -->	
-							<div class="box-result" style="display: none;">
-								<!-- 결과 알려줌 -------------------------------------------------------- -->
-								<div class="box-inform">
-									<span>회원님의 아이디는 <b>****@naver.com</b> 입니다.</span>
-								</div>
-								<!-- 버튼 -------------------------------------------------------- -->
-								<button class="btn btn-login col-12">로그인</button>
-							</div>
+							<div class="box-result" style="display: none;"></div>
 						</div>
 						<!-- 비밀번호 찾기 -------------------------------------------------------- -->
 						<div id="pw" class="tab-pane fade">
@@ -112,7 +105,7 @@
 								<div class="form-group">
 									<label>이메일</label>
 									<input type="text" class="form-control" name="mb_email" id="mb_email">
-									<label class="error" for="#mb_email"></label>
+									<label class="error emailError"></label>
 								</div>
 								<!-- 이름 입력 -------------------------------------------------------- -->
 								<div class="form-group">
@@ -123,7 +116,7 @@
 								<div class="form-group">
 									<label>핸드폰번호</label>
 									<input type="text" class="form-control" name="mb_phone" id="mb_phone">
-									<label class="error" for="#mb_phone"></label>
+									<label class="error phoneError"></label>
 								</div>
 								<!-- 비밀번호 찾기 -------------------------------------------------------- -->
 								<button type="button" class="btn btn-pw col-12">비밀번호 찾기</button>
@@ -146,10 +139,93 @@
 <!-- script **************************************************************************** -->
 <script>
 	$(function(){
-	/* 이벤트 **************************************************************************** */	
-	let type = '${type}';
-	$('[href="#'+type+'"]').click();
+		/* 이벤트 **************************************************************************** */	
+		let type = '${type}';
+		$('[href="#'+type+'"]').click();
+		
+		let emailRegex = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+		let phoneRegex = /^(010)-(\d{4})-(\d{4})$/;
+		
+		//아이디 찾기 클릭 -------------------------------------------------------
+		$('.btn-id').click(function(){
+			let mb_name = $('#id #mb_name').val();
+			let mb_phone = $('#id #mb_phone').val();	
+			//이름을 입력 안했으면
+			if(mb_name == '' || mb_name.length == 0){
+				$('#id #mb_name').focus();
+				return;
+			}
+			//전화번호 입력 안했으면
+			if(mb_phone == '' || mb_phone.length == 0){
+				$('#id #mb_phone').focus();
+				return;
+			}
+			//전화번호 형식에 안맞으면
+			if(!phoneRegex.test(mb_phone)){
+				$('.phoneError').text('010-0000-0000 형식으로 입력해주세요.').show();
+				$('#id #mb_phone').focus();
+				return;
+			}
+			//이메일 찾기
+			let obj= {
+				mb_name,
+				mb_phone
+			}
+			ajaxPost(false, obj, '/find/email',function(data){
+				console.log(data.email);
+				//화면 재구성
+				$('#id .box-input').hide(); //입력박스 사라짐
+				$('#id .box-result').show(); //결과박스 보임
+				let email = data.email;
+				let html = '';
+				//이메일 정보가 있으면
+				if(email != null){
+					//아이디 블라인드 처리
+					email = blindEmail(email);
+					//이메일 알려주고 로그인 버튼 보임
+					html += '<div class="box-inform">';
+					html += 	'<span>회원님의 아이디는 다음과 같습니다.</span><br>';
+					html += 	'<b>'+email+'</b>';
+					html += '</div>';
+					html += '<a class="btn btn-login col-12" href="<c:url value="/account/login"></c:url>">로그인</a>';
+					$('#id .box-result').append(html);
+				}
+				//이메일 정보가 없으면
+				else{
+					//일치하는 회원정보가 없다고 알려주고 회원가입 버튼 보임
+					html += '<div class="box-inform">';
+					html += 	'<span>일치하는 회원정보가 없습니다. 회원가입해주세요.</span>';
+					html += '</div>';
+					html += '<a class="btn btn-signup col-12" href="<c:url value="/account/signup"></c:url>">회원가입</a>';
+					$('#id .box-result').append(html);
+				}
+			})
+		})
 	})
+/* 함수 **************************************************************************** */	
+	//이메일 아이디 4글자 치환 ----------------------------------------------------------
+	function blindEmail(email){
+		if(email == '')
+			return '';
+		//이메일 아이디 4글자 ****로 치환
+		//아이디 추출하기
+		let atIndex = email.indexOf('@');
+		let emailId = email.slice(0, atIndex);
+		//이메일 블라인드 처리
+		let remainEmail = ''; //앞에 블라인드 자르고 남은 이메일
+		let blindEmail = ''; //일부 블라인드 처리한 이메일
+		//아이디 길이가 5글자 이하이면
+		if(emailId.length <= 5){
+			remainEmail = email.slice(2);
+			blindEmail = '**' + remainEmail;
+		} 
+		//아이디 길이가 5글자 초과이면
+		else{
+			remainEmail = email.slice(4);
+			blindEmail = '****' + remainEmail;
+		}
+		return blindEmail;
+	}
 </script>
 </body>
 </html>

@@ -285,4 +285,20 @@ public class MemberServiceImp implements MemberService {
 			return "";
 		return email;
 	}
+	/* findEmail : 이름과 전화번호로 이메일 정보 가져오기 ------------------------------------------------------------------*/
+	@Override
+	public String findEmail(MemberVO member) {
+		//값이 없으면
+		if(member == null)
+			return null;
+		if(member.getMb_name() == null || member.getMb_name().length() == 0)
+			return null;
+		if(member.getMb_phone() == null || member.getMb_phone().length() == 0)
+			return null;
+		//회원정보 가져오기
+		MemberVO dbMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
+		if(dbMember == null)
+			return null;
+		return dbMember.getMb_email();
+	}
 }

@@ -26,4 +26,6 @@ public interface MemberService {
 	void updateSession(MemberVO user);
 	//세션 아이디로 이메일 정보 가져오기
 	String getEmail(MemberVO member);
+	//이름과 전화번호로 이메일 가져오기
+	String findEmail(MemberVO member);
 }

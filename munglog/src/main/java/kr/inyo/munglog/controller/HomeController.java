@@ -162,4 +162,14 @@ public class HomeController {
 		map.put("email", email);
 		return map;
 	}
+	
+	/* 이름과 핸드폰 번호로 이메일 가져오기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/find/email", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> findEmail(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		String email = memberService.findEmail(member);
+		map.put("email", email);
+		return map;
+	}
 }
