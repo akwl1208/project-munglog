@@ -15,7 +15,7 @@ public class MemberVO {
 	private String mb_profile;
 	private String mb_nickname;
 	private String mb_greeting;
-	private int mb_activity;
+	private String mb_activity;
 	private String mb_session_id;
 	private Date mb_session_expir;
 	private boolean saveId;

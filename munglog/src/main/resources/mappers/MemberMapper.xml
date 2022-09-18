@@ -67,6 +67,18 @@
 				mb_session_expir = #{mb_session_expir}
 			where mb_num = #{mb_num}
 	</update>
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember">
+		update member
+			set mb_pw = #{mb_pw},
+				mb_name = #{mb_name},
+				mb_phone = #{mb_phone},
+				mb_level = #{mb_level},
+				mb_activity = #{mb_activity}
+			where mb_num = #{mb_num}
+	</update>
+	
 	<!-- delete *********************************************************** -->
 	<!-- 회원 이메일 주고 본인인증 삭제 -->
 	<delete id="deleteVerification">

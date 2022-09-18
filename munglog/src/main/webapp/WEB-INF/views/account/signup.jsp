@@ -320,7 +320,7 @@
 		let obj= {
 			mb_email
 		}
-		ajaxPost(false, obj, '/send/email',function(data){
+		ajaxPost(false, obj, '/send/code',function(data){
 			sendCheck = data.res;
 			//메일전송에 실패했으면 다시 전송버튼 누르라고 알려줌
 			if(!data.res){

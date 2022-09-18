@@ -6,8 +6,8 @@ import kr.inyo.munglog.vo.VerificationVO;
 public interface MemberService {
 	//회원인지 아닌지
 	boolean isMember(MemberVO member);
-	//메일 전송
-	boolean sendEmail(MemberVO member);
+	//본인인증 메일 전송
+	boolean sendVeriCode(MemberVO member);
 	//본인 인증 삭제
 	boolean deleteVerification(MemberVO member);
 	//본인인증코드 확인
@@ -26,6 +26,8 @@ public interface MemberService {
 	void updateSession(MemberVO user);
 	//세션 아이디로 이메일 정보 가져오기
 	String getEmail(MemberVO member);
-	//이름과 전화번호로 이메일 가져오기
+	//이름과 전화번호로 이메일 가져오기(아이디 찾기)
 	String findEmail(MemberVO member);
+	//비밀번호 재설정(비밀번호 찾기)
+	int findPw(MemberVO member);
 }

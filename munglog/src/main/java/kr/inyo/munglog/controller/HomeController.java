@@ -101,11 +101,11 @@ public class HomeController {
 	}
 	
 	/* 이메일 보내기 ---------------------------------------------------------------*/
-	@RequestMapping(value = "/send/email", method = RequestMethod.POST)
+	@RequestMapping(value = "/send/code", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> sendEmail(@RequestBody MemberVO member) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
-		boolean res = memberService.sendEmail(member);
+		boolean res = memberService.sendVeriCode(member);
 		map.put("res", res);
 		return map;
 	}
@@ -163,13 +163,23 @@ public class HomeController {
 		return map;
 	}
 	
-	/* 이름과 핸드폰 번호로 이메일 가져오기 ---------------------------------------------------------------*/
+	/* 이름과 핸드폰 번호로 이메일 가져오기(아이디 찾기) ---------------------------------------------------------------*/
 	@RequestMapping(value = "/find/email", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> findEmail(@RequestBody MemberVO member) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		String email = memberService.findEmail(member);
 		map.put("email", email);
+		return map;
+	}
+	
+	/* 비밀번호 재설정(비밀번호 찾기) ---------------------------------------------------------------*/
+	@RequestMapping(value = "/find/pw", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> findPw(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		int res = memberService.findPw(member);
+		map.put("res", res);
 		return map;
 	}
 }

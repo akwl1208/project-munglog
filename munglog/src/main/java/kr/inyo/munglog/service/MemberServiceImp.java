@@ -37,8 +37,9 @@ public class MemberServiceImp implements MemberService {
 	    mailSender.send(message);
 		} catch(Exception e){
 	    e.getStackTrace();
+	    return false;
 		}
-		return false;
+		return true;
 	}
 	//영문대소문자, 숫자를 조합한 랜덤한 문자 만들기-----------------------------------------------------
 	private String createRandom() {
@@ -71,7 +72,7 @@ public class MemberServiceImp implements MemberService {
 	}
 	/* sendEmail : 회원에게 이메일을 보냄 ----------------------------------------------*/
 	@Override
-	public boolean sendEmail(MemberVO member) {
+	public boolean sendVeriCode(MemberVO member) {
 		//member가 null이면
 		if(member == null)
 			return false;
@@ -84,32 +85,28 @@ public class MemberServiceImp implements MemberService {
 		//본인인증코드 생성
 		String veriCode = createRandom();
 		//본인인증코드 메일로 보내기
-		try {
-			//본인인증 재전송때문에 본인인증번호 저장한 값이 있는지 확인
-			VerificationVO veri = memberDao.selectVerification(member.getMb_email());
-			//코드가 저장되어 있으면 코드 수정
-			if(veri != null) {
-				//본인인증 재설정
-				veri.setVr_code(veriCode);
-				//실패횟수가 5번 초과이면 재전송하니까 실패횟수 0으로 초기화
-				if(veri.getVr_failure_count() > 5)
-					veri.setVr_failure_count(0);
-				memberDao.updateVerifiCation(veri);
-			}
-			// 저장되어 있지 않으면 이메일과 인증코드 db에 추가
-			else {
-				//db에 저장 안됬으면 메일 안보냄
-				if(!memberDao.insertVeriCode(member.getMb_email(),veriCode))
-					return false;
-			}
-			//메일로 인증코드를 보내줌
-			String title = "[멍멍일지]본인인증코드 전송";
-			String content = "회원가입에서 본인인증코드 입력란에 다음 인증코드를 입력하여 회원가입을 완료하세요<br>"+ veriCode;
-			sendEmail(title, content, member.getMb_email());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+		//본인인증 재전송때문에 본인인증번호 저장한 값이 있는지 확인
+		VerificationVO veri = memberDao.selectVerification(member.getMb_email());
+		//코드가 저장되어 있으면 코드 수정
+		if(veri != null) {
+			//본인인증 재설정
+			veri.setVr_code(veriCode);
+			//실패횟수가 5번 초과이면 재전송하니까 실패횟수 0으로 초기화
+			if(veri.getVr_failure_count() > 5)
+				veri.setVr_failure_count(0);
+			memberDao.updateVerifiCation(veri);
 		}
+		// 저장되어 있지 않으면 이메일과 인증코드 db에 추가
+		else {
+			//db에 저장 안됬으면 메일 안보냄
+			if(!memberDao.insertVeriCode(member.getMb_email(),veriCode))
+				return false;
+		}
+		//메일로 인증코드를 보내줌
+		String title = "[멍멍일지]본인인증코드 전송";
+		String content = "회원가입에서 본인인증코드 입력란에 다음 인증코드를 입력하여 회원가입을 완료하세요<br>"+ veriCode;
+		if(!sendEmail(title, content, member.getMb_email()))
+			return false;
 		return true;
 	}
 	/* deleteVerification : 회원 메일을 주고 본인인증 삭제 ---------------------------------------------------*/
@@ -237,7 +234,7 @@ public class MemberServiceImp implements MemberService {
 		if(dbMember == null)
 			return false;
 		//활동정지된 회원이면
-		if(dbMember.getMb_activity() == 1)
+		if(dbMember.getMb_activity().equals("1"))
 			return false;
 		//비번이 일치하는지 확인
 		if(!passwordEncoder.matches(member.getMb_pw(), dbMember.getMb_pw()))
@@ -285,7 +282,7 @@ public class MemberServiceImp implements MemberService {
 			return "";
 		return email;
 	}
-	/* findEmail : 이름과 전화번호로 이메일 정보 가져오기 ------------------------------------------------------------------*/
+	/* findEmail : 이름과 전화번호로 이메일 정보 가져오기(아이디 찾기) ------------------------------------------------------------------*/
 	@Override
 	public String findEmail(MemberVO member) {
 		//값이 없으면
@@ -300,5 +297,44 @@ public class MemberServiceImp implements MemberService {
 		if(dbMember == null)
 			return null;
 		return dbMember.getMb_email();
+	}
+	/* findPw : 비밀번호 재설정하기(비밀번호 찾기)  ------------------------------------------------------------------*/
+	@Override
+	public int findPw(MemberVO member) {
+		//값이 없으면
+		if(member == null)
+			return -1;
+		if(member.getMb_email() == null || member.getMb_email().length() == 0)
+			return -1;
+		if(member.getMb_name() == null || member.getMb_name().length() == 0)
+			return -1;
+		if(member.getMb_phone() == null || member.getMb_phone().length() == 0)
+			return -1;
+		//이메일로 회원인지 판별
+		MemberVO isMember = memberDao.selectMember(member.getMb_email());
+		if(isMember == null)
+			return -1;
+		//이름과 핸드폰 번호로 회원인지 판별
+		MemberVO dbMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
+		if(dbMember == null)
+			return -1;
+		//입력한 이메일과 이름과 핸드폰 번호로 가져온 이메일이 일치해야함
+		if(!member.getMb_email().equals(dbMember.getMb_email()))
+			return -1;
+		//비밀번호 재설정
+		//임시비밀번호 생성
+		String mb_pw = createRandom();
+		//임시비밀번호 암호화
+		String encPw =passwordEncoder.encode(mb_pw); 
+		dbMember.setMb_pw(encPw);
+		//메일로 임시비밀번호를 보내줌
+		String title = "[멍멍일지]임시비밀번호 전송";
+		String content = "임시비밀번호가 발급되었습니다. 임시비밀번호로 로그인해주세요.<br>"+ mb_pw;
+		//이메일 못보내지면 설정 못함
+		if(!sendEmail(title, content, dbMember.getMb_email()))
+			return 0;
+		//회원 비밀번호 재설정
+		memberDao.updateMember(dbMember);
+		return 1;
 	}
 }

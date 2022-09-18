@@ -122,14 +122,7 @@
 								<button type="button" class="btn btn-pw col-12">비밀번호 찾기</button>
 							</div>
 							<!-- box-result -------------------------------------------------------- -->	
-							<div class="box-result" style="display: none;">
-								<!-- 결과 알려줌 -------------------------------------------------------- -->
-								<div class="box-inform">
-									<span>이메일로 임시비밀번호를 보냈습니다. 확인해주세요.</span>
-								</div>
-								<!-- 버튼 -------------------------------------------------------- -->
-								<button class="btn btn-login col-12">로그인</button>
-							</div>
+							<div class="box-result" style="display: none;"></div>
 						</div>
 					</div>
 				</div>
@@ -146,6 +139,41 @@
 		let emailRegex = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 		let phoneRegex = /^(010)-(\d{4})-(\d{4})$/;
 		
+		//유효성 검사----------------------------------------------------------------------
+		//아이디 찾기 핸드폰 입력창 바뀌면 ------------------------------------------------------- 
+		$('#id #mb_phone').change(function(){
+			let mb_phone = $('#id #mb_phone').val();
+			//전화번호 형식에 안맞으면
+			if(!phoneRegex.test(mb_phone)){
+				$('#id .phoneError').text('010-0000-0000 형식으로 입력해주세요.').show();
+				$('#id #mb_phone').focus();
+				return;
+			}else
+				$('#id .phoneError').hide();
+		})
+		//비밀번호 찾기 이메일 입력창 바뀌면 -------------------------------------------------------
+		$('#pw #mb_email').change(function(){
+			let mb_email = $('#pw #mb_email').val();
+			//전화번호 형식에 안맞으면
+			//이메일 형식에 안맞으면
+			if(!emailRegex.test(mb_email)){
+				$('#pw .emailError').text('이메일 형식에 맞게 작성해주세요.').show();
+				$('#pw #mb_email').focus();
+				return;
+			}else
+				$('#pw .emailError').hide();
+		})
+		//비밀번호 찾기 핸드폰 입력창 바뀌면 ------------------------------------------------------- 
+		$('#pw #mb_phone').change(function(){
+			let mb_phone = $('#pw #mb_phone').val();
+			//전화번호 형식에 안맞으면
+			if(!phoneRegex.test(mb_phone)){
+				$('#pw .phoneError').text('010-0000-0000 형식으로 입력해주세요.').show();
+				$('#pw #mb_phone').focus();
+				return;
+			}else
+				$('#pw .phoneError').hide();
+		})
 		//아이디 찾기 클릭 -------------------------------------------------------
 		$('.btn-id').click(function(){
 			let mb_name = $('#id #mb_name').val();
@@ -162,7 +190,7 @@
 			}
 			//전화번호 형식에 안맞으면
 			if(!phoneRegex.test(mb_phone)){
-				$('.phoneError').text('010-0000-0000 형식으로 입력해주세요.').show();
+				$('#id .phoneError').text('010-0000-0000 형식으로 입력해주세요.').show();
 				$('#id #mb_phone').focus();
 				return;
 			}
@@ -172,7 +200,6 @@
 				mb_phone
 			}
 			ajaxPost(false, obj, '/find/email',function(data){
-				console.log(data.email);
 				//화면 재구성
 				$('#id .box-input').hide(); //입력박스 사라짐
 				$('#id .box-result').show(); //결과박스 보임
@@ -200,6 +227,83 @@
 					$('#id .box-result').append(html);
 				}
 			})
+		})
+		//비밀번호 찾기 클릭 -------------------------------------------------------
+		$('.btn-pw').click(function(){
+			let mb_email = $('#pw #mb_email').val();
+			let mb_name = $('#pw #mb_name').val();
+			let mb_phone = $('#pw #mb_phone').val();
+			//이메일 입력 안했으면
+			if(mb_email == '' || mb_email.length == 0){
+				$('#pw #mb_email').focus();
+				return;
+			}
+			//이메일 형식에 안맞으면
+			if(!emailRegex.test(mb_email)){
+				$('#pw .emailError').text('이메일 형식에 맞게 작성해주세요.').show();
+				$('#pw #mb_email').focus();
+				return;
+			}
+			//이름을 입력 안했으면
+			if(mb_name == '' || mb_name.length == 0){
+				$('#pw #mb_name').focus();
+				return;
+			}
+			//전화번호 입력 안했으면
+			if(mb_phone == '' || mb_phone.length == 0){
+				$('#pw #mb_phone').focus();
+				return;
+			}
+			//전화번호 형식에 안맞으면
+			if(!phoneRegex.test(mb_phone)){
+				$('#pw .phoneError').text('010-0000-0000 형식으로 입력해주세요.').show();
+				$('#pw #mb_phone').focus();
+				return;
+			}
+			//비밀번호 재설정
+			let obj= {
+				mb_email,
+				mb_name,
+				mb_phone
+			}
+			ajaxPost(false, obj, '/find/pw',function(data){
+				//임시비밀번호 전송에 실패
+				if(data.res == 0){
+					alert('임시비밀번호 전송에 실패했습니다. 다시 시도해주세요.');
+					return;
+				}
+				//화면 재구성
+				$('#pw .box-input').hide(); //입력박스 사라짐
+				$('#pw .box-result').show(); //결과박스 보임
+				let html = '';
+				//임시비밀번호 전송에 성공했으면
+				if(data.res == 1){
+					//임시비밀번호를 보냈다고 알려주고, 로그인 버튼 보임
+					html += '<div class="box-inform">';
+					html += 	'<span>메일로 임시비밀번호를 보냈습니다.<br> 이메일을 확인해주세요.</span>';
+					html += '</div>';
+					html += '<a class="btn btn-login col-12" href="<c:url value="/account/login"></c:url>">로그인</a>';
+					$('#pw .box-result').append(html);
+				}
+				//일치하는 회원이 없으면
+				if(data.res == -1){
+					//일치하는 회원정보가 없다고 알려주고 회원가입 버튼 보임
+					html += '<div class="box-inform">';
+					html += 	'<span>일치하는 회원정보가 없습니다. 회원가입해주세요.</span>';
+					html += '</div>';
+					html += '<a class="btn btn-signup col-12" href="<c:url value="/account/signup"></c:url>">회원가입</a>';
+					$('#pw .box-result').append(html);
+				}
+			})
+		})
+		//탭메뉴 클릭 -------------------------------------------------------
+		$('.nav-link').click(function(){
+			//입력칸이 보이고
+			$('.box-input').show();
+			$('.box-result').hide();
+			//값 초기화
+			$('input').val('');
+			$('.error').hide();
 		})
 	})
 /* 함수 **************************************************************************** */	
