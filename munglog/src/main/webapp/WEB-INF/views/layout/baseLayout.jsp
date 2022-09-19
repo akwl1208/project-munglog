@@ -16,18 +16,18 @@
 <style type="text/css">
 *{padding:0; margin: 0;}
 .main{
-	width:830px; padding: 20px; display: block;
+	width:830px; padding: 50px 20px; display: block;
 	}
 .side-main{
-	width:280px; padding: 20px; display: block;
+	width:280px; padding: 50px 10px; display: block;
 	}
 </style>
 </head>
 <body>
 	<tiles:insertAttribute name="header"/>
-	<div class="container clearfix" style="margin-top:101px;">
-		<div style="display:flex; min-width:1110px;">
-			<div class="main" style="min-height:1000px;">
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height:100vh;">
+			<div class="main">
 			 	<tiles:insertAttribute name="body" />
 			</div>
 			<div class="side-main">

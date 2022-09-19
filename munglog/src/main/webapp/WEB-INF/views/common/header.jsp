@@ -12,51 +12,50 @@
 		a{text-decoration: none; color: #52443b;}
 		a:hover{text-decoration: none; color: #52443b;}
 		ul,li{list-style-type: none; color: #52443b;}
-		.fixed-top{
+		.fixed-top.header{
 			background-color: white; box-shadow: 0 1px 3px 0 rgba(73, 67, 60, 0.2);
 			min-width : 500px;
 		}
-		.box-menu{display: flex;}
-		.account-list{
+		.header .box-menu{display: flex; text-align: right; padding: 10px 0 20px;}
+		.header .box-account .account-list{
 			text-align: right; margin-top: 10px;
 		}
-		.account-list>li{
+		.header .box-account .account-list>li{
 			display: inline-block; font-size: 12px;
 		}
-		.account-list>li:last-child::before{
+		.header .box-account .account-list>li:last-child::before{
 			display: inline-block; content: ''; margin: 0 6px 3px;
 			width: 1px; height: 12px; background-color: #b9ab9a;
 			vertical-align: middle;
 		}
-		.nickname{line-height: 24px;}
-		.nickname .fa-dog{color: #fb9600; margin-right: 6px;}
-		.nickname::after{
+		.header .box-account .nickname{line-height: 24px;}
+		.header .box-account .nickname .fa-dog{color: #fb9600; margin-right: 6px;}
+		.header .box-account .nickname::after{
 			display: inline-block; content: ''; margin: 0 6px 6px;
     	width: 3px; height: 3px; border-radius: 50%; background-color: #b9ab9a;
     	vertical-align: middle;
 		}
-		.box-menu{text-align: right; padding: 10px 0 20px;}
-		.logo{
+		.header .box-menu .logo{
 			font-size: 24px; font-weight: 900; text-align: left;
 			line-height: 45px; padding-left: 20px;
 		}
-		.logo .fa-paw{margin-right: 6px;}
-		.menu-list{margin: auto;}
-		.menu-list>li{
+		.header .box-menu .logo .fa-paw{margin-right: 6px;}
+		.header .box-menu .menu-list{margin: auto;}
+		.header .box-menu .menu-list>li{
 			display: inline-block; font-size: 18px; font-weight: bold;
 			margin-left: 40px;
 		}
-		.menu-list a:hover{color: #fb9600;}
-		.dropdown{margin: auto 0;}
-		.all-menu{
+		.header .box-menu .menu-list a:hover{color: #fb9600;}
+		.header .box-menu .dropdown{margin: auto 0;}
+		.header .box-menu .all-menu{
 			display: inline-block; font-size: 18px; font-weight: bold;
 			margin-left: 40px;
 		}
-		.dropdown-menu{background-color: #fff7ed; margin-top: 34px}
+		.header .box-menu .dropdown-menu{background-color: #fff7ed; margin-top: 34px}
 	</style>
 </head>
 <body>
-	<nav class="fixed-top">
+	<nav class="fixed-top header">
 		<div class="container">
 			<!-- box-account -------------------------------------------------------- -->
 			<div class="box-account">
@@ -108,7 +107,9 @@
 					<div class="dropdown-menu dropdown-menu-right border-0" style="width:270px;">
 						<h5 class="dropdown-header">일지</h5>
 						<a class="dropdown-item" href="#">멍친일지</a>
-						<a class="dropdown-item" href="#">나의 일지</a>
+						<a class="dropdown-item" 
+							href="<c:if test="${dogs == null}"><c:url value="/log/register?mb_num=${user.mb_num}"></c:url></c:if>
+								<c:if test="${dogs != null}"><c:url value="/account/login"></c:url></c:if>">나의 일지</a>
 						<a class="dropdown-item" href="#">챌린지</a>
 						<h5 class="dropdown-header">굿즈</h5>
 						<a class="dropdown-item" href="#">굿즈 보기</a>
