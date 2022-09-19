@@ -177,28 +177,39 @@
 	<script>
 		$(function(){
 			$(document).on('click','.fa-circle-plus', function(){
-				$('.box-more').hide();
+				//이전 버튼 삭제
+				$('.box-more').remove();
 				let html = '';
-				html += '<div class="form-group">';
-				html += 	'<label>강아지 이름</label>';
-				html += 	'<input type="text" class="form-control" name="dg_name" id="dg_name">';
-				html +=		'<label class="error" for="dg_name"></label>';
+				html += '<div class="box-input">';
+				html += 	'<div class="form-group">';
+				html += 		'<label>강아지 이름</label>';
+				html += 		'<input type="text" class="form-control" name="dg_name" id="dg_name">';
+				html +=			'<label class="error" for="dg_name"></label>';
+				html +=		'</div>';
+				html += 	'<div class="form-group">';
+				html +=			'<label>강아지 등록번호</label>';
+				html +=			'<input type="text" class="form-control" name="dg_reg_number" id="dg_reg_number">';
+				html +=			'<label class="error" for="dg_reg_number"></label>';
+				html +=		'</div>';
+				html +=		'<div class="form-group">';
+				html +=			'<label>강아지 생일</label>';
+				html +=			'<input type="text" class="form-control" name="dg_birth" id="dg_birth">';
+				html +=			'<label class="error" for="dg_birth"></label>';
+				html +=		'</div>';
+				html +=		'<hr>';
+				html +=		'<div class="box-more">';
+				html +=			'<i class="fa-solid fa-circle-plus"></i>';
+				html +=		'</div>';
 				html +=	'</div>';
-				html += '<div class="form-group">';
-				html +=		'<label>강아지 등록번호</label>';
-				html +=		'<input type="text" class="form-control" name="dg_reg_number" id="dg_reg_number">';
-				html +=		'<label class="error" for="dg_reg_number"></label>';
-				html +=	'</div>';
-				html +=	'<div class="form-group">';
-				html +=		'<label>강아지 생일</label>';
-				html +=		'<input type="text" class="form-control" name="dg_birth" id="dg_birth">';
-				html +=		'<label class="error" for="dg_birth"></label>';
-				html +=	'</div>';
-				html +=	'<hr>';
-				html +=	'<div class="box-more">';
-				html +=		'<i class="fa-solid fa-circle-plus"></i>';
-				html +=	'</div>';
-				$('.box-input').append(html);
+				//버튼 앞에 붙임
+				$('.main .box-content .btn-registration').before(html);
+				let count = $('.main .box-content .box-input').length;
+				//3개 생기면 더이상 박스 생성 막음
+				if(count == 3){
+					//화면 재구성
+					$('.main .box-content .box-input hr').last().remove(); //마지막 구분선 삭제
+					$('.box-more').remove(); //버튼 삭제
+				}
 			})
 		})
 	</script> 
