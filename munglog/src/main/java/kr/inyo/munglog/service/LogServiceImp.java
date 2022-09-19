@@ -55,9 +55,12 @@ public class LogServiceImp implements LogService {
 		for(int i=0; i<dlist.getDlist().size();i++) {
 			//강아지 정보 객체에 저장
 			DogVO dog = dlist.getDlist().get(i);
+			//값이 없으면
+			if(dog == null)
+				continue;
 			//이름 없으면 
 			if(dog.getDg_name() == null || dog.getDg_name().length() == 0)
-				return -1;
+				continue;
 			//강아지 정보 추가
 			logDao.insertDog(dog, user.getMb_num());
 		}
