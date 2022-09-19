@@ -1,6 +1,9 @@
 package kr.inyo.munglog.vo;
 
+import java.awt.List;
 import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
 
@@ -8,7 +11,8 @@ import lombok.Data;
 public class DogVO {
 	private int dg_num;
 	private int dg_mb_num;
-	private int dg_name;
-	private int dg_reg_num;
+	private String dg_name;
+	private String dg_reg_num;
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dg_birth;
 }

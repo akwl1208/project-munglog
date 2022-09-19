@@ -9,7 +9,13 @@
 	<select id="selectDogs" resultType="kr.inyo.munglog.vo.DogVO">
 		select * from Dog where dg_mb_num = #{mb_num}
 	</select>
+
 	<!-- insert *********************************************************** -->
+	<!-- 강아지 정보 추가 -->
+	<insert id="insertDog">
+	insert into dog(dg_mb_num, dg_name, dg_reg_num, dg_birth)
+		values(#{dg_mb_num}, #{dog.dg_name}, #{dog.dg_reg_num}, #{dog.dg_birth})
+	</insert>
 	
 	<!-- update *********************************************************** -->
 	
