@@ -9,6 +9,14 @@
 		<put-attribute name="body" value="/WEB-INF/views/account/{1}.jsp" />
 	</definition>
 	
+	<!-- log 레이아웃 -->
+	<definition name="/log/*" template="/WEB-INF/views/layout/logLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/log/{1}.jsp" />
+		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
+	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+	  <put-attribute name="aside" value="/WEB-INF/views/aside/logAside.jsp" />
+	</definition>
+	
 	<!-- 기본 레이아웃 -->
 	<definition name=".root" template="/WEB-INF/views/layout/baseLayout.jsp">
 	  <put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
