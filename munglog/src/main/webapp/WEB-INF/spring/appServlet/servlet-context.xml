@@ -38,8 +38,20 @@
 	</beans:bean>
 	
 	<!-- interceptor -->
+	<beans:bean id="guestInterceptor" class="kr.inyo.munglog.interceptor.GuestInterceptor"></beans:bean>
+	<beans:bean id="memberInterceptor" class="kr.inyo.munglog.interceptor.MemberInterceptor"></beans:bean>
 	<beans:bean id="loginInterceptor" class="kr.inyo.munglog.interceptor.LoginInterceptor"></beans:bean>
 	<interceptors>
+	  <interceptor>
+	    <mapping path="/account/signup"/>
+	    <mapping path="/account/login"/>
+	    <mapping path="/account/find"/>
+	    <beans:ref bean="guestInterceptor"/>
+    </interceptor>
+		<interceptor>
+	    <mapping path="/log/register"/>
+	    <beans:ref bean="memberInterceptor"/>
+    </interceptor>
 		<interceptor>
 			<mapping path="/account/login"/>
 			<beans:ref bean="loginInterceptor"/>
