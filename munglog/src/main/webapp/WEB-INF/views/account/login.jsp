@@ -107,7 +107,6 @@
 		//로그인 버튼 클릭-------------------------------------------------------
 		$('.btn-login').click(function(){
 			let saveId = $('[name=saveId]').val();
-			console.log('saveId : ' + saveId);
 			let mb_email = $('#mb_email').val();
 			let mb_pw = $('#mb_pw').val();
 			//이메일 작성 안하면
