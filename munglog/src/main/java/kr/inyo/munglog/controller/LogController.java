@@ -1,6 +1,8 @@
 package kr.inyo.munglog.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -10,6 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.service.LogService;
@@ -56,17 +61,27 @@ public class LogController {
 	public ModelAndView logMylogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
 			HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		MemberVO dbUser = memberService.getMember(user);
-		//회원번호가 다르면 접근 할 수 없음
-		if(dbUser.getMb_num() != mb_num) {
-			messageService.message(response, "다른 사람 일지는 접속할 수 없습니다.", "/munglog/");
+		//회원이 아니거나 회원번호가 다르면 접근 할 수 없음
+		if(user == null || user.getMb_num() != mb_num) {
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		}
 		//강아지 정보 가져오기
-		ArrayList<DogVO> dList = logService.getDogs(dbUser);
+		ArrayList<DogVO> dList = logService.getDogs(user);
+
 		mv.addObject("dList", dList);
 		mv.setViewName("/log/mylog");
 		return mv;
 	}
 /* ajax ***************************************************************/
-
+	/* 일지에 사진 업로드 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> uploadLog(@RequestParam("file") MultipartFile file,
+			@RequestParam("dg_nums[]") ArrayList<Integer> dg_nums, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		int res = logService.uploadLog(dg_nums, file, user);
+		map.put("res", res);
+		return map;
+	}
 }

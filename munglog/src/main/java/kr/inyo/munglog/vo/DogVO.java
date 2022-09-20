@@ -1,6 +1,5 @@
 package kr.inyo.munglog.vo;
 
-import java.awt.List;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;

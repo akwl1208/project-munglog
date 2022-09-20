@@ -2,6 +2,8 @@ package kr.inyo.munglog.service;
 
 import java.util.ArrayList;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
@@ -11,6 +13,8 @@ public interface LogService {
 	ArrayList<DogVO> getDogs(MemberVO user);
 	//강아지 정보 추가
 	int insertDog(MemberVO user, DogListVO dlist);
+	//일지에 사진 등록
+	int uploadLog(ArrayList<Integer> dg_nums, MultipartFile file, MemberVO user);
 
 
 }
