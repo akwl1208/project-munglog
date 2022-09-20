@@ -76,14 +76,14 @@
 						<c:forEach items="${dList}" var="dog">
 							<div class="box-dog form-check-inline">
 								<label class="form-check-label" for="check1">
-									<input type="checkbox" class="form-check-input" name="dlist[0].dg_num" value="${dog.dg_num}">${dog.dg_name}
+									<input type="checkbox" class="form-check-input" name="dg_num" value="${dog.dg_num}">${dog.dg_name}
 								</label>
 							</div>
 			 			</c:forEach>
 					</div>
 					<!-- box-file(사진 선택) -------------------------------------------------------- -->
 					<div class="box-file ml-auto">
-						<input type="file" name="file" style="display: none;">
+						<input type="file" name="file" accept="image/jpg, image/jpeg, image/png, image/gif" style="display: none;">
 						<button type="button" class="btn-file">사진 선택</button>
 					</div>
 				</div>
@@ -92,7 +92,7 @@
 					<div class="d-flex align-items-end justify-content-between">
 						<!-- box-preview(사진 미리보기) -------------------------------------------------------- -->
 						<div class="box-preview">
-							<img class="preview" max-width="300px" max-height="300px">
+							<img class="preview" style="max-width: 300px; max-height: 300px;">
 						</div>
 						<!-- 사진 전송 버튼(box-send) -------------------------------------------------------- -->
 						<button type="button" class="btn-send">사진 등록</button>
@@ -160,20 +160,56 @@
 <!-- script **************************************************************************** -->
 <script>
 	$(function(){	
+	/* 이벤트 **************************************************************************** */
+		//사진 등록 아이콘 클릭-------------------------------------------------------
 		$('.main .box-nav .btn-upload').click(function(){
 			$('.box-drop').toggle();
 			$('.drop').hide();
 			$('.drop-upload').show();
 		})
+		
+		//필터 아이콘 클릭-------------------------------------------------------
 		$('.main .box-nav .btn-filter').click(function(){
 			$('.box-drop').toggle();
 			$('.drop').hide();
 			$('.drop-filter').show();
 		})
+		
+		//정렬 아이콘 클릭-------------------------------------------------------
 		$('.main .box-nav .btn-sort').click(function(){
 			$('.box-drop').toggle();
 			$('.drop').hide();
 			$('.drop-sort').show();
+		})
+		
+		//사진 선택 버튼(btn-file) 클릭-------------------------------------------------------
+		$('.main .drop-upload .box-file .btn-file').click(function(){
+			$('.main .drop-upload .box-file [name=file]').click();
+		})
+		
+		//사진을 선택했으면 -------------------------------------------------------
+		$('.main .drop-upload .box-file [name=file]').on('change', function(event) {
+			//파일을 선택하지 않았으면
+			if(event.target.files.length == 0){
+				$('.main .box-drop .drop-upload .box-file').show();
+				$('.main .box-drop .drop-upload .box-send').hide();
+				return;
+			} else{
+				$('.main .box-drop .drop-upload .box-file').hide();
+				$('.main .box-drop .drop-upload .box-send').show();			
+			}
+		  let file = event.target.files[0];
+		  let reader = new FileReader(); 
+		  
+		  reader.onload = function(e) {
+		      $('.main .drop-upload .box-send .box-preview .preview').attr('src', e.target.result);
+		  }
+		  reader.readAsDataURL(file);
+		});
+	
+		$('.main .box-drop .drop-upload .box-send .box-preview').click(function(){
+			$('.main .drop-upload .box-file [name=file]').click();
+			$('.main .drop-upload .box-file [name=file]').change();
 		})
 	})
 </script> 
