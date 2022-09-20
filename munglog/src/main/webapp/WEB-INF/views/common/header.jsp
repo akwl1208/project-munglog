@@ -109,7 +109,9 @@
 						<a class="dropdown-item" href="#">멍친일지</a>
 						<a class="dropdown-item" 
 							href="<c:if test="${dogs == null}"><c:url value="/log/register"></c:url></c:if>
-								<c:if test="${dogs != null}"><c:url value="/account/login"></c:url></c:if>">나의 일지</a>
+								<c:if test="${dogs != null}"><c:url value="/log/mylog/${user.mb_num}"></c:url></c:if>">
+							나의 일지
+						</a>
 						<a class="dropdown-item" href="#">챌린지</a>
 						<h5 class="dropdown-header">굿즈</h5>
 						<a class="dropdown-item" href="#">굿즈 보기</a>
