@@ -109,4 +109,17 @@ public class LogServiceImp implements LogService {
 		return 1;
 	}
 
+	/* getLogList : 일지들 가져오기 ----------------------------------------------------------------------------------------------------*/
+	@Override
+	public ArrayList<LogVO> getLogList(LogVO log) {
+		//값이 없으면
+		if(log == null || log.getLg_mb_num() < 1)
+			return null;
+		//회원번호 주고 로그 가져오기
+		ArrayList<LogVO> dbLogList = logDao.selectLogList(log.getLg_mb_num());
+		if(dbLogList == null)
+			return null;
+		return dbLogList;
+	}
+
 }

@@ -7,6 +7,7 @@
 <title>메인-나의일지</title>
 <!-- css ************************************************************ -->
 <style>
+	/* main box-title --------------------------------------------------------------------- */
 	.main .box-title{
 		background-color: #ae8a68; border-radius: 5px;
 		padding: 20px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
@@ -16,6 +17,7 @@
 	.main .box-title .box-message{
 		font-size: 12px; margin: 5px 0; padding-left: 24px;
 	}
+	/* main box-nav --------------------------------------------------------------------- */
 	.main .box-nav{margin-bottom: 10px; position: relative;}
 	.main .box-nav .box-set .set{margin-left: 10px;}
 	.main .box-nav .box-set .set .fa-solid:hover{color:#fb9600;}
@@ -46,7 +48,20 @@
 		width: 1px; height: 12px; background-color: #b9ab9a;
 		line-height: 24px;
 	}
-	.main .box-content{background-color: red; height: 100px;	padding: 20px 44px;}
+	/* main box-content --------------------------------------------------------------------- */
+	.main .box-content{margin: 30px 44px;}
+	.main .box-content .log-list{
+		display: table; width: 100%; min-width: 100%;
+	}
+	.main .box-content .log-list .log-item{
+		display: inline-block; width: calc(25% - 10px); height: calc(702px / 4);
+		overflow: hidden; margin: 5px;
+	}
+	.main .box-content .log-list .log-item .log-link{
+		width: 100%; height: 100%; display: block; background-position: center center; 
+		background-size: cover; border: 1px solid #dfe0df;
+	}
+	.main .box-content .log-list .log-item .log-link:hover{transform: scale(0.9);}
 </style>
 </head>
 <!-- html ********************************************************************************************************* -->
@@ -61,8 +76,8 @@
 		<!-- box-set(아이콘 버튼들) --------------------------------------------------------------------------------------- -->
 		<div class="box-set d-flex justify-content-end">
 			<div class="set box-upload p-2"><i class="btn-upload fa-solid fa-camera"></i></div>
-			<div class="set box-filter p-2"><i class="btn-filter fa-solid fa-filter"></i></i></div>
-			<div class="set box-sort p-2""><i class="btn-sort fa-solid fa-arrow-down-short-wide"></i></div>
+			<div class="set box-filter p-2"><i class="btn-filter fa-solid fa-filter"></i></div>
+			<div class="set box-sort p-2"><i class="btn-sort fa-solid fa-arrow-down-short-wide"></i></div>
 		</div>
 		<!-- box-drop(드랍 박스) ---------------------------------------------------------------------------------------- -->
 		<div class="box-drop" style="display: none;">
@@ -154,13 +169,15 @@
 	</div>
 	<!-- box-content ------------------------------------------------------------------------------------------------ -->
 	<div class="box-content">
-	${dList}
+		<ul class="log-list"></ul>
 	</div>
 </body>
 <!-- script ******************************************************************************************************* -->
 <script>
-	$(function(){	
-	/* 이벤트 **************************************************************************** */
+	let obj = {lg_mb_num : ${user.mb_num}};
+	$(function(){
+		getLogList(obj);
+	/* 이벤트 *********************************************************************************************************** */
 		//사진 등록 아이콘(btn-upload) 클릭--------------------------------------------------------------------------------------
 		$('.main .box-nav .btn-upload').click(function(){
 			$('.main .box-nav .box-drop').toggle();
@@ -268,13 +285,6 @@
 					//성공했을 때
 					else if(data.res == 1){
 						alert('사진을 등록했습니다.');
-						//체크박스 체크 해제
-						$('.main .box-drop .drop-upload .box-checkbox [name=dg_num]').prop('checked', false);
-						//선택한 파일 비우기
-						$('.main .drop-upload .box-file [name=file]').val('');
-						//화면 재구성
-						$('.main .drop-upload .box-file [name=file]').change();
-						$('.main .box-drop .drop-upload .box-send').hide();
 						$('.main .box-nav .btn-upload').click();
 					}
 					//실패했을 때
@@ -292,5 +302,19 @@
 			});
 		})
 	})
+	/* 이벤트 *********************************************************************************************************** */
+	// getLogList -----------------------------------------------------------------------------------------------------
+	function getLogList(obj){
+		ajaxPost(false, obj, '/get/logList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			for(log of data.list){
+				html += '<li class="log-item">';
+				html +=		'<a href="#" class="log-link" style="background-image: url(\'<%=request.getContextPath()%>/img'+log.lg_image+'\')"></a>';
+				html += '</li>';
+			}
+			$('.main .box-content .log-list').append(html);
+		});
+	}
 </script> 
 </html>

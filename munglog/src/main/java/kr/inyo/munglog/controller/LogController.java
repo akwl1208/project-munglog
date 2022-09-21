@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
 
 @Controller
@@ -82,6 +84,19 @@ public class LogController {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		int res = logService.uploadLog(dg_nums, file, user);
 		map.put("res", res);
+		return map;
+	}
+	
+	/* 일지 가져오기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/get/logList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getLogList(@RequestBody LogVO log) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		System.out.println("----------------------------------");
+		System.out.println(log);
+		System.out.println("----------------------------------");
+		ArrayList<LogVO> logList = logService.getLogList(log);
+		map.put("list", logList);
 		return map;
 	}
 }
