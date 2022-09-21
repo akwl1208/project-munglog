@@ -65,13 +65,20 @@ public class LogController {
 	public ModelAndView logMylogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
 			HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		//회원이 아니거나 회원번호가 다르면 접근 할 수 없음
-		if(user == null || user.getMb_num() != mb_num) {
+		//회원이 아니거나 
+		if(user == null) {
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		}
+		//회원번호가 다르면 접근 할 수 없음
+		if(user.getMb_num() != mb_num) {
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		}
 		//강아지 정보 가져오기
 		ArrayList<DogVO> dList = logService.getDogs(user);
-
+		//사진이 등록된 년도 가져오기
+		ArrayList<String> regYearList = logService.getRegYearList(user);
+		
+		mv.addObject("regYearList", regYearList);
 		mv.addObject("dList", dList);
 		mv.setViewName("/log/mylog");
 		return mv;
@@ -95,7 +102,6 @@ public class LogController {
 	public Map<Object, Object> getLogList(@RequestBody Criteria cri) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		ArrayList<LogVO> logList = logService.getLogList(cri);
-
 		int totalCount = logService.getLogTotalCount(cri);
 		PageMaker pm = new PageMaker(totalCount, 2, cri);
 		

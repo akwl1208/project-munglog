@@ -28,11 +28,11 @@
 	}
 	.main .box-nav .box-drop .drop{padding: 20px 40px;}
 	.main .box-drop .drop-upload .box-checkbox .box-message,
-	.main .box-drop .drop-filter .box-dog .box-message{margin: 5px 0;}
+	.main .box-drop .drop-filter .box-radio .box-message{margin: 5px 0;}
 	.main .box-drop .drop-upload .box-file .btn-file,
 	.main .box-drop .drop-upload .box-send .btn-send,
 	.main .box-drop .drop-filter .box-btn .btn-reset,
-	.main .box-drop .drop-filter .box-btn .btn-filter{
+	.main .box-drop .drop-filter .box-btn .btn-set{
 		padding: 5px 10px; background-color: #a04c00; margin-left: 10px;
 		border: none; color: #fff7ed; border-bottom: 3px solid rgba(73, 67, 60, 0.3);
 		border-radius: 3px;
@@ -89,7 +89,7 @@
 					<div class="box-checkbox">
 						<div class="box-message">사진 속 강아지를 선택하세요.</div>
 						<c:forEach items="${dList}" var="dog">
-							<div class="box-dog form-check-inline">
+							<div class="form-check-inline">
 								<label class="form-check-label">
 									<input type="checkbox" class="form-check-input" name="dg_num" value="${dog.dg_num}">${dog.dg_name}
 								</label>
@@ -118,34 +118,26 @@
 			<div class="drop drop-filter">
 				<!-- box-select -------------------------------------------------------- -->
 				<div class="box-select d-flex flex-column">
-					<!-- box-dog(강아지 선택) -------------------------------------------------------- -->
-					<div class="box-dog">
+					<!-- box-radio(강아지 선택) -------------------------------------------------------- -->
+					<div class="box-radio">
 						<div class="box-message">사진을 보고 싶은 강아지를 선택하세요.</div>
-						<div class="form-check-inline">
-							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="optradio">멍멍이
-							</label>
-						</div>
-						<div class="form-check-inline">
-							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="optradio">왈왈이
-							</label>
-						</div>
-						<div class="form-check-inline disabled">
-							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="optradio">뭉뭉이
-							</label>
-						</div>
+						<c:forEach items="${dList}" var="dog">
+							<div class="form-check-inline">
+								<label class="form-check-label">
+									<input type="radio" class="form-check-input" name="dgNum" value="${dog.dg_num}">${dog.dg_name}
+								</label>
+							</div>
+			 			</c:forEach>
 					</div>
 					<!-- box-year(년도 선택) -------------------------------------------------------- -->
 					<div class="box-year">
 						<div class="box-message mb-2">보고 싶은 년도를 선택하세요.</div>
 						<div class="form-group mb-0" style="width: 100px;">
-							<select class="form-control">
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-								<option>4</option>
+							<select class="form-control" name="regYear">
+								<option>년도</option>
+						  	<c:forEach items="${regYearList}" var="regYear">
+						  		<option value="${regYear}">${regYear}</option>
+						  	</c:forEach>
 							</select>
 						</div>
 					</div>
@@ -153,7 +145,7 @@
 				<!-- box-btn(초기화, 설정) -------------------------------------------------------- -->
 				<div class="box-btn">
 					<button type="button" class="btn-reset">초기화</button>
-					<button type="button" class="btn-filter">설정</button>
+					<button type="button" class="btn-set">설정</button>
 				</div>
 			</div>
 			<!-- drop-sort ---------------------------------------------------------------------------------------------- -->
@@ -177,9 +169,11 @@
 	/* 변수 *********************************************************************************************************** */
 	let page = 1;
 	let obj = {
-		mb_num : ${user.mb_num},
 		page : page,
-		perPageNum : 12
+		perPageNum : 12,
+		mb_num : ${user.mb_num},
+		dg_num : 0,
+		regYear : ''
 	};
 	$(function(){
 		//일지들 보여줌
@@ -319,6 +313,26 @@
 				obj.page = page;
 				getLogList(obj);
       }
+		})
+		
+		//필터 설정(btn-set) 클릭 --------------------------------------------------------------------------------------------
+		$('.main .box-drop .drop-filter .box-btn .btn-set').click(function(){
+			let dg_num = $('.main .box-drop .drop-filter .box-radio [name=dgNum]:checked').val();
+			let regYear = $('.main .box-drop .drop-filter .box-year [name=regYear]').val();
+			//ul의 li 비우고
+			$('.main .box-content .log-list .log-item').remove();
+			//페이지 1로 초기화
+			obj.page = 1;
+			//강아지를 선택했으면 
+			if(typeof(dg_num) != 'undefined')
+				obj.dg_num = dg_num;
+			//년도를 선택했으면
+			if(regYear != '년도')
+				obj.regYear = regYear;
+			//리스트 불러오기
+			getLogList(obj);
+			//화면 재구성
+			$('.main .box-nav .btn-filter').click();
 		})
 	})//
 	

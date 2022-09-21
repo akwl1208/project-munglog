@@ -17,7 +17,16 @@
 	
 	<!-- 회원번호 주고 일지리스트 가져오기 -->
 	<select id="selectLogList" resultType="kr.inyo.munglog.vo.LogVO">
-		select * from Log where lg_mb_num = #{mb_num}
+		select * from log
+			join subject on log.lg_num = subject.sb_lg_num
+			where lg_mb_num = #{mb_num}
+			<if test="dg_num != 0">
+				and sb_dg_num = #{dg_num}
+			</if>
+			<if test="regYear != ''">
+				and year(lg_reg_date) = #{regYear}
+			</if>
+			group by lg_num
 			order by lg_reg_date desc
 			limit #{pageStart}, #{perPageNum}
 	</select>
@@ -27,6 +36,12 @@
 		select count(*) from Log where lg_mb_num = #{mb_num}
 	</select>
 	
+	<!-- 사진이 등록된 년도들 가져오기 -->
+	<select id="selectRegYearList" resultType="String"> 
+		select year(lg_reg_date) from log where lg_mb_num = #{lg_mb_num}
+			group by year(lg_reg_date);
+	</select>
+		
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">

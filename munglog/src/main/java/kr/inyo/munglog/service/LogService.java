@@ -21,5 +21,7 @@ public interface LogService {
 	ArrayList<LogVO> getLogList(Criteria cri);
 	//회원의 일지의 사진 개수 가져오기
 	int getLogTotalCount(Criteria cri);
+	//사진이 등록된 년도들 가져오기
+	ArrayList<String> getRegYearList(MemberVO user);
 
 }

@@ -110,7 +110,7 @@ public class LogServiceImp implements LogService {
 		return 1;
 	}
 
-	/* getLogList : 일지들 가져오기 ----------------------------------------------------------------------------------------------------*/
+	/* getLogList : 일지들 가져오기 ----------------------------------------------------------------------------------------------*/
 	@Override
 	public ArrayList<LogVO> getLogList(Criteria cri) {
 		//값이 없으면
@@ -123,12 +123,24 @@ public class LogServiceImp implements LogService {
 		return dbLogList;
 	}
 
+	/* getLogTotalCount : 회원의 일지 개수 가져오기 ---------------------------------------------------------------------------------*/
 	@Override
 	public int getLogTotalCount(Criteria cri) {
 		//값이 없으면
 		if(cri == null || cri.getMb_num() < 1)
 			cri = new Criteria();
 		return logDao.selectLogTotalCount(cri);
+	}
+	
+	/* getRegYearList : 일지가 등록된 년도들 가져오기 --------------------------------------------------------------------------------*/
+	@Override
+	public ArrayList<String> getRegYearList(MemberVO user) {
+		if(user == null || user.getMb_num() < 1)
+			return null;
+		ArrayList<String> regYearList = logDao.selectRegYearList(user.getMb_num());
+		if(regYearList == null)
+			return null;
+		return regYearList;
 	}
 
 }

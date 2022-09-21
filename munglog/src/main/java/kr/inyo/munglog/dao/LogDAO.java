@@ -25,6 +25,8 @@ public interface LogDAO {
 	ArrayList<LogVO> selectLogList(Criteria cri);
 	//회원의 일지 개수 가져오기
 	int selectLogTotalCount(Criteria cri);
+	//등록된 사진 년도들 가져오기
+	ArrayList<String> selectRegYearList(int lg_mb_num);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
