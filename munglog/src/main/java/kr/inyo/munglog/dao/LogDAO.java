@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Param;
 
+import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.LogVO;
 
@@ -21,7 +22,9 @@ public interface LogDAO {
 	//회원정보와 이미지로 로그 가져오기
 	LogVO selectLogByImg(@Param("lg_mb_num")int mb_num, @Param("lg_image")String lg_image);
 	//회원 번호 주고 로그리스트 가져오기
-	ArrayList<LogVO> selectLogList(int lg_mb_num);
+	ArrayList<LogVO> selectLogList(Criteria cri);
+	//회원의 일지 개수 가져오기
+	int selectLogTotalCount(Criteria cri);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가

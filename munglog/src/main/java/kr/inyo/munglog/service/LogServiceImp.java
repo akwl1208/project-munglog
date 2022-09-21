@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dao.LogDAO;
+import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.DogListVO;
@@ -111,15 +112,23 @@ public class LogServiceImp implements LogService {
 
 	/* getLogList : 일지들 가져오기 ----------------------------------------------------------------------------------------------------*/
 	@Override
-	public ArrayList<LogVO> getLogList(LogVO log) {
+	public ArrayList<LogVO> getLogList(Criteria cri) {
 		//값이 없으면
-		if(log == null || log.getLg_mb_num() < 1)
+		if(cri == null || cri.getMb_num() < 1)
 			return null;
 		//회원번호 주고 로그 가져오기
-		ArrayList<LogVO> dbLogList = logDao.selectLogList(log.getLg_mb_num());
+		ArrayList<LogVO> dbLogList = logDao.selectLogList(cri);
 		if(dbLogList == null)
 			return null;
 		return dbLogList;
+	}
+
+	@Override
+	public int getLogTotalCount(Criteria cri) {
+		//값이 없으면
+		if(cri == null || cri.getMb_num() < 1)
+			cri = new Criteria();
+		return logDao.selectLogTotalCount(cri);
 	}
 
 }

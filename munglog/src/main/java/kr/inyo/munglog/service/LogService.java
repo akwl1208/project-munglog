@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.LogVO;
@@ -17,6 +18,8 @@ public interface LogService {
 	//일지에 사진 등록
 	int uploadLog(ArrayList<Integer> dg_nums, MultipartFile file, MemberVO user);
 	//회원의 로그들 가져오기
-	ArrayList<LogVO> getLogList(LogVO log);
+	ArrayList<LogVO> getLogList(Criteria cri);
+	//회원의 일지의 사진 개수 가져오기
+	int getLogTotalCount(Criteria cri);
 
 }

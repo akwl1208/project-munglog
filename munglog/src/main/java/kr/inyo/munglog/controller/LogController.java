@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
@@ -90,12 +92,14 @@ public class LogController {
 	/* 일지 가져오기 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/get/logList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<Object, Object> getLogList(@RequestBody LogVO log) {
+	public Map<Object, Object> getLogList(@RequestBody Criteria cri) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
-		System.out.println("----------------------------------");
-		System.out.println(log);
-		System.out.println("----------------------------------");
-		ArrayList<LogVO> logList = logService.getLogList(log);
+		ArrayList<LogVO> logList = logService.getLogList(cri);
+
+		int totalCount = logService.getLogTotalCount(cri);
+		PageMaker pm = new PageMaker(totalCount, 2, cri);
+		
+		map.put("pm",pm);
 		map.put("list", logList);
 		return map;
 	}
