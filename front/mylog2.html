@@ -112,17 +112,24 @@
 			width: 1px; height: 12px; background-color: #b9ab9a;
 			line-height: 24px;
 		}
-		.main .box-content{margin: 20px 44px;}
+		.main .box-content{ margin: 20px 44px;}
 		.main .box-content .log-list{
 			display: table; width: 100%; min-width: 100%;
 		}
 		.main .box-content .log-list .log-item{
 			display: inline-block; width: calc(25% - 10px); height: calc(702px / 4);
-			overflow: hidden; margin: 5px;
+			position: relative; overflow: hidden; margin: 5px;
 		}
 		.main .box-content .log-list .log-item .log-link{
 			width: 100%; height: 100%; display: block; background-position: center center; 
-			background-size: cover; border: 1px solid #dfe0df;
+			background-size: cover; border: 1px solid #ececec;
+		}
+		.main .box-content .log-list .log-item .lg_image{
+			max-width: 100%; max-height: 100%;
+			border: 1px solid #ececec;
+			position: absolute;   top: 50%; 
+			left: 50%;
+			transform: translate(-50%, -50%);
 		}
 		.main .box-content .log-list .log-item .log-link:hover{
 			transform: scale(0.9);
@@ -232,12 +239,46 @@
 						</div>
 					</div>
 				</div>
-				<!-- box-content -------------------------------------------------------- -->
 				<div class="box-content">
 					<ul class="log-list">
 						<li class="log-item">
 							<a href="#" class="log-link" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="log-item">
+							<a href="#" class="log-link" style="background-image: url(/아지.jpg)"></a>
+						</li>		
+						<li class="log-item">
+							<a href="#" class="log-link" style="background-image: url(/KakaoTalk_20220921_112043078.jpg)"></a>
+						</li>		
+						<li class="log-item">
+							<a href="#" class="log-link" style="background-image: url(/화면\ 캡처\ 2022-09-21\ 013944.png)"></a>
+						</li>		
+						<li class="log-item">
+							<a href="#" class="log-link" style="background-image: url(/akwl.jpg)"></a>
+						</li>		
+						<li class="log-item">
+							<a href="#" class="log-link" style="background-image: url(/akwl.jpg)"></a>
+						</li>				
+						<li class="log-item">
+							<a href="#" class="log-link">
+								<img class="lg_image" src="/아지.jpg" alt="">
+							</a>
+						</li>		
+						<li class="log-item">
+								<a href="#" class="log-link">
+									<img class="lg_image" src="/화면 캡처 2022-09-21 013944.png" alt="">
+								</a>
+						</li>
+						<li class="log-item">
+							<a href="#" class="log-link">
+								<img class="lg_image" src="/KakaoTalk_20220921_112043078.jpg" alt="">
+							</a>
 						</li>	
+						<li class="log-item">
+							<a href="#" class="log-link">
+								<img class="lg_image" src="/KakaoTalk_20220921_112043078.jpg" alt="">
+							</a>
+						</li>				
 					</ul>
 				</div>
 			</div>
