@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>222</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.main{
+			width:830px; padding: 50px 20px; display: block;
+		}
+		.side-main{
+			width:280px; padding: 50px 10px; display: block; 
+		}
+		/*aside ------------------------------------------------------------- */
+		.box-profile,
+		.box-friend{
+			border: 1px solid #52443b; border-radius: 5px;
+			padding: 20px 10px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+			margin-bottom: 50px;
+		}
+		.box-profile .box-user .thumb{float: left;}
+		.box-profile .box-user .thumb img{
+			border-radius: 50px; width: 60px; height: 60px;
+		}
+		.box-profile .box-user .nickname{
+			float: left; width: 178px; height: 60px;
+			line-height: 60px; padding-left: 10px;
+			font-weight: bold; overflow: hidden; text-overflow: ellipsis;
+		}
+		.box-profile .box-greeting{
+			margin-top: 20px; border-radius: 5px; background-color: #fff7ed;
+			font-size: 12px; padding: 10px;
+		}
+		.box-friend .box-title{
+			text-align: center; font-weight: bold; font-size: 18px;
+			margin-bottom: 20px;
+		}
+		.box-friend .box-title .fa-dog{
+			margin-right: 6px; color: #fb9600;
+		}
+		.box-friend .friend-list{
+			margin: 0px; height: 180px;
+			overflow-y: scroll; 
+		}
+		.box-friend .friend-list .friend-item{
+			background-color: #fff7ed; margin-bottom: 10px;
+			padding: 5px 0 5px 5px;
+		}
+		.box-friend .friend-item .thumb{float: left;}
+		.box-friend .friend-item .thumb img{
+			border-radius: 50px; width: 40px; height: 40px;
+		}
+		.box-friend .friend-item .nickname{
+			float: left; width: 150px;
+			line-height: 40px; padding-left: 10px;
+			font-weight: bold; overflow: hidden; text-overflow: ellipsis;
+		}
+		.box-friend .friend-item .btn-delete{
+			float: left; width: 20px; line-height: 40px;
+			text-align: center;
+		}
+		.box-friend .friend-item .fa-xmark:hover{
+			color: #fb9600;
+		}
+		/*main ------------------------------------------------------------- */
+		.main .box-title{
+			background-color: #ae8a68; border-radius: 5px;
+			padding: 20px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+			margin-bottom: 10px; font-size: 18px; font-weight: bold;
+		}
+		.main .box-title .fa-paw{margin-right: 6px;}
+		.main .box-title .box-message{
+			font-size: 12px; margin: 5px 0; padding-left: 24px;
+		}
+		.main .box-content{margin: 20px 44px;}
+		.main .box-content .swiper {
+			width:100%; position: relative; 
+		}
+		.main .box-content .swiper .swiper-button-next,
+		.main .box-content .swiper .swiper-button-prev {
+			position: absolute; color: #a04c00; top: 60%;}
+		.main .box-content .swiper .swiper-slide {width:100%; }
+		.main .box-content .swiper-slide .box-nav{position: relative;}
+		.main .box-content .swiper-slide .box-nav .list-nav{text-align: center;}
+		.main .box-content .swiper-slide .box-nav .item-nav{font-weight: bold;}
+		.main .box-nav .box-drop{
+			padding: 20px 40px; 
+			position: absolute; top: 40px; left: 0; right: 0; background-color: white;
+			width: 100%; border-bottom: 3px solid rgba(73, 67, 60, 0.1);
+		}
+		.main .box-content .box-drop .box-checkbox .box-message{margin: 5px 0;}
+		.main .box-content .box-drop .box-file .btn-file,
+		.main .box-content .box-drop .box-send .btn-send{
+			padding: 5px 10px; background-color: #a04c00; margin-left: 10px;
+			border: none; color: #fff7ed; box-shadow: 3px 3px 3px rgba(73, 67, 60, 0.3);
+			border-radius: 3px;
+		}
+		.main .box-content .box-drop .box-send{margin-top: 20px;}
+		.main .box-content .box-drop .box-send .box-preview{margin: 0 auto;}
+		.main .box-content .swiper .swiper-slide .box-img{
+			width:100%; height: 500px; margin-top: 50px;
+			display: flex; flex-direction: row; align-items: center;
+		}
+		.main .box-content .swiper .swiper-slide img {
+			width: 50%; object-fit: cover; display: block; margin: auto;
+		}
+		.main .box-content .mylog{
+			float: right; font-weight: bold; color: #fb9600;
+			margin-top: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height: 100vh;">
+			<!-- main -------------------------------------------------------- -->
+			<div class="main">
+				<!-- 제목 -------------------------------------------------------- -->
+				<div class="box-title">
+					<i class="fa-solid fa-paw"></i><span>일지 상세보기</span>
+					<div class="box-message">사진의 상세 정보를 확인하고 관리하세요. 슬라이드쇼도 볼 수 있습니다.</div>
+				</div>
+				<!-- box-content -------------------------------------------------------- -->
+				<div class="box-content">
+					<div class="wrapper">
+						<div class="swiper">
+							<div class="swiper-wrapper">
+								<div class="swiper-slide">
+									<div class="box-nav">
+										<ul class="list-nav list-group list-group-horizontal">
+											<li class="item-nav list-group-item border-0 flex-fill">
+												<span class="lg_reg_date">2022-09-22</span> 
+											</li>
+											<li class="item-nav list-group-item border-0 flex-fill">
+												<i class="fa-regular fa-eye mr-3"></i><span class="lg_views">0</span>
+											</li>
+											<li class="item-nav list-group-item border-0 flex-fill">
+												<i class="fa-regular fa-face-grin-hearts mr-3"></i><span class="heart">0</span>
+											</li>
+											<li class="item-nav list-group-item border-0 flex-fill">
+												<div class="box-slide">
+													<i class="auto-start fa-solid fa-circle-play mr-4"></i>
+													<i class="auto-stop fa-solid fa-stop"></i>
+												</div>
+											</li>
+											<li class="item-nav list-group-item border-0 flex-fill">
+												<div class="box-set">
+													<i class="fa-solid fa-camera-rotate mr-4"></i>
+													<i class="fa-solid fa-trash-can"></i>
+												</div>
+											</li>
+										</ul>
+										<div class="box-drop" style="display: none;">
+											<div class="box-select d-flex flex-column">
+												<div class="box-checkbox">
+													<div class="box-message">사진 속 강아지를 선택하세요.</div>
+													<div class="box-dog form-check-inline">
+														<label class="form-check-label" for="check1">
+															<input type="checkbox" class="form-check-input" id="check1" name="vehicle1" value="something">멍멍이
+														</label>
+													</div>
+													<div class="box-dog form-check-inline">
+														<label class="form-check-label" for="check2">
+															<input type="checkbox" class="form-check-input" id="check2" name="vehicle2" value="something">왈왈이
+														</label>
+													</div>
+													<div class="box-dog form-check-inline">
+														<label class="form-check-label">
+															<input type="checkbox" class="form-check-input">뭉뭉이
+														</label>
+													</div>
+												</div>
+												<div class="box-file ml-auto">
+													<input type="file" name="file" style="display: none;">
+													<button type="button" class="btn-file">사진 선택</button>
+												</div>
+											</div>
+											<div class="box-send" style="display: none;">
+												<div class="d-flex align-items-end justify-content-between">
+													<div class="box-preview">
+														<img class="preview" max-width="300px" max-height="300px">
+													</div>
+													<button type="button" class="btn-send">사진 등록</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="box-img">
+										<img class="lg_image" src="/KakaoTalk_20220921_153028470.jpg">
+									</div>							
+								</div>
+							</div>
+							<div class="btn-swiper swiper-button-next"></div>
+							<div class="btn-swiper swiper-button-prev"></div>
+						</div>
+					</div>
+					<a class="mylog" href="#">나의 일지로 돌아가기</a>
+				</div>
+			</div>
+			<!-- aside -------------------------------------------------------- -->
+			<div class="side-main">
+				<div class="box-profile " style="width: 260px;">
+					<div class="box-user clearfix">
+						<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
+						<a href="#" class="nickname">MUNG2MUNG2MUNG2MUNG2</a>
+					</div>
+					<div class="box-greeting">
+						<span>만나서 반갑습니다. MUNG2님 일지입니다.</span>
+					</div>
+				</div>
+				<div class="box-friend" style="width: 260px;">
+					<div class="box-title">
+						<a href="#"><i class="fa-solid fa-dog"></i><span>나의 멍멍친구들</span></a>
+					</div>
+					<input class="form-control" id="myInput" type="text" placeholder="닉네임을 검색하세요"><br>
+					<ul class="friend-list" id="myList">
+						<li class="friend-item clearfix">
+							<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
+							<a href="#" class="nickname">MUNG2</a>
+							<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
+						</li>
+						<li class="friend-item clearfix">
+							<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
+							<a href="#" class="nickname">MUN</a>
+							<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
+						</li>
+						<li class="friend-item clearfix">
+							<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
+							<a href="#" class="nickname">MU</a>
+							<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
+						</li>
+						<li class="friend-item clearfix">
+							<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
+							<a href="#" class="nickname">M</a>
+							<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+  </div>
+	<script>
+		$(function(){
+			$(document).ready(function(){
+				$("#myInput").on("keyup", function() {
+					var value = $(this).val().toLowerCase();
+					$("#myList li").filter(function() {
+						$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+					});
+				});
+			});
+
+			let slideNum = $('.swiper-slide').length;
+			let isLoop = '';
+			if(slideNum <= 1)
+				isLoop = false
+			else
+				isLoop = true
+			const swiper = new Swiper('.swiper', {
+				slidesPerView: 1,
+				speed: 400, 
+				Loop : isLoop,
+				centeredSlides: true, //사진 가운데
+				preventClicks:true,
+				//사진 1개면 버튼 숨김
+				watchOverflow : true,
+				// 좌우 화살표 요소 지정
+				navigation: {
+					nextEl: '.swiper-button-next',
+					prevEl: '.swiper-button-prev',
+				},
+				on: {
+					init: function () {
+						$('.swiper-slide').addClass('changed');
+					},
+					slideChangeTransitionStart: function() {
+							$('.swiper-slide').addClass('changing');
+							$('.swiper-slide').removeClass('changed');
+					},
+					slideChangeTransitionEnd: function() {
+							$('.swiper-slide').removeClass('changing');
+							$('.swiper-slide').addClass('changed');
+					}
+        }
+			});
+			//슬라이드쇼 시작
+			$('.auto-start').on('click', function() {
+				swiper.autoplay.start();
+			});
+			//슬라이드쇼 정지
+			$('.auto-stop').on('click', function() {
+        swiper.autoplay.stop();
+			});
+		})
+	</script> 
+</body>
+</html>
