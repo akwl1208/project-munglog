@@ -180,7 +180,7 @@
 		getLogList(obj);
 	/* 이벤트 *********************************************************************************************************** */
 		//사진 등록 아이콘(btn-upload) 클릭--------------------------------------------------------------------------------------
-		$('.main .box-nav .btn-upload').click(function(){
+		$('.main .box-nav .btn-upload').click(function(){		
 			$('.main .box-nav .box-drop').toggle();
 			//drop-upload만 열리게
 			$('.main .box-nav .drop').hide();
@@ -193,13 +193,13 @@
 			//화면 재구성
 			$('.main .drop-upload .box-file [name=file]').change();
 			$('.main .box-drop .drop-upload .box-send').hide();
-		})
+		})//
 		
 		//필터 아이콘(btn-filter) 클릭------------------------------------------------------------------------------------------
 		$('.main .box-nav .btn-filter').click(function(){
-			$('.box-drop').toggle();
-			$('.drop').hide();
-			$('.drop-filter').show();
+			$('.main .box-nav .box-drop').toggle();
+			$('.main .box-nav .drop').hide();
+			$('.main .box-nav .drop-filter').show();
 		})
 		
 		//정렬 아이콘(btn-sort) 클릭-------------------------------------------------------------------------------------------
@@ -212,7 +212,7 @@
 		//사진 선택 버튼(btn-file) 클릭-----------------------------------------------------------------------------------------
 		$('.main .drop-upload .box-file .btn-file').click(function(){
 			$('.main .drop-upload .box-file [name=file]').click();
-		})
+		})//
 		
 		//사진 선택했으면(input:file)------------------------------------------------------------------------------------------
 		$('.main .drop-upload .box-file [name=file]').on('change', function(event) {
@@ -232,13 +232,13 @@
 		      $('.main .drop-upload .box-send .box-preview .preview').attr('src', e.target.result);
 		  }
 		  reader.readAsDataURL(file);
-		});
+		})//
 	
 		//미리보기 사진(box-preview) 클릭---------------------------------------------------------------------------------------
 		$('.main .box-drop .drop-upload .box-send .box-preview').click(function(){
 			$('.main .drop-upload .box-file [name=file]').click();
 			$('.main .drop-upload .box-file [name=file]').change();
-		})
+		})//
 		
 		//사진 등록 버튼(btn-send) 클릭-----------------------------------------------------------------------------------------
 		$('.main .box-drop .drop-upload .box-send .btn-send').click(function(){
@@ -301,7 +301,7 @@
 					}
 				}
 			});
-		})
+		})//
 		
 		//스크롤이 브라우저 끝에 도달했을 때-----------------------------------------------------------------------------------------
 		$(window).scroll(function(){
@@ -313,7 +313,7 @@
 				obj.page = page;
 				getLogList(obj);
       }
-		})
+		})//
 		
 		//필터 설정(btn-set) 클릭 --------------------------------------------------------------------------------------------
 		$('.main .box-drop .drop-filter .box-btn .btn-set').click(function(){
@@ -336,13 +336,26 @@
 		})
 	})//
 	
+	//필터 초기화(btn-reset) 클릭 --------------------------------------------------------------------------------------------
+	$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){
+		console.log(1)	
+		//라디오 박스 값 초기화
+		$('.main .box-drop .drop-filter .box-radio [name=dgNum]').prop('checked', false);
+		obj.dg_num = 0;
+		//select 태그 초기화
+		$('.main .box-drop .drop-filter .box-year [name=regYear]').val("년도").prop('selected', true);
+		obj.regYear = '';
+		//리스트 초기화
+		$('.main .box-drop .drop-filter .box-btn .btn-set').click();
+	})//
+	
 	/* 함수 *********************************************************************************************************** */
 	// getLogList -----------------------------------------------------------------------------------------------------
 	function getLogList(obj){
 		ajaxPost(false, obj, '/get/logList', function(data){
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
-			for(log of data.list){
+			for(log of data.lList){
 				html += '<li class="log-item">';
 				html +=		'<a href="#" class="log-link" style="background-image: url(\'<%=request.getContextPath()%>/img'+log.lg_image+'\')"></a>';
 				html += '</li>';
