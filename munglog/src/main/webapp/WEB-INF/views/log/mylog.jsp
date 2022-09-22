@@ -27,14 +27,14 @@
 		
 	}
 	.main .box-nav .box-drop .drop{padding: 20px 40px;}
-	.main .box-drop .drop-upload .box-checkbox .box-message,
+	.main .box-drop .drop-upload .box-check .box-message,
 	.main .box-drop .drop-filter .box-radio .box-message{margin: 5px 0;}
 	.main .box-drop .drop-upload .box-file .btn-file,
 	.main .box-drop .drop-upload .box-send .btn-send,
 	.main .box-drop .drop-filter .box-btn .btn-reset,
 	.main .box-drop .drop-filter .box-btn .btn-set{
 		padding: 5px 10px; background-color: #a04c00; margin-left: 10px;
-		border: none; color: #fff7ed; border-bottom: 3px solid rgba(73, 67, 60, 0.3);
+		border: none; color: #fff7ed; box-shadow: 3px 3px 3px rgba(73, 67, 60, 0.3);
 		border-radius: 3px;
 	}
 	.main .box-drop .drop-upload .box-send,
@@ -85,8 +85,8 @@
 			<div class="drop drop-upload">
 				<!-- box-select ------------------------------------------------------------------------------------------- -->
 				<div class="box-select d-flex flex-column">
-					<!-- box-checkbox(강아지 선택) ----------------------------------------------------------------------------- -->
-					<div class="box-checkbox">
+					<!-- box-check(강아지 선택) ----------------------------------------------------------------------------- -->
+					<div class="box-check">
 						<div class="box-message">사진 속 강아지를 선택하세요.</div>
 						<c:forEach items="${dList}" var="dog">
 							<div class="form-check-inline">
@@ -168,10 +168,11 @@
 <script>
 	/* 변수 *********************************************************************************************************** */
 	let page = 1;
+	let mb_num = ${user.mb_num};
 	let obj = {
-		page : page,
+		page,
 		perPageNum : 12,
-		mb_num : ${user.mb_num},
+		mb_num,
 		dg_num : 0,
 		regYear : ''
 	};
@@ -187,7 +188,7 @@
 			$('.main .box-nav .drop-upload').show();
 			//값 초기화
 			//체크박스 체크 해제
-			$('.main .box-drop .drop-upload .box-checkbox [name=dg_num]').prop('checked', false);
+			$('.main .box-drop .drop-upload .box-check [name=dg_num]').prop('checked', false);
 			//선택한 파일 비우기
 			$('.main .drop-upload .box-file [name=file]').val('');
 			//화면 재구성
@@ -244,7 +245,7 @@
 		$('.main .box-drop .drop-upload .box-send .btn-send').click(function(){
 			//선택한 강아지 list에 담기
 			let dList = [];
-			$('.main .box-drop .drop-upload .box-checkbox [name=dg_num]:checked').each(function(){
+			$('.main .box-drop .drop-upload .box-check [name=dg_num]:checked').each(function(){
 				//강아지 번호 추출
 				let dg_num = $(this).val();
 				//강아지 리스트에 담기
@@ -292,7 +293,7 @@
 					else {
 						alert('일지 등록에 실팼습니다. 다시 시도해주세요.');
 						//체크박스 체크 해제
-						$('.main .box-drop .drop-upload .box-checkbox [name=dg_num]').prop('checked', false);
+						$('.main .box-drop .drop-upload .box-check [name=dg_num]').prop('checked', false);
 						//선택한 파일 비우기
 						$('.main .drop-upload .box-file [name=file]').val('');
 						//화면 재구성
@@ -337,8 +338,7 @@
 	})//
 	
 	//필터 초기화(btn-reset) 클릭 --------------------------------------------------------------------------------------------
-	$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){
-		console.log(1)	
+	$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){	
 		//라디오 박스 값 초기화
 		$('.main .box-drop .drop-filter .box-radio [name=dgNum]').prop('checked', false);
 		obj.dg_num = 0;
@@ -348,20 +348,31 @@
 		//리스트 초기화
 		$('.main .box-drop .drop-filter .box-btn .btn-set').click();
 	})//
-	
-	/* 함수 *********************************************************************************************************** */
+
+/* 함수 *********************************************************************************************************** */
 	// getLogList -----------------------------------------------------------------------------------------------------
 	function getLogList(obj){
 		ajaxPost(false, obj, '/get/logList', function(data){
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
+			let criUrl = makeCriUrl(obj);
 			for(log of data.lList){
 				html += '<li class="log-item">';
-				html +=		'<a href="#" class="log-link" style="background-image: url(\'<%=request.getContextPath()%>/img'+log.lg_image+'\')"></a>';
+				html +=		'<a href="'+contextPath+'/log/mylogDetail/'+mb_num+criUrl+'" class="log-link"'; 
+				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
 				html += '</li>';
 			}
 			$('.main .box-content .log-list').append(html);
 		});
 	}//
+	
+	// makeCriUrl -----------------------------------------------------------------------------------------------------
+	function makeCriUrl(obj){
+		let pageUrl = '?page=' + obj.page;
+		let mbNumUrl = pageUrl + '&mb_num=' +  obj.mb_num;
+		let dgNumUrl = mbNumUrl + '&dg_num=' +  obj.dg_num;
+		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;
+		return regYearUrl;
+	}
 </script> 
 </html>

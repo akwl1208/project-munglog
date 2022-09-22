@@ -14,6 +14,7 @@ import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.SubjectVO;
 
 @Service
 public class LogServiceImp implements LogService {
@@ -100,8 +101,8 @@ public class LogServiceImp implements LogService {
 			//회원 정보로 로그 정보 가져옴
 			LogVO dbLog = logDao.selectLogByImg(user.getMb_num(), lg_image);
 			for(int i = 0; i < dg_nums.size(); i++) {
-				//dg_num이 0과 같거나 작을순 없음
-				if(dg_nums.get(i) <= 0)
+				//dg_num이 1보다 작으면
+				if(dg_nums.get(i) < 1)
 					continue;
 				//피사체 추가
 				logDao.insertSubject(dbLog.getLg_num(), dg_nums.get(i));
@@ -117,10 +118,7 @@ public class LogServiceImp implements LogService {
 		if(cri == null || cri.getMb_num() < 1)
 			return null;
 		//회원번호 주고 로그 가져오기
-		ArrayList<LogVO> dbLogList = logDao.selectLogList(cri);
-		if(dbLogList == null)
-			return null;
-		return dbLogList;
+		return logDao.selectLogList(cri);
 	}
 
 	/* getLogTotalCount : 회원의 일지 개수 가져오기 ---------------------------------------------------------------------------------*/
@@ -137,10 +135,17 @@ public class LogServiceImp implements LogService {
 	public ArrayList<String> getRegYearList(MemberVO user) {
 		if(user == null || user.getMb_num() < 1)
 			return null;
-		ArrayList<String> regYearList = logDao.selectRegYearList(user.getMb_num());
-		if(regYearList == null)
+		return logDao.selectRegYearList(user.getMb_num());
+	}
+	
+	/* getSubjectList: 일지의 피사체들 가져오기 --------------------------------------------------------------------------------*/
+	@Override
+	public ArrayList<SubjectVO> getSubjectList(int lg_num) {
+		//값이 1 미만이면
+		if(lg_num < 1)
 			return null;
-		return regYearList;
+		//피사체들 가져오기
+		return logDao.selectSubjectList(lg_num);	
 	}
 
 }

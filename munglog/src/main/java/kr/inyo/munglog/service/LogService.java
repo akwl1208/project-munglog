@@ -9,6 +9,7 @@ import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.SubjectVO;
 
 public interface LogService {
 	//강아지 정보 가져오기
@@ -23,5 +24,6 @@ public interface LogService {
 	int getLogTotalCount(Criteria cri);
 	//사진이 등록된 년도들 가져오기
 	ArrayList<String> getRegYearList(MemberVO user);
-
+	//사진의 피사체들 가져오기
+	ArrayList<SubjectVO> getSubjectList(int lg_num);
 }

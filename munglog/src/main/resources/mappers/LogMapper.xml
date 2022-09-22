@@ -41,7 +41,12 @@
 		select year(lg_reg_date) from log where lg_mb_num = #{lg_mb_num}
 			group by year(lg_reg_date);
 	</select>
-		
+	
+	<!-- 로그 번호 주고 강아지 번호 가져오기 -->
+	<select id="selectSubjectList" resultType="kr.inyo.munglog.vo.SubjectVO">
+		select * from subject where sb_lg_num = #{lg_num}
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">

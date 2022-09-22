@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.LogVO;
+import kr.inyo.munglog.vo.SubjectVO;
 
 public interface LogDAO {
 
@@ -31,4 +32,6 @@ public interface LogDAO {
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
 	void insertSubject(@Param("sb_lg_num")int lg_num, @Param("sb_dg_num")Integer sb_dg_num);
+	//일지 속 피사체들 가져오기
+	ArrayList<SubjectVO> selectSubjectList(int lg_num);
 }
