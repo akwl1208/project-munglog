@@ -38,7 +38,7 @@ public class LogController {
 	MessageService messageService;
 	@Autowired
 	MemberService memberService;
-	
+
 /* ajax 아님 *************************************************************************************************************** */
 	/* 강아지 정보 등록 --------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/register", method = RequestMethod.GET)
@@ -88,7 +88,7 @@ public class LogController {
 	/* 나의 일지 상세보기 -------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/mylogDetail/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView logMylogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
-			Criteria cri, HttpSession session, HttpServletResponse response) {
+			int lg_num, Criteria cri, HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//회원이 아니거나 
 		if(user == null) {
@@ -98,21 +98,25 @@ public class LogController {
 		if(user.getMb_num() != mb_num) {
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		}
+		//일지 전체 개수 가져오기
 		int totalCount = logService.getLogTotalCount(cri);
+		//criteria 재설정
+		cri.setPage(1);
 		cri.setPerPageNum(totalCount);
-		PageMaker pm = new PageMaker(totalCount, 2, cri);
 		//일지들 가져오기
 		ArrayList<LogVO> logList = logService.getLogList(cri);
 		//강아지 정보 가져오기
 		ArrayList<DogVO> dogList = logService.getDogs(user);
+		//인덱스 찾기
+		int index = logService.findIndex(logList, lg_num);
 		
+		mv.addObject("index", index);
 		mv.addObject("dogList", dogList);
 		mv.addObject("logList", logList);
-		mv.addObject("pm", pm);
 		mv.setViewName("/log/mylogDetail");
 		return mv;
 	}
-	
+
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)
@@ -143,11 +147,25 @@ public class LogController {
 	/* 일지 피사체 가져오기 ----------------------------------------------------------------------------------------------------- */
 	@RequestMapping(value = "/get/subjectList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<Object, Object> getSubjectList(@RequestBody LogVO log) {
+	public Map<Object, Object> getSubjectList(@RequestBody LogVO log, HttpSession session) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
-		ArrayList<SubjectVO> subjectList = logService.getSubjectList(log.getLg_num());
+		MemberVO user = (MemberVO)session.getAttribute("user");	
+		ArrayList<SubjectVO> subjectList = logService.getSubjectList(log, user);
 
 		map.put("subjectList", subjectList);
+		return map;
+	}
+	
+	/* 일지에 사진 수정 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/modify/log", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> modifyLog(@RequestParam(value="file",required=false) MultipartFile file,
+			@RequestParam("m_dg_nums[]") ArrayList<Integer> m_dg_nums, @RequestParam("d_dg_nums[]") ArrayList<Integer> d_dg_nums, 
+			LogVO log, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		int res = logService.modifyLog(m_dg_nums, d_dg_nums, file, log, user);
+		map.put("res", res);
 		return map;
 	}
 }

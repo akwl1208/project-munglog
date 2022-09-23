@@ -13,6 +13,7 @@ public class LogVO {
 	private String lg_image;
 	private int lg_views;
 	private String lg_report;
+	private String lg_del;
 	
 	public String getLg_reg_date_time() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

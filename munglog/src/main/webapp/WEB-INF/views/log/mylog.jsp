@@ -20,7 +20,7 @@
 	/* main box-nav --------------------------------------------------------------------- */
 	.main .box-nav{margin-bottom: 10px; position: relative;}
 	.main .box-nav .box-set .set{margin-left: 10px;}
-	.main .box-nav .box-set .set .fa-solid:hover{color:#fb9600;}
+	.main .box-nav .box-set .set .fa-solid:hover{color:#fb9600;cursor:pointer;}
 	.main .box-nav .box-drop{
 		position: absolute; top: 40px; left: 0; right: 0; background-color: white;
 		width: 100%; border-bottom: 3px solid rgba(73, 67, 60, 0.1);
@@ -262,6 +262,9 @@
 				$('.main .drop-upload .box-file [name=file]').click();
 				return;
 			}
+			//사진 등록할건지 묻고 취소 버튼 누르면 등록안함
+			if(!confirm('사진을 등록하겠습니까?'))
+				return;
 			//강아지 정보와 사진 정보 서버로 보내기
 			let data = new FormData();
 			data.append('file', $('.main .drop-upload .box-file [name=file]')[0].files[0]);
@@ -288,6 +291,7 @@
 					else if(data.res == 1){
 						alert('사진을 등록했습니다.');
 						$('.main .box-nav .btn-upload').click();
+						$('.main .box-drop .drop-filter .box-btn .btn-set').click();
 					}
 					//실패했을 때
 					else {
@@ -333,7 +337,7 @@
 			//리스트 불러오기
 			getLogList(obj);
 			//화면 재구성
-			$('.main .box-nav .btn-filter').click();
+			$('.main .box-nav .box-drop').hide();
 		})
 	})//
 	
@@ -355,8 +359,8 @@
 		ajaxPost(false, obj, '/get/logList', function(data){
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
-			let criUrl = makeCriUrl(obj);
 			for(log of data.lList){
+				let criUrl = makeCriUrl(log.lg_num, obj);
 				html += '<li class="log-item">';
 				html +=		'<a href="'+contextPath+'/log/mylogDetail/'+mb_num+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
@@ -367,8 +371,9 @@
 	}//
 	
 	// makeCriUrl -----------------------------------------------------------------------------------------------------
-	function makeCriUrl(obj){
-		let pageUrl = '?page=' + obj.page;
+	function makeCriUrl(lg_num, obj){
+		let lgNumUrl = '?lg_num=' + lg_num;
+		let pageUrl = lgNumUrl +'&page=' + obj.page;
 		let mbNumUrl = pageUrl + '&mb_num=' +  obj.mb_num;
 		let dgNumUrl = mbNumUrl + '&dg_num=' +  obj.dg_num;
 		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;

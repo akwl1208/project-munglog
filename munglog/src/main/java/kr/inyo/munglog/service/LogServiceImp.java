@@ -140,12 +140,89 @@ public class LogServiceImp implements LogService {
 	
 	/* getSubjectList: 일지의 피사체들 가져오기 --------------------------------------------------------------------------------*/
 	@Override
-	public ArrayList<SubjectVO> getSubjectList(int lg_num) {
-		//값이 1 미만이면
-		if(lg_num < 1)
+	public ArrayList<SubjectVO> getSubjectList(LogVO log, MemberVO user) {
+		//값이 없으면
+		if(log == null || log.getLg_num() < 1)
+			return null;
+		//로그 정보 가져오기
+		LogVO dbLog = logDao.selectLog(log.getLg_num());
+		//회원이 등록한 일지가 아니면
+		if(dbLog.getLg_mb_num() != user.getMb_num())
 			return null;
 		//피사체들 가져오기
-		return logDao.selectSubjectList(lg_num);	
+		return logDao.selectSubjectList(log.getLg_num());	
 	}
-
+	
+	/* modifyLog: 일지 수정하기 ----------------------------------------------------------------------------------------------*/
+	@Override
+	public int modifyLog(ArrayList<Integer> m_dg_nums, ArrayList<Integer> d_dg_nums, MultipartFile file, LogVO log, MemberVO user) {
+		//값이 없으면
+		if(log == null || log.getLg_num() < 1)
+			return -1;
+		//일지 가져오기
+		LogVO dbLog = logDao.selectLog(log.getLg_num());
+		if(dbLog == null)
+			return -1;
+		//회원이 등록한 일지가 아니면
+		if(dbLog.getLg_mb_num() != user.getMb_num())
+			return -1;
+		//피사체도 수정안하고 파일도 수정 안한 경우
+		if(m_dg_nums.equals(d_dg_nums) && file == null)
+			return 2;
+		//피사체 수정	-----------------------------------------------------
+		if(!m_dg_nums.equals(d_dg_nums)) {
+			//기존 피사체 삭제
+			for(int i = 0; i < d_dg_nums.size(); i++) {
+				//dg_num이 1보다 작으면
+				if(d_dg_nums.get(i) < 1)
+					continue;
+				//피사체 삭제
+				logDao.deleteSubject(dbLog.getLg_num());
+			}
+			//새로운 피사체 추가
+			for(int i = 0; i < m_dg_nums.size(); i++) {
+				//dg_num이 1보다 작으면
+				if(m_dg_nums.get(i) < 1)
+					continue;
+				//피사체 추가
+				logDao.insertSubject(dbLog.getLg_num(), m_dg_nums.get(i));
+			}
+		}
+		//사진 수정 ---------------------------------------------------------
+		if(file != null) {
+			//이미지 파일인지 확인
+			String originalName = file.getOriginalFilename();
+			String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
+			if(MediaUtils.getMediaType(formatName) == null)
+				return 0;
+			//기존 파일 삭제
+			UploadFileUtils.deleteFile(logUploadPath, dbLog.getLg_image());
+			//새로운 파일업로드
+			String lg_image = "";
+			try {
+				lg_image = UploadFileUtils.uploadFileDir(logUploadPath, String.valueOf(user.getMb_num()), file.getOriginalFilename(), file.getBytes());
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			//이미지 수정
+			dbLog.setLg_image(lg_image);
+			logDao.updateLog(dbLog);
+		}
+		return 1;
+	}
+	/* findIndex: 일지번호로 슬라이드 인덱스 찾기 -----------------------------------------------------------------------------------*/
+	@Override
+	public int findIndex(ArrayList<LogVO> logList, int lg_num) {
+		//값 없으면
+		if(logList.isEmpty() || lg_num < 1)
+			return 0;
+		LogVO tmpLog = new LogVO();
+		for(LogVO log : logList) {
+			if(log.getLg_num() == lg_num) {
+				tmpLog = log;
+				break;				
+			}
+		}
+		return logList.indexOf(tmpLog);
+	}
 }

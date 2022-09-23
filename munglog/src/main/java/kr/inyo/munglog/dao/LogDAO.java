@@ -28,10 +28,17 @@ public interface LogDAO {
 	int selectLogTotalCount(Criteria cri);
 	//등록된 사진 년도들 가져오기
 	ArrayList<String> selectRegYearList(int lg_mb_num);
+	//일지 번호 주고 일지 가져오기
+	LogVO selectLog(int lg_num);
+	//일지 수정
+	void updateLog(LogVO dbLog);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
 	void insertSubject(@Param("sb_lg_num")int lg_num, @Param("sb_dg_num")Integer sb_dg_num);
 	//일지 속 피사체들 가져오기
 	ArrayList<SubjectVO> selectSubjectList(int lg_num);
+	//피사체 삭제
+	void deleteSubject(int lg_num);
+	
 }

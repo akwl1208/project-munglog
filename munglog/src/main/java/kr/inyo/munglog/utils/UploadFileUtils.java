@@ -68,4 +68,13 @@ public class UploadFileUtils {
 		String iconName = uploadPath + path + File.separator + fileName;
 		return iconName.substring(uploadPath.length()).replace(File.separatorChar, '/');
 	}
+	
+	//파일 삭제
+	public static boolean deleteFile(String uploadPath, String fileName) {
+		String delFileName = fileName.replace('/', File.separatorChar);
+		File file = new File(uploadPath+delFileName);
+		if(!file.exists())
+			return false;
+		return file.delete();
+	}
 }

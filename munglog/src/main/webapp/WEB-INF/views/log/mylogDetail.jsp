@@ -28,8 +28,8 @@
 	.main .box-content .swiper-slide .item-nav .auto-start:hover,
 	.main .box-content .swiper-slide .item-nav .auto-stop:hover,
 	.main .box-content .swiper-slide .item-nav .btn-modify:hover,
-	.main .box-content .swiper-slide .item-nav .btn-delete:hover{color: #ffa31c;}
-		.main .box-content .swiper-slide .item-nav .btn-modify.select,
+	.main .box-content .swiper-slide .item-nav .btn-delete:hover{color: #ffa31c; cursor:pointer;}
+	.main .box-content .swiper-slide .item-nav .btn-modify.select,
 	.main .box-content .swiper-slide .item-nav .auto-start.select,
 	.main .box-content .swiper-slide .item-nav .auto-stop.select{color: #fb9600;}
 	/* main box-nav box-drop --------------------------------------------------------------------- */
@@ -40,7 +40,6 @@
 	}
 	.main .box-content .box-drop .box-send .box-message,
 	.main .box-content .box-drop .box-check .box-message{margin: 5px 0;}
-	.main .box-content .box-drop .box-file .btn-file,
 	.main .box-content .box-drop .box-send .btn-send{
 		padding: 5px 10px; background-color: #a04c00; margin-left: 10px;
 		border: none; color: #fff7ed; box-shadow: 3px 3px 3px rgba(73, 67, 60, 0.3);
@@ -48,9 +47,10 @@
 	}
 	.main .box-content .box-drop .box-send{margin-top: 20px;}
 	.main .box-content .box-drop .box-send .box-preview{margin: 0 auto;}
+	.main .box-content .box-drop .box-send .box-preview:hover{cursor:pointer}
 	/* main box-img --------------------------------------------------------------------- */
 	.main .box-content .swiper .swiper-slide .box-img{
-		width:100%; height: 500px; margin-top: 50px; position: relative;
+		width:100%; height: 500px; margin-top: 30px; position: relative;
 		display: flex; flex-direction: row; align-items: center;
 	}
 	.main .box-content .swiper .swiper-slide .lg_image{
@@ -58,16 +58,12 @@
 	}
 	.main .box-content .swiper .swiper-button-next,
 	.main .box-content .swiper .swiper-button-prev{
-		position: absolute; color: #a04c00; top: 50%;
-	}
-	.main .box-content .swiper .swiper-button-next,
-	.main .box-content .swiper .swiper-button-prev{
-		position: absolute; color: #a04c00; top: 50%;
+		position: absolute; color: #a04c00; top: 50%; z-index: 8;
 	}
 	.main .box-content .mylog{
-		float: right; font-weight: bold; color: #fb9600;
-		margin-top: 50px;
+		float: right; font-weight: bold; margin-right: 37px;
 	}
+	.main .box-content .mylog:hover{color: #fb9600;}
 </style>
 </head>
 <!-- html ********************************************************************************************************* -->
@@ -81,8 +77,7 @@
 	<div class="box-content">
 		<div class="wrapper">
 			<div class="swiper">
-				<div class="swiper-wrapper">
-					
+				<div class="swiper-wrapper">	
 					<!-- swiper-slide ---------------------------------------------------------------------------------------- -->
 					<c:forEach items="${logList}" var="log">
 						<div class="swiper-slide">
@@ -130,11 +125,8 @@
 												</div>
 								 			</c:forEach>
 										</div>
-										<!-- box-file(파일 선택) ------------------------------------------------------------------------------- -->
-										<div class="box-file ml-auto" style="display: none;">
-											<input type="file" name="file" style="display: none;">
-											<button type="button" class="btn-file">사진 선택</button>
-										</div>
+										<!-- file(파일 선택) ------------------------------------------------------------------------------- -->
+										<input type="file" name="file" accept="image/jpg, image/jpeg, image/png, image/gif" style="display: none;">
 									</div>
 										<!-- box-content ------------------------------------------------------------------------------------------------- -->
 									<div class="box-send">
@@ -143,7 +135,7 @@
 											<div class="box-preview">
 												<img class="preview" style="max-width: 300px; max-height: 300px;" src="<c:url value="${log.lg_image_url}"></c:url>">
 											</div>
-											<button type="button" class="btn-send">사진 수정</button>
+											<button type="button" class="btn-send" data-value="${log.lg_num}">사진 수정</button>
 										</div>
 									</div>
 								</div>
@@ -152,47 +144,131 @@
 								<img class="lg_image" src="<c:url value="${log.lg_image_url}"></c:url>">
 								<div class="btn-swiper swiper-button-next"></div>
 								<div class="btn-swiper swiper-button-prev"></div>
-							</div>							
+							</div>
+							<a class="mylog" href="<c:url value="/log/mylog/${user.mb_num}"></c:url>">나의 일지로 돌아가기</a>							
 						</div>
 					</c:forEach>
 				</div>
 			</div>
 		</div>
-		<a class="mylog" href="#">나의 일지로 돌아가기</a>
 	</div>
 </body>
 <!-- script ******************************************************************************************************* -->
 <script>
 	/* 변수 *********************************************************************************************************** */
-		let slideIndex = 2;
+		let slideIndex = '${index}';
+		let deleteDList = [];
 	/* 이벤트 *********************************************************************************************************** */
 		$(function(){
 			// 수정 버튼 클릭(btn-modify)---------------------------------------------------------------------------------------
-			$('.btn-modify').click(function(){
+			$('.main .box-content .box-nav .btn-modify').click(function(){
 				$(this).toggleClass('select');
+				//체크박스 체크 해제
+				$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('checked', false);
 				//사진의 lg_num 가져옴
 				let lg_num = $(this).data('value');
-				if(typeof(lg_num) == 'undefined')
+				//사진의 피사체에 체크
+				getSubjectList(lg_num);
+				//만약 수정 시 삭제할 피사체 담기
+				deleteDList = pushDgNum();
+				//사진 초기화
+				$('.main .swiper-slide-active .box-drop .box-select [name=file]').val('');
+				let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
+				$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
+				$('.main .box-content .swiper-slide-active .box-drop').toggle();	
+			})//
+			
+			//사진 선택했으면(input:file)------------------------------------------------------------------------------------------
+			$('.main .box-drop .box-select [name=file]').on('change', function(event) {
+				//파일을 안했으면 유지
+				if(event.target.files.length == 0)
+					return;		
+			  let file = event.target.files[0];
+			  let reader = new FileReader();
+			  //선택한 파일 미리보기에 넣기
+			  reader.onload = function(e) {
+			  	$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', e.target.result);
+			  }
+			  reader.readAsDataURL(file);
+			})//
+		
+			//미리보기 사진(box-preview) 클릭---------------------------------------------------------------------------------------
+			$('.main .box-drop .box-send .box-preview').click(function(){
+				$('.main .swiper-slide-active .box-drop .box-select [name=file]').click();
+				$('.main .swiper-slide-active .box-drop .box-select [name=file]').change();
+			})//
+			
+			//사진 수정 버튼(btn-send) 클릭-----------------------------------------------------------------------------------------
+			$('.main .box-drop .box-send .btn-send').click(function(){
+				//수정할 강아지 번호 저장
+				let modifyDList = pushDgNum();
+				//사진의 lg_num 가져옴
+				let lg_num = $(this).data('value');
+				//파일 가져옴
+				let file = $('.main .swiper-slide-active .box-drop .box-select [name=file]')[0].files[0];
+				//강아지 체크도 바꾸지 않고 파일도 안바꿨으면 
+				if((JSON.stringify(deleteDList) === JSON.stringify(modifyDList)) && typeof(file) == 'undefined'){
+					alert('사진 속 강아지나 사진을 변경해주세요.');					
 					return;
-				let obj = {
-					lg_num
 				}
-				//일지의 피사체들(강아지) 가져옴
-				ajaxPost(false, obj, '/get/subjectList', function(data){
-					for(subject of data.subjectList){
-						let sb_dg_num = subject.sb_dg_num;
-						$('.main .box-drop .box-check [name=dg_num]').each(function(){
-							//강아지 번호 추출
-							let dg_num = $(this).val();
-							//sb_dg_num과 같으면 체크
-							if(dg_num == sb_dg_num){
-								$(this).prop('checked', true);
-							}
-						})
+				//수정할건지 묻기
+				if(!confirm('사진을 수정하겠습니까?'))
+					return;
+				//강아지 정보와 사진 정보 서버로 보내기
+				let data = new FormData();
+				data.append('file', file);
+				data.append('d_dg_nums[]', deleteDList);
+				data.append('m_dg_nums[]', modifyDList);
+				data.append('lg_num', lg_num);
+				$.ajax({
+					async: false,
+					type:'POST',
+					data: data,
+					url: "<%=request.getContextPath()%>/modify/log",
+					processData : false,
+					contentType : false,
+					dataType: "json",
+					success : function(data){
+						//이미지 파일이 아닐 때
+						if(data.res == 0){
+							alert('이미지 파일만 등록가능 합니다.');
+							//선택한 파일 비우기
+							$('.main .swiper-slide-active .box-drop .box-select [name=file]').val('');
+							//화면 재구성
+							let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
+							$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
+							$('.main .swiper-slide-active .box-drop .box-select [name=file]').click();
+						}
+						//성공했을 때
+						else if(data.res == 1){
+							alert('사진을 수정했습니다.');
+							//화면 새로고침
+							location.reload();		
+						}
+						//실패했을 때
+						else if(data.res == -1){
+							alert('일지 등록에 실팼습니다. 다시 시도해주세요.');
+							//체크박스 체크 해제
+							$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('checked', false);
+							//사진의 lg_num 가져옴
+							let lg_num = $(this).data('value');
+							//사진의 피사체에 체크
+							getSubjectList(lg_num);
+							//선택한 파일 비우기
+							$('.main .swiper-slide-active .box-drop .box-select .box-file [name=file]').val('');
+							//화면 재구성
+							let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
+							$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
+						}
 					}
 				});
-				$('.box-drop').toggle();	
 			})//
+			
+			//이동 버튼(btn-swiper) 클릭-----------------------------------------------------------------------------------------
+			$('.main .box-content .box-img').click(function(){
+				$('.auto-stop').click();
+			})	
+			
 			//swiper----------------------------------------------------------------------------------------------------------
 			const swiper = new Swiper('.swiper', {
 				slidesPerView: 1,
@@ -221,9 +297,13 @@
 						$('.main .box-content .swiper .swiper-slide').addClass('changed');
 					},
           activeIndexChange: function () {
-	     	  	console.log(slideIndex)
+	     	  	console.log('slideIndex'+slideIndex)
 	     	  	console.log('------------------------')
 	          slideIndex = this.realIndex; //현재 슬라이드 index 갱신
+          },
+          slideChange : function() {
+        	  $('.main .box-content .swiper .box-drop').hide();
+        	  $('.main .box-content .box-nav .btn-modify').removeClass('select');
           }
 	      }
 			});//
@@ -240,7 +320,42 @@
 	      swiper.autoplay.stop();
 			});//
 		})//
+
 /* 함수 *********************************************************************************************************** */
-	//  ------------------------------------------------------------------------------------------------
+	// getSubjectList ------------------------------------------------------------------------------------------------
+	function getSubjectList(lg_num){
+		if(typeof(lg_num) == 'undefined')
+			return;
+		let obj = {
+			lg_num
+		}
+		//일지의 피사체들(강아지) 가져옴
+		ajaxPost(false, obj, '/get/subjectList', function(data){
+			for(subject of data.subjectList){
+				let sb_dg_num = subject.sb_dg_num;
+				$('.main .box-drop .box-check [name=dg_num]').each(function(){
+					//강아지 번호 추출
+					let dg_num = $(this).val();
+					//sb_dg_num과 같으면 체크
+					if(dg_num == sb_dg_num){
+						$(this).prop('checked', true);
+					}
+				})
+			}
+		});
+	}//
+	
+	// pushDgNum ------------------------------------------------------------------------------------------------
+	function pushDgNum(){
+		let dList = [];
+		//선택한 강아지 list에 담기
+		$('.main .swiper-slide-active .box-drop .box-select [name=dg_num]:checked').each(function(){
+			//강아지 번호 추출
+			let dg_num = $(this).val();
+			//강아지 리스트에 담기
+    	dList.push(dg_num);
+		})
+		return dList;
+	}//
 </script> 
 </html>

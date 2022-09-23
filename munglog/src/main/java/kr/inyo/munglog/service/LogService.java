@@ -25,5 +25,10 @@ public interface LogService {
 	//사진이 등록된 년도들 가져오기
 	ArrayList<String> getRegYearList(MemberVO user);
 	//사진의 피사체들 가져오기
-	ArrayList<SubjectVO> getSubjectList(int lg_num);
+	ArrayList<SubjectVO> getSubjectList(LogVO log, MemberVO user);
+	//일지 수정
+	int modifyLog(ArrayList<Integer> m_dg_nums, ArrayList<Integer> d_dg_nums, MultipartFile file, LogVO log, MemberVO user);
+	//슬라이드 인덱스 찾기
+	int findIndex(ArrayList<LogVO> logList, int lg_num);
+
 }

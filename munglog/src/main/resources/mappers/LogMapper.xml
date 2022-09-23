@@ -18,7 +18,7 @@
 	<!-- 회원번호 주고 일지리스트 가져오기 -->
 	<select id="selectLogList" resultType="kr.inyo.munglog.vo.LogVO">
 		select * from log
-			join subject on log.lg_num = subject.sb_lg_num
+			left join subject on log.lg_num = subject.sb_lg_num
 			where lg_mb_num = #{mb_num}
 			<if test="dg_num != 0">
 				and sb_dg_num = #{dg_num}
@@ -47,6 +47,11 @@
 		select * from subject where sb_lg_num = #{lg_num}
 	</select>
 	
+	<!-- 일지 번호 주고 일지 가져오기 -->
+	<select id="selectLog" resultType="kr.inyo.munglog.vo.LogVO">
+		select * from log where lg_num = #{lg_num}
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">
@@ -65,8 +70,17 @@
 	</insert>
 	
 	<!-- update *********************************************************** -->
-	
+	<update id="updateLog">
+		update log 
+			set lg_image = #{lg_image},
+				lg_views = #{lg_views},
+				lg_report = #{lg_report},
+				lg_del = #{lg_del}
+			where lg_num = #{lg_num}
+	</update>
 	<!-- delete *********************************************************** -->
-
+	<delete id="deleteSubject">
+		delete from subject where sb_lg_num = #{lg_num}
+	</delete>
 
 </mapper>
