@@ -15,7 +15,7 @@
 		select * from Log where lg_mb_num = #{lg_mb_num} and lg_image = #{lg_image} and lg_del = '0'
 	</select>
 	
-	<!-- 회원번호 주고 일지리스트 가져오기 -->
+	<!-- criteria 주고 일지리스트 가져오기 -->
 	<select id="selectLogList" resultType="kr.inyo.munglog.vo.LogVO">
 		select * from log
 			left join subject on log.lg_num = subject.sb_lg_num
@@ -50,6 +50,12 @@
 	<!-- 일지 번호 주고 일지 가져오기 -->
 	<select id="selectLog" resultType="kr.inyo.munglog.vo.LogVO">
 		select * from log where lg_num = #{lg_num} and lg_del = '0'
+	</select>
+	
+	<!-- 회원번호 주고 일지리스트 가져오기 -->
+	<select id="selectTodayLogListByMbNum" resultType="kr.inyo.munglog.vo.LogVO">
+		select * from log
+			where lg_mb_num = #{mb_num} and date_format(lg_reg_date,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
 	</select>
 	
 	<!-- insert *********************************************************** -->

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dao.LogDAO;
+import kr.inyo.munglog.dao.MemberDAO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
@@ -21,6 +22,8 @@ public class LogServiceImp implements LogService {
 
 	@Autowired
 	LogDAO logDao;
+	@Autowired
+	MemberDAO memberDao;
 	
 	String logUploadPath = "D:\\git\\munglog\\log";
 
@@ -82,6 +85,8 @@ public class LogServiceImp implements LogService {
 		//값이 없으면
 		if(file == null || user == null || user.getMb_num() < 1)
 			return -1;
+		//포인트 적립을 위해 오늘 적립한 로그 가져옴
+		ArrayList<LogVO> dbLogList = logDao.selectTodayLogListByMbNum(user.getMb_num());
 		//이미지 파일인지 확인
 		String originalName = file.getOriginalFilename();
 		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
@@ -107,6 +112,11 @@ public class LogServiceImp implements LogService {
 				//피사체 추가
 				logDao.insertSubject(dbLog.getLg_num(), dg_nums.get(i));
 			}
+		}
+		//매일 처음 등록한 사진에 포인트적립
+		if(dbLogList.isEmpty()) {
+			//포인트 지급
+			memberDao.insertPoint(user.getMb_num(),"적립","일지 사진 등록",100);
 		}
 		return 1;
 	}
@@ -243,6 +253,10 @@ public class LogServiceImp implements LogService {
 		//일지 삭제하기
 		dbLog.setLg_del("1");
 		logDao.updateLog(dbLog);
+		//기존 파일 삭제
+		UploadFileUtils.deleteFile(logUploadPath, dbLog.getLg_image());
+		//피사체 삭제하기
+		logDao.deleteSubject(dbLog.getLg_num());
 		return true;
 	}
 }

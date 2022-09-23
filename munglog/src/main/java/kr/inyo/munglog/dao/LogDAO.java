@@ -22,7 +22,7 @@ public interface LogDAO {
 	void insertLog(@Param("lg_mb_num")int mb_num, @Param("lg_image")String lg_image);
 	//회원정보와 이미지로 로그 가져오기
 	LogVO selectLogByImg(@Param("lg_mb_num")int mb_num, @Param("lg_image")String lg_image);
-	//회원 번호 주고 로그리스트 가져오기
+	//criteria 주고 로그리스트 가져오기
 	ArrayList<LogVO> selectLogList(Criteria cri);
 	//회원의 일지 개수 가져오기
 	int selectLogTotalCount(Criteria cri);
@@ -32,6 +32,8 @@ public interface LogDAO {
 	LogVO selectLog(int lg_num);
 	//일지 수정
 	void updateLog(LogVO dbLog);
+	//회원번호 주고 당일 일지리스트 가져오기
+	ArrayList<LogVO> selectTodayLogListByMbNum(int mb_num);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
