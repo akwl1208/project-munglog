@@ -12,14 +12,14 @@
 	
 	<!-- 회원번호와 이미지 주고 일지 가져오기 -->
 	<select id="selectLogByImg" resultType="kr.inyo.munglog.vo.LogVO">
-		select * from Log where lg_mb_num = #{lg_mb_num} and lg_image = #{lg_image}
+		select * from Log where lg_mb_num = #{lg_mb_num} and lg_image = #{lg_image} and lg_del = '0'
 	</select>
 	
 	<!-- 회원번호 주고 일지리스트 가져오기 -->
 	<select id="selectLogList" resultType="kr.inyo.munglog.vo.LogVO">
 		select * from log
 			left join subject on log.lg_num = subject.sb_lg_num
-			where lg_mb_num = #{mb_num}
+			where lg_mb_num = #{mb_num} and lg_del = '0'
 			<if test="dg_num != 0">
 				and sb_dg_num = #{dg_num}
 			</if>
@@ -33,12 +33,12 @@
 	
 	<!-- 회원의 일지 개수 가져오기 -->
 	<select id="selectLogTotalCount" resultType="int">
-		select count(*) from Log where lg_mb_num = #{mb_num}
+		select count(*) from Log where lg_mb_num = #{mb_num} and lg_del = '0'
 	</select>
 	
 	<!-- 사진이 등록된 년도들 가져오기 -->
 	<select id="selectRegYearList" resultType="String"> 
-		select year(lg_reg_date) from log where lg_mb_num = #{lg_mb_num}
+		select year(lg_reg_date) from log where lg_mb_num = #{lg_mb_num} and lg_del = '0'
 			group by year(lg_reg_date);
 	</select>
 	
@@ -49,7 +49,7 @@
 	
 	<!-- 일지 번호 주고 일지 가져오기 -->
 	<select id="selectLog" resultType="kr.inyo.munglog.vo.LogVO">
-		select * from log where lg_num = #{lg_num}
+		select * from log where lg_num = #{lg_num} and lg_del = '0'
 	</select>
 	
 	<!-- insert *********************************************************** -->
@@ -78,6 +78,7 @@
 				lg_del = #{lg_del}
 			where lg_num = #{lg_num}
 	</update>
+	
 	<!-- delete *********************************************************** -->
 	<delete id="deleteSubject">
 		delete from subject where sb_lg_num = #{lg_num}

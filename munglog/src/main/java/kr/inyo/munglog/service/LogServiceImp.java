@@ -47,7 +47,7 @@ public class LogServiceImp implements LogService {
 	@Override
 	public int insertDog(MemberVO user, DogListVO dlist) {
 		//값이 없으면
-		if(user == null || dlist == null)
+		if(user == null || dlist == null || user.getMb_num() < 1)
 			return -1;
 		//강아지 정보 가져오기
 		ArrayList<DogVO> dbDogs = logDao.selectDogs(user.getMb_num());
@@ -80,7 +80,7 @@ public class LogServiceImp implements LogService {
 	@Override
 	public int uploadLog(ArrayList<Integer> dg_nums, MultipartFile file, MemberVO user) {
 		//값이 없으면
-		if(file == null || user == null)
+		if(file == null || user == null || user.getMb_num() < 1)
 			return -1;
 		//이미지 파일인지 확인
 		String originalName = file.getOriginalFilename();
@@ -142,6 +142,8 @@ public class LogServiceImp implements LogService {
 	@Override
 	public ArrayList<SubjectVO> getSubjectList(LogVO log, MemberVO user) {
 		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return null;
 		if(log == null || log.getLg_num() < 1)
 			return null;
 		//로그 정보 가져오기
@@ -157,6 +159,8 @@ public class LogServiceImp implements LogService {
 	@Override
 	public int modifyLog(ArrayList<Integer> m_dg_nums, ArrayList<Integer> d_dg_nums, MultipartFile file, LogVO log, MemberVO user) {
 		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return -1;
 		if(log == null || log.getLg_num() < 1)
 			return -1;
 		//일지 가져오기
@@ -224,5 +228,21 @@ public class LogServiceImp implements LogService {
 			}
 		}
 		return logList.indexOf(tmpLog);
+	}
+
+	/* deleteLog: 일지 삭제 --------------------------------------------------------------------------------------------------*/
+	@Override
+	public boolean deleteLog(LogVO log, MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(log == null || log.getLg_num() < 1)
+			return false;
+		//로그 정보 가져오기
+		LogVO dbLog = logDao.selectLog(log.getLg_num());
+		//일지 삭제하기
+		dbLog.setLg_del("1");
+		logDao.updateLog(dbLog);
+		return true;
 	}
 }

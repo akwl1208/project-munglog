@@ -107,7 +107,7 @@
 									<li class="item-nav list-group-item border-0 flex-fill">
 										<div class="box-set">
 											<i class="btn-modify fa-solid fa-camera-rotate mr-4" data-value="${log.lg_num}"></i>
-											<i class="btn-delete fa-solid fa-trash-can"></i>
+											<i class="btn-delete fa-solid fa-trash-can" data-value="${log.lg_num}"></i>
 										</div>
 									</li>
 								</ul>
@@ -264,10 +264,34 @@
 				});
 			})//
 			
-			//이동 버튼(btn-swiper) 클릭-----------------------------------------------------------------------------------------
+			//이미지 영역 클릭(box-img) 클릭-----------------------------------------------------------------------------------------
 			$('.main .box-content .box-img').click(function(){
 				$('.auto-stop').click();
-			})	
+			})//	
+			
+			//삭제 버튼(btn-delete) 클릭-----------------------------------------------------------------------------------------
+			$('.main .box-content .box-nav .btn-delete').click(function(){
+				if(!confirm('사진을 삭제하겠습니까?'))
+					return;
+				let lg_num = $(this).data('value');
+				if(typeof(lg_num) == 'undefined' || lg_num < 1)
+					return;				
+				let obj = {
+					lg_num
+				}
+				//일지 삭제
+				ajaxPost(false, obj, '/delete/log', function(data){
+					//삭제 실패했을 때
+					if(!data.res)
+						alert('사진 삭제에 실패했습니다. 다시 시도해주세요.')
+					//삭제했을 때
+					else{
+						alert('사직을 삭제했습니다.')
+						//화면 새로고침
+						location.reload();
+					}
+				});
+			})//
 			
 			//swiper----------------------------------------------------------------------------------------------------------
 			const swiper = new Swiper('.swiper', {
@@ -307,6 +331,7 @@
           }
 	      }
 			});//
+			
 			//슬라이드쇼 시작
 			$('.auto-start').on('click', function() {
 				$('.auto-stop').removeClass('select');
@@ -324,7 +349,7 @@
 /* 함수 *********************************************************************************************************** */
 	// getSubjectList ------------------------------------------------------------------------------------------------
 	function getSubjectList(lg_num){
-		if(typeof(lg_num) == 'undefined')
+		if(typeof(lg_num) == 'undefined' || lg_num < 1)
 			return;
 		let obj = {
 			lg_num

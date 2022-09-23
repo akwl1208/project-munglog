@@ -30,5 +30,7 @@ public interface LogService {
 	int modifyLog(ArrayList<Integer> m_dg_nums, ArrayList<Integer> d_dg_nums, MultipartFile file, LogVO log, MemberVO user);
 	//슬라이드 인덱스 찾기
 	int findIndex(ArrayList<LogVO> logList, int lg_num);
+	//일지 삭제
+	boolean deleteLog(LogVO log, MemberVO user);
 
 }

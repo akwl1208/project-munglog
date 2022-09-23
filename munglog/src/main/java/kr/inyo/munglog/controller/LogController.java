@@ -168,4 +168,16 @@ public class LogController {
 		map.put("res", res);
 		return map;
 	}
+	
+	/* 일지 삭제 ----------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/delete/log", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> deleteLog(@RequestBody LogVO log, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");	
+		boolean res = logService.deleteLog(log, user);
+
+		map.put("res", res);
+		return map;
+	}
 }
