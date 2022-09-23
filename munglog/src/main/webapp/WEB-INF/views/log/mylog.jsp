@@ -23,8 +23,7 @@
 	.main .box-nav .box-set .set .fa-solid:hover{color:#fb9600;cursor:pointer;}
 	.main .box-nav .box-drop{
 		position: absolute; top: 40px; left: 0; right: 0; background-color: white;
-		width: 100%; border-bottom: 3px solid rgba(73, 67, 60, 0.1);
-		
+		width: 100%; border-bottom: 3px solid rgba(73, 67, 60, 0.1);  z-index: 10;
 	}
 	.main .box-nav .box-drop .drop{padding: 20px 40px;}
 	.main .box-drop .drop-upload .box-check .box-message,
