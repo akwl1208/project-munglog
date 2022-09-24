@@ -20,6 +20,7 @@
 	/* main box-nav --------------------------------------------------------------------- */
 	.main .box-nav{margin-bottom: 10px; position: relative;}
 	.main .box-nav .box-set .set{margin-left: 10px;}
+	.main .box-nav .box-set .set .fa-solid.select{color:#fb9600;}
 	.main .box-nav .box-set .set .fa-solid:hover{color:#fb9600;cursor:pointer;}
 	.main .box-nav .box-drop{
 		position: absolute; top: 40px; left: 0; right: 0; background-color: white;
@@ -102,7 +103,7 @@
 					</div>
 				</div>
 				<!-- box-send(사진 미리보기, 사진 전송) -------------------------------------------------------------------------- -->
-				<div class="box-send">
+				<div class="box-send" style="display:none;">
 					<div class="d-flex align-items-end justify-content-between">
 						<!-- box-preview(사진 미리보기) --------------------------------------------------------------------------- -->
 						<div class="box-preview">
@@ -113,6 +114,8 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="box-drop" style="display: none;">
 			<!-- drop-filter -------------------------------------------------------------------------------------------- -->
 			<div class="drop drop-filter">
 				<!-- box-select -------------------------------------------------------- -->
@@ -147,6 +150,8 @@
 					<button type="button" class="btn-set">설정</button>
 				</div>
 			</div>
+		</div>
+		<div class="box-drop" style="display: none;">
 			<!-- drop-sort ---------------------------------------------------------------------------------------------- -->
 			<div class="drop drop-sort">
 				<!-- box-choose(정렬 방식 선택) -------------------------------------------------------- -->
@@ -180,11 +185,9 @@
 		getLogList(obj);
 	/* 이벤트 *********************************************************************************************************** */
 		//사진 등록 아이콘(btn-upload) 클릭--------------------------------------------------------------------------------------
-		$('.main .box-nav .btn-upload').click(function(){		
-			$('.main .box-nav .box-drop').toggle();
-			//drop-upload만 열리게
-			$('.main .box-nav .drop').hide();
-			$('.main .box-nav .drop-upload').show();
+		$('.main .box-nav .btn-upload').click(function(){
+			$(this).parents('.box-set').siblings('.box-drop').eq(0).siblings('.box-drop').hide();
+			$(this).parents('.box-set').siblings('.box-drop').eq(0).toggle();
 			//값 초기화
 			//체크박스 체크 해제
 			$('.main .box-drop .drop-upload .box-check [name=dg_num]').prop('checked', false);
@@ -193,20 +196,24 @@
 			//화면 재구성
 			$('.main .drop-upload .box-file [name=file]').change();
 			$('.main .box-drop .drop-upload .box-send').hide();
+			$(this).parent().siblings().children().removeClass('select');
+			$(this).toggleClass('select');
 		})//
 		
 		//필터 아이콘(btn-filter) 클릭------------------------------------------------------------------------------------------
 		$('.main .box-nav .btn-filter').click(function(){
-			$('.main .box-nav .box-drop').toggle();
-			$('.main .box-nav .drop').hide();
-			$('.main .box-nav .drop-filter').show();
+			$(this).parents('.box-set').siblings('.box-drop').eq(1).siblings('.box-drop').hide();
+			$(this).parents('.box-set').siblings('.box-drop').eq(1).toggle();
+			$(this).parent().siblings().children().removeClass('select');
+			$(this).toggleClass('select');
 		})
 		
 		//정렬 아이콘(btn-sort) 클릭-------------------------------------------------------------------------------------------
 		$('.main .box-nav .btn-sort').click(function(){
-			$('.box-drop').toggle();
-			$('.drop').hide();
-			$('.drop-sort').show();
+			$(this).parents('.box-set').siblings('.box-drop').eq(2).siblings('.box-drop').hide();
+			$(this).parents('.box-set').siblings('.box-drop').eq(2).toggle();
+			$(this).parent().siblings().children().removeClass('select');
+			$(this).toggleClass('select');
 		})
 		
 		//사진 선택 버튼(btn-file) 클릭-----------------------------------------------------------------------------------------
@@ -229,7 +236,7 @@
 		  let reader = new FileReader(); 
 		  
 		  reader.onload = function(e) {
-		      $('.main .drop-upload .box-send .box-preview .preview').attr('src', e.target.result);
+		  	$('.main .drop-upload .box-send .box-preview .preview').attr('src', e.target.result);
 		  }
 		  reader.readAsDataURL(file);
 		})//
@@ -336,7 +343,8 @@
 			//리스트 불러오기
 			getLogList(obj);
 			//화면 재구성
-			$('.main .box-nav .box-drop').hide();
+			$('.main .box-nav .box-drop').eq(1).hide();
+			$('.main .box-nav .box-set .set .fa-solid').removeClass('select');
 		})
 	})//
 	
