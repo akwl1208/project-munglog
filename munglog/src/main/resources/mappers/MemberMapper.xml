@@ -25,6 +25,11 @@
 		select mb_email from member where mb_session_id = #{mb_session_id} and mb_session_expir > now();
 	</select>
 	
+	<!-- 회원 정보 리스트 가져오기 -->
+	<select id="getMemberList" resultType="kr.inyo.munglog.vo.MemberVO">
+		select * from member where mb_activity = '0'
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 본인인증 테이블에 회원메일, 본인인증코드 저장 -->
 	<insert id="insertVeriCode">

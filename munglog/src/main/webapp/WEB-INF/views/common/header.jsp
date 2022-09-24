@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title></title>
-	<!-- style-------------------------------------------------------- -->
+<!-- style ****************************************************************************************************** -->
 	<style>
 		*{padding: 0; margin: 0;}
 		a{text-decoration: none; color: #52443b;}
@@ -46,21 +46,25 @@
 			margin-left: 40px;
 		}
 		.header .box-menu .menu-list a:hover{color: #fb9600;}
-		.header .box-menu .dropdown{margin: auto 0;}
+		.header .box-menu .dropdown{margin: 9px 0; height: 27px; padding: 4.5px 0;}
 		.header .box-menu .all-menu{
-			display: inline-block; font-size: 18px; font-weight: bold;
-			margin-left: 40px;
+			display: inline-block; font-weight: bold; margin-left: 40px;
 		}
-		.header .box-menu .dropdown-menu{background-color: #fff7ed; margin-top: 34px}
+		.header .box-menu .all-menu .fa-bar{line-height: 27px; font-size: 18px;}
+		.header .box-menu .dropdown-menu{
+			margin-top: 37px; padding: 0;
+		} 
+		.header .box-menu .dropdown-menu .dropdown-header{background-color: #fff7ed;}
 	</style>
 </head>
+<!-- body ****************************************************************************************************** -->
 <body>
 	<nav class="fixed-top header">
 		<div class="container">
-			<!-- box-account -------------------------------------------------------- -->
+			<!-- box-account ------------------------------------------------------------------------------------------- -->
 			<div class="box-account">
 				<ul class="account-list">
-					<!-- 비회원일 때 -------------------------------------------------------- -->
+					<!-- 비회원일 때 ------------------------------------------------------------------------------------------ -->
 					<c:if test="${user == null}">
 						<li class="account-item">
 							<a href="<c:url value="/account/signup"></c:url>" class="account-link">회원가입</a>
@@ -69,7 +73,7 @@
 							<a href="<c:url value="/account/login"></c:url>" class="account-link">로그인</a>
 						</li>
 					</c:if>
-					<!-- 회원일 때 -------------------------------------------------------- -->
+					<!-- 회원일 때 --------------------------------------------------------------------------------------------- -->
 					<c:if test="${user != null}">
 						<li class="account-item nickname">
 							<span><i class="fa-solid fa-dog"></i>${user.mb_nickname}님</span>
@@ -83,16 +87,16 @@
 					</c:if>
 				</ul>
 			</div>
-			<!-- box-menu -------------------------------------------------------- -->
+			<!-- box-menu ---------------------------------------------------------------------------------------------- -->
 			<div class="box-menu">
-				<!-- 로고 -------------------------------------------------------- -->
+				<!-- 로고 -------------------------------------------------------------------------------------------------- -->
 				<div class="logo" style="width:40%;">
 					<a href="<c:url value="/"></c:url>"><i class="fa-solid fa-paw"></i><span>멍멍일지</span></a>
 				</div>
-				<!-- 메뉴 -------------------------------------------------------- -->
+				<!-- 메뉴 -------------------------------------------------------------------------------------------------- -->
 				<ul class="menu-list" style="width:60%;">
 					<li class="menu-item">
-						<a href="#" class="menu-link">일지</a>
+						<a href="<c:url value="/log/feed"></c:url>" class="menu-link">일지</a>
 					</li>
 					<li class="menu-item">
 						<a href="#" class="menu-link">굿즈</a>
@@ -101,12 +105,12 @@
 						<a href="#" class="menu-link">후원</a>
 					</li>
 				</ul>
-				<!-- 드랍 메뉴 -------------------------------------------------------- -->
+				<!-- 드랍 메뉴 ------------------------------------------------------------------------------------------ -->
 				<div class="dropdown">
 					<a href="#" class="all-menu" data-toggle="dropdown"><i class="fa-solid fa-bars"></i></a>
 					<div class="dropdown-menu dropdown-menu-right border-0" style="width:270px;">
 						<h5 class="dropdown-header">일지</h5>
-						<a class="dropdown-item" href="#">멍친일지</a>
+						<a class="dropdown-item" href="<c:url value="/log/feed"></c:url>">멍멍피드</a>
 						<a class="dropdown-item" 
 							href="<c:if test="${dogs == null}"><c:url value="/log/register"></c:url></c:if>
 								<c:if test="${dogs != null}"><c:url value="/log/mylog/${user.mb_num}"></c:url></c:if>">

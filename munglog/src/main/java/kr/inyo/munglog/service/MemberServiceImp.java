@@ -1,5 +1,7 @@
 package kr.inyo.munglog.service;
 
+import java.util.ArrayList;
+
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -336,5 +338,10 @@ public class MemberServiceImp implements MemberService {
 		//회원 비밀번호 재설정
 		memberDao.updateMember(dbMember);
 		return 1;
+	}
+	/* getMemberList : 회원 정보들 가져오기  ------------------------------------------------------------------*/
+	@Override
+	public ArrayList<MemberVO> getMemberList() {
+		return memberDao.getMemberList();
 	}
 }

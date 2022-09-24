@@ -19,4 +19,8 @@ public class MemberVO {
 	private String mb_session_id;
 	private Date mb_session_expir;
 	private boolean saveId;
+	
+	public String getMb_profile_url() {
+		return "/profile/img" + mb_profile;
+	}
 }

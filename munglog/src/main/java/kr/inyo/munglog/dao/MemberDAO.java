@@ -1,5 +1,7 @@
 package kr.inyo.munglog.dao;
 
+import java.util.ArrayList;
+
 import org.apache.ibatis.annotations.Param;
 
 import kr.inyo.munglog.vo.MemberVO;
@@ -32,6 +34,8 @@ public interface MemberDAO {
 	String selectMemberEmail(String mb_session_id);
 	//회원정보 수정
 	void updateMember(MemberVO member);
+	//회원 정보 리스트 가져오기
+	ArrayList<MemberVO> getMemberList();
 	
 	/* 포인트 ----------------------------------------------------------------------------------- */
 	//포인트 적립

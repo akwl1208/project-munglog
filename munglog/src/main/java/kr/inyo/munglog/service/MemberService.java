@@ -1,5 +1,7 @@
 package kr.inyo.munglog.service;
 
+import java.util.ArrayList;
+
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
@@ -30,4 +32,6 @@ public interface MemberService {
 	String findEmail(MemberVO member);
 	//비밀번호 재설정(비밀번호 찾기)
 	int findPw(MemberVO member);
+	//회원 리스트 가져오기
+	ArrayList<MemberVO> getMemberList();
 }

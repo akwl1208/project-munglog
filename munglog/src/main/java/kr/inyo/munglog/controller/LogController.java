@@ -116,7 +116,16 @@ public class LogController {
 		mv.setViewName("/log/mylogDetail");
 		return mv;
 	}
-
+	
+	/* 멍멍피드 --------------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/feed", method = RequestMethod.GET)
+	public ModelAndView logFeedGet(ModelAndView mv) {
+		ArrayList<MemberVO> memberList = memberService.getMemberList();
+		
+		mv.addObject("memberList", memberList);
+		mv.setViewName("/log/feed");
+		return mv;
+	}
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)
