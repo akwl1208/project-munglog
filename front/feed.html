@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>나의 일지</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.main{
+			width:830px; padding: 50px 20px; display: block;
+		}
+		.side-main{
+			width:280px; padding: 50px 10px; display: block; height: 2000px;
+		}
+		/*aside ------------------------------------------------------------- */
+		.side-main .box-search{
+			border: 1px solid #52443b; border-radius: 5px; 
+			padding: 20px 10px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+		}
+		.side-main .box-search .friend-list{
+			margin: 20px 0 0; display: none; height: 180px; overflow-y: scroll; 
+		}
+		.side-main .box-search .friend-list .friend-item{
+			background-color: #fff7ed; margin-bottom: 10px;
+			padding: 5px 0 5px 5px;
+		}
+		.side-main .box-search .friend-item .friend-link{
+			display: block; height: 40px; margin: auto 0 ;
+		}
+		.side-main .box-search .friend-item .thumb{
+			float: left;
+		}
+		.side-main .box-search .friend-item .thumb img{
+			border-radius: 50px; width: 40px; height: 40px;
+		}
+		.side-main .box-search .friend-item .nickname{
+			float: left; width: 183px;
+			line-height: 40px; padding-left: 10px;
+			font-weight: bold; overflow: hidden; text-overflow: ellipsis;
+		}
+		/*main ------------------------------------------------------------- */
+		.main .box-title{
+			background-color: #ae8a68; border-radius: 5px;
+			padding: 20px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+			margin-bottom: 10px; font-size: 18px; font-weight: bold;
+		}
+		.main .box-title .fa-paw{margin-right: 6px;}
+		.main .box-title .box-message{
+			font-size: 12px; margin: 5px 0; padding-left: 24px;
+		}
+		.main .box-nav{margin-bottom: 10px; position: relative;}
+		.main .box-nav .box-set .set{margin-left: 10px;}
+		.main .box-nav .box-set .set .fa-solid:hover{color:#fb9600;}
+		.main .box-nav .box-drop{
+			position: absolute; top: 40px; left: 0; right: 0; background-color: white;
+			width: 100%; border-bottom: 3px solid rgba(73, 67, 60, 0.1);
+			
+		}
+		.main .box-nav .box-drop .drop{padding: 20px 40px;}
+		.main .box-drop .drop-upload .box-checkbox .box-message,
+		.main .box-drop .drop-filter .box-dog .box-message{margin: 5px 0;}
+		.main .box-drop .drop-upload .box-file .btn-file,
+		.main .box-drop .drop-upload .box-send .btn-send,
+		.main .box-drop .drop-filter .box-btn .btn-reset,
+		.main .box-drop .drop-filter .box-btn .btn-filter{
+			padding: 5px 10px; background-color: #a04c00; margin-left: 10px;
+			border: none; color: #fff7ed; border-bottom: 3px solid rgba(73, 67, 60, 0.3);
+			border-radius: 3px;
+		}
+		.main .box-drop .drop-upload .box-send,
+		.main .box-drop .drop-filter .box-year{margin-top: 20px;}
+		.main .box-drop .drop-upload .box-send .box-preview{margin: 0 auto;}
+		.main .box-drop .drop-filter .box-btn{text-align: right;}
+		.main .box-drop .drop-sort .box-choose{text-align: right;}
+		.main .box-drop .drop-sort .box-choose .sort-oldest::before,
+		.main .box-drop .drop-sort .box-choose .sort-popularity::before{
+			display: inline-block; content: ''; margin: 0 10px;
+			width: 1px; height: 12px; background-color: #b9ab9a;
+			line-height: 24px;
+		}
+		.main .box-content{margin: 20px 44px;}
+		.main .box-content .log-list{
+			display: table; width: 100%; min-width: 100%;
+		}
+		.main .box-content .log-list .log-item{
+			display: inline-block; width: calc(25% - 10px); height: calc(702px / 4);
+			overflow: hidden; margin: 5px;
+		}
+		.main .box-content .log-list .log-item .log-link{
+			width: 100%; height: 100%; display: block; background-position: center center; 
+			background-size: cover; border: 1px solid #dfe0df;
+		}
+		.main .box-content .log-list .log-item .log-link:hover{
+			transform: scale(0.9);
+		}
+	</style>
+</head>
+<body>
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height: 100vh;">
+			<!-- main -------------------------------------------------------- -->
+			<div class="main">
+				<!-- 제목 -------------------------------------------------------- -->
+				<div class="box-title">
+					<i class="fa-solid fa-paw"></i><span>멍멍 일지</span>
+					<div class="box-message">강아지의 일상을 기록하고 감상하세요.</div>
+				</div>
+				<!-- 네이게이션 -------------------------------------------------------- -->
+				<div class="box-nav">
+					<!-- box-set -------------------------------------------------------- -->
+					<div class="box-set d-flex justify-content-end">
+						<div class="set box-upload p-2"><i class="btn-upload fa-solid fa-camera"></i></div>
+						<div class="set box-filter p-2"><i class="btn-filter fa-solid fa-filter"></i></i></div>
+						<div class="set box-sort p-2""><i class="btn-sort fa-solid fa-arrow-down-short-wide"></i></div>
+					</div>
+					<!-- box-drop -------------------------------------------------------- -->
+					<div class="box-drop" style="display: none;">
+						<!-- drop-upload -------------------------------------------------------- -->
+						<div class="drop drop-upload">
+							<div class="box-select d-flex flex-column">
+								<div class="box-checkbox">
+									<div class="box-message">사진 속 강아지를 선택하세요.</div>
+									<div class="box-dog form-check-inline">
+										<label class="form-check-label" for="check1">
+											<input type="checkbox" class="form-check-input" id="check1" name="vehicle1" value="something">멍멍이
+										</label>
+									</div>
+									<div class="box-dog form-check-inline">
+										<label class="form-check-label" for="check2">
+											<input type="checkbox" class="form-check-input" id="check2" name="vehicle2" value="something">왈왈이
+										</label>
+									</div>
+									<div class="box-dog form-check-inline">
+										<label class="form-check-label">
+											<input type="checkbox" class="form-check-input">뭉뭉이
+										</label>
+									</div>
+								</div>
+								<div class="box-file ml-auto">
+									<input type="file" name="file" style="display: none;">
+									<button type="button" class="btn-file">사진 선택</button>
+								</div>
+							</div>
+							<div class="box-send" style="display: none;">
+								<div class="d-flex align-items-end justify-content-between">
+									<div class="box-preview">
+										<img class="preview" max-width="300px" max-height="300px">
+									</div>
+									<button type="button" class="btn-send">사진 등록</button>
+								</div>
+							</div>
+						</div>
+						<!-- drop-filter -------------------------------------------------------- -->
+						<div class="drop drop-filter">
+							<div class="box-select d-flex flex-column">
+								<div class="box-dog">
+									<div class="box-message">사진을 보고 싶은 강아지를 선택하세요.</div>
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" name="optradio">멍멍이
+										</label>
+									</div>
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" name="optradio">왈왈이
+										</label>
+									</div>
+									<div class="form-check-inline disabled">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" name="optradio">뭉뭉이
+										</label>
+									</div>
+								</div>
+								<div class="box-year">
+									<div class="box-message mb-2">보고 싶은 년도를 선택하세요.</div>
+									<div class="form-group mb-0" style="width: 100px;">
+										<select class="form-control">
+											<option>1</option>
+											<option>2</option>
+											<option>3</option>
+											<option>4</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="box-btn">
+								<button type="button" class="btn-reset">초기화</button>
+								<button type="button" class="btn-filter">설정</button>
+							</div>
+						</div>
+						<!-- drop-sort -------------------------------------------------------- -->
+						<div class="drop drop-sort">
+							<div class="box-choose">
+								<span class="sort sort-lastest">최신순</span>
+								<span class="sort sort-oldest">오래된순</span>
+								<span class="sort sort-popularity">인기순</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- box-content -------------------------------------------------------- -->
+				<div class="box-content">
+					<ul class="log-list">
+						<li class="log-item">
+							<a href="#" class="log-link" style="background-image: url(/akwl.jpg)"></a>
+						</li>	
+					</ul>
+				</div>
+			</div>
+			<!-- aside -------------------------------------------------------- -->
+			<div class="side-main">
+				<div class="box-search" style="width: 260px;">
+					<input class="form-control" id="myInput" type="text" placeholder="닉네임을 검색하세요">
+					<ul class="friend-list" id="myList">
+						<li class="friend-item">
+							<a class="friend-link" href="#">
+								<div class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></div>
+								<div class="nickname">아지짱짱</div>
+							</a>
+						</li>					
+					</ul>
+				</div>
+			</div>
+		</div>
+  </div>
+	<script>
+		$(function(){
+			$(document).ready(function(){
+				$('#myInput').on('keyup', function() {					
+					var value = $(this).val().toLowerCase();
+					if(value == ''){
+						$('.friend-list').hide();
+					}
+					if(value != ''){
+						$('.friend-list').show();
+						$('#myList li').filter(function() {
+							$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+						});
+					}
+				});
+			});
+
+			$('.main .box-nav .btn-upload').click(function(){
+				$('.box-drop').toggle();
+				$('.drop').hide();
+				$('.drop-upload').show();
+			})
+			$('.main .box-nav .btn-filter').click(function(){
+				$('.box-drop').toggle();
+				$('.drop').hide();
+				$('.drop-filter').show();
+			})
+			$('.main .box-nav .btn-sort').click(function(){
+				$('.box-drop').toggle();
+				$('.drop').hide();
+				$('.drop-sort').show();
+			})
+		})
+	</script> 
+</body>
+</html>
