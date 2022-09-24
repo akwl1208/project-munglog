@@ -34,7 +34,7 @@
 			 	<tiles:insertAttribute name="body" />
 			</div>
 			<div class="side-main">
-				<tiles:insertAttribute name="logAside" />
+				<tiles:insertAttribute name="logFeedAside" />
 			</div>
 		</div>
   </div>                                                          
