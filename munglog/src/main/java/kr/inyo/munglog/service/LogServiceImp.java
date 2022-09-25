@@ -101,10 +101,12 @@ public class LogServiceImp implements LogService {
 		}
 		//일지 등록
 		logDao.insertLog(user.getMb_num(), lg_image);
+		//회원 정보로 로그 정보 가져옴
+		LogVO dbLog = logDao.selectLogByImg(user.getMb_num(), lg_image);
+		if(dbLog == null)
+			return -1;
 		//피사체가 있으면
 		if(dg_nums != null) {
-			//회원 정보로 로그 정보 가져옴
-			LogVO dbLog = logDao.selectLogByImg(user.getMb_num(), lg_image);
 			for(int i = 0; i < dg_nums.size(); i++) {
 				//dg_num이 1보다 작으면
 				if(dg_nums.get(i) < 1)
@@ -125,7 +127,7 @@ public class LogServiceImp implements LogService {
 	@Override
 	public ArrayList<LogVO> getLogList(Criteria cri) {
 		//값이 없으면
-		if(cri == null || cri.getMb_num() < 1)
+		if(cri == null || cri.getMb_num() < 0)
 			return null;
 		//회원번호 주고 로그 가져오기
 		return logDao.selectLogList(cri);
@@ -158,6 +160,8 @@ public class LogServiceImp implements LogService {
 			return null;
 		//로그 정보 가져오기
 		LogVO dbLog = logDao.selectLog(log.getLg_num());
+		if(dbLog == null)
+			return null;
 		//회원이 등록한 일지가 아니면
 		if(dbLog.getLg_mb_num() != user.getMb_num())
 			return null;
@@ -224,6 +228,7 @@ public class LogServiceImp implements LogService {
 		}
 		return 1;
 	}
+	
 	/* findIndex: 일지번호로 슬라이드 인덱스 찾기 -----------------------------------------------------------------------------------*/
 	@Override
 	public int findIndex(ArrayList<LogVO> logList, int lg_num) {
@@ -250,6 +255,8 @@ public class LogServiceImp implements LogService {
 			return false;
 		//로그 정보 가져오기
 		LogVO dbLog = logDao.selectLog(log.getLg_num());
+		if(dbLog == null)
+			return false;
 		//일지 삭제하기
 		dbLog.setLg_del("1");
 		logDao.updateLog(dbLog);
@@ -259,4 +266,5 @@ public class LogServiceImp implements LogService {
 		logDao.deleteSubject(dbLog.getLg_num());
 		return true;
 	}
+
 }

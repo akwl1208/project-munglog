@@ -53,7 +53,7 @@ public class LogController {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		int res = logService.insertDog(user, dlist);
 		if(res == 1)
-			messageService.message(response, "강아지 정보가 등록되었습니다.", "/munglog/");
+			messageService.message(response, "강아지 정보가 등록되었습니다.", "/munglog/log/mylog/"+user.getMb_num());
 		else if(res == 0)
 			messageService.message(response, "강아지는 최대 3마리까지 등록할 수 있습니다.", "/munglog/");
 		else if(res == -1)
@@ -187,6 +187,17 @@ public class LogController {
 		boolean res = logService.deleteLog(log, user);
 
 		map.put("res", res);
+		return map;
+	}
+	
+	/* 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/dogList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getDogList(@RequestBody MemberVO member) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		ArrayList<DogVO> dogList = logService.getDogs(member);
+	
+		map.put("dogList", dogList);
 		return map;
 	}
 }

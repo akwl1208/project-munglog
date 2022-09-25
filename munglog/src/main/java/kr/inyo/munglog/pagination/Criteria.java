@@ -21,8 +21,11 @@ public class Criteria {
 	public Criteria() {
 		this.page = 1;
 		this.perPageNum = 12;
+		this.mb_num = 0;
+		this.dg_num = 0;
+		this.regYear = "";
 	}
-
+	
 	/* 쿼리문에서 limit에 사용되는 인덱스를 계산하는 getter */
 	public int getPageStart() {
 		return (this.page -1) * perPageNum;

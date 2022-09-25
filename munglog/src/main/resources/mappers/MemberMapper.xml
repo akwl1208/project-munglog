@@ -25,9 +25,12 @@
 		select mb_email from member where mb_session_id = #{mb_session_id} and mb_session_expir > now();
 	</select>
 	
-	<!-- 회원 정보 리스트 가져오기 -->
+	<!-- 일지가 있는 회원 정보 리스트 가져오기 -->
 	<select id="getMemberList" resultType="kr.inyo.munglog.vo.MemberVO">
-		select * from member where mb_activity = '0'
+		select member.* from member
+			join dog on member.mb_num = dog.dg_mb_num
+ 				where mb_activity = '0'
+				group by mb_num; 
 	</select>
 	
 	<!-- insert *********************************************************** -->
@@ -47,6 +50,7 @@
 		insert into point(pi_mb_num, pi_process, pi_history,pi_amount)
 			values(#{pi_mb_num},#{pi_process},#{pi_history},#{pi_amount})
 	</insert>
+	
 	<!-- update *********************************************************** -->
 	<!-- 본인인증 정보 수정 -->
 	<update id="updateVerifiCation">

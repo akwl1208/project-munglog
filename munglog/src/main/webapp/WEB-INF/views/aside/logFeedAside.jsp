@@ -12,7 +12,7 @@
 		padding: 20px 10px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
 	}
 	.side-main .box-search .friend-list{
-		margin: 20px 0 0; max-height: 180px; overflow-y: scroll;
+		margin: 20px 0 0; display: none; max-height: 180px; overflow-y: scroll;
 	}
 	.side-main .box-search .friend-list .friend-item{
 		background-color: #fff7ed; margin-bottom: 10px;
@@ -35,16 +35,17 @@
 <!-- html ********************************************************************************************************* -->
 <body>
 	<div class="box-search" style="width: 260px;">
-		<input class="form-control" id="myInput" type="text" placeholder="닉네임을 검색하세요">
+		<input class="form-control" id="myInput" type="text" placeholder="닉네임 또는 강아지를 검색하세요">
 		<ul class="friend-list" id="myList">
 			<c:forEach items="${memberList}" var="member">
-				<li class="friend-item">
-				<a class="friend-link" href="#">
-				<div class="thumb">
-				<img src="<c:url value="${member.mb_profile_url}"></c:url>">
-				</div>
-				<div class="nickname">${member.mb_nickname}</div>
-				</a>
+				<li class="friend-item" data-value="${member.mb_num}">
+					<a class="friend-link" href="#">
+						<div class="thumb">
+							<img src="<c:url value="${member.mb_profile_url}"></c:url>">
+						</div>
+						<div class="nickname">${member.mb_nickname}</div>
+					</a>
+					<div class="box-dog" style="display:none;"></div>
 				</li>
 			</c:forEach>
 		</ul>
@@ -53,9 +54,16 @@
 <!-- script ******************************************************************************************************* -->
 <script>
 	$(function(){
-		let obj = {};
 		$(document).ready(function(){
-			//getMemberList(obj);
+			//회원의 강아지들 가져오기 --------------------------------------------------------------------------------------------
+			let li = $('.side-main .box-search .friend-list .friend-item');
+			let size = li.length;
+			for(let i = 0; i < size; i++){
+				let mb_num = li.eq(i).data('value');
+				let obj = {mb_num};
+				getDogList(obj, i);
+			}
+			//검색하면 프로필 나오는 --------------------------------------------------------------------------------------------
 			$('#myInput').on('keyup', function() {					
 				var value = $(this).val().toLowerCase();
 				if(value == ''){
@@ -69,24 +77,19 @@
 				}
 			});
 		});
-	})
+	})//
+	
 /* 함수 *********************************************************************************************************** */
-	// getMemberList -----------------------------------------------------------------------------------------------------
-	function getMemberList(obj){
-		ajaxPost(false, obj, '/get/memberList', function(data){
+	// getDogList -----------------------------------------------------------------------------------------------------
+	function getDogList(obj, index){
+		ajaxPost(false, obj, '/get/dogList', function(data){		
 			let html = '';
-			let contextPath = '<%=request.getContextPath()%>';
-			for(member of data.memberList){
-				html += '<li class="friend-item">';
-				html += 	'<a class="friend-link" href="#">';
-				html += 		'<div class="thumb">';
-				html += 			'<img src="'+contextPath+'/profile/img'+member.mb_profile+'">';
-				html += 		'</div>';
-				html += 		'<div class="nickname">'+member.mb_nickname+'</div>';
-				html += 	'</a>';
-				html += '</li>';		
+			for(dog of data.dogList){
+				if(dog == null)
+					return;
+				html += '<span>'+dog.dg_name+'</span>';
 			}
-			$('.side-main .box-search .friend-list').append(html);
+			$('.side-main .box-search .friend-list .friend-item').eq(index).find('.box-dog').append(html);
 		});
 	}//
 </script>
