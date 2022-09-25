@@ -172,7 +172,7 @@
 <script>
 	/* 변수 *********************************************************************************************************** */
 	let page = 1;
-	let mb_num = ${user.mb_num};
+	let mb_num = ${member.mb_num};
 	let obj = {
 		page,
 		perPageNum : 12,
@@ -343,13 +343,15 @@
 			//리스트 불러오기
 			getLogList(obj);
 			//화면 재구성
-			$('.main .box-nav .box-drop').eq(1).hide();
+			$(this).parents('.box-drop').hide();
 			$('.main .box-nav .box-set .set .fa-solid').removeClass('select');
 		})
 	})//
 	
 	//필터 초기화(btn-reset) 클릭 --------------------------------------------------------------------------------------------
-	$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){	
+	$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){
+		//페이지 1로 초기화
+		obj.page = 1;
 		//라디오 박스 값 초기화
 		$('.main .box-drop .drop-filter .box-radio [name=dgNum]').prop('checked', false);
 		obj.dg_num = 0;
