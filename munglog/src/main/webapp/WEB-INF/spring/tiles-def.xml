@@ -17,6 +17,14 @@
 	  <put-attribute name="logFeedAside" value="/WEB-INF/views/aside/logFeedAside.jsp" />
 	</definition>
 	
+	<!-- log feedDetail 레이아웃 -->
+	<definition name="/log/feedDetail" template="/WEB-INF/views/layout/logFeedLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/log/feedDetail.jsp" />
+		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
+	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+	  <put-attribute name="logFeedAside" value="/WEB-INF/views/aside/logFeedAside.jsp" />
+	</definition>
+	
 	<!-- log 레이아웃 -->
 	<definition name="/log/*" template="/WEB-INF/views/layout/logLayout.jsp">
 		<put-attribute name="body" value="/WEB-INF/views/log/{1}.jsp" />
