@@ -361,4 +361,12 @@ public class MemberServiceImp implements MemberService {
 	public ArrayList<MemberVO> getMemberList() {
 		return memberDao.getMemberList();
 	}
+	
+	/* getMemberByMbnum : 회원번호로 회원 정보 가져오기 ---------------------------------------------------------------------------*/
+	@Override
+	public MemberVO getMemberByMbnum(int mb_num) {
+		if(mb_num < 1)
+			return null;
+		return memberDao.selectMemberByMbnum(mb_num);
+	}
 }

@@ -125,13 +125,23 @@
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
 			for(log of data.lList){
+				let criUrl = makeCriUrl(log.lg_num, obj, log.lg_mb_num);
 				html += '<li class="log-item" data-lgNum="'+log.lg_num+'" data-mbNum="'+log.lg_mb_num+'">';
-				html +=		'<a href="#" class="log-link"'; 
+				html +=		'<a href="'+contextPath+'/log/feedDetail'+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
 				html += '</li>';
 			}
 			$('.main .box-content .log-list').append(html);
 		});
 	}//
+	// makeCriUrl -----------------------------------------------------------------------------------------------------
+	function makeCriUrl(lg_num, obj){
+		let lgNumUrl = '?lg_num=' + lg_num;
+		let pageUrl = lgNumUrl +'&page=' + obj.page;
+		let mbNumUrl = pageUrl + '&mb_num=' +  obj.mb_num;
+		let dgNumUrl = mbNumUrl + '&dg_num=' +  obj.dg_num;
+		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;
+		return regYearUrl;
+	}
 </script> 
 </html>

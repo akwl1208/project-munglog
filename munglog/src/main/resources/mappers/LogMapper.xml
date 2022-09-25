@@ -38,7 +38,11 @@
 	
 	<!-- 회원의 일지 개수 가져오기 -->
 	<select id="selectLogTotalCount" resultType="int">
-		select count(*) from Log where lg_mb_num = #{mb_num} and lg_del = '0' and lg_report = '0'
+		select count(*) from Log 
+			where lg_del = '0' and lg_report = '0'
+				<if test="mb_num != 0">
+					and lg_mb_num = #{mb_num}
+				</if>
 	</select>
 	
 	<!-- 사진이 등록된 년도들 가져오기 -->

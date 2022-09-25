@@ -39,7 +39,8 @@
 		<ul class="friend-list" id="myList">
 			<c:forEach items="${memberList}" var="member">
 				<li class="friend-item" data-value="${member.mb_num}">
-					<a class="friend-link" href="#">
+					<a class="friend-link" href="<c:if test="${user == null or user.mb_num != member.mb_num}"><c:url value="/log/friendlog/${member.mb_num}"></c:url></c:if>
+						<c:if test="${user.mb_num == member.mb_num}"><c:url value="/log/mylog/${user.mb_num}"></c:url></c:if>">
 						<div class="thumb">
 							<img src="<c:url value="${member.mb_profile_url}"></c:url>">
 						</div>

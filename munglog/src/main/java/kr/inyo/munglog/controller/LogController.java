@@ -74,11 +74,14 @@ public class LogController {
 		if(user.getMb_num() != mb_num) {
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		}
+		//회원정보 가져옴
+		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
 		//강아지 정보 가져오기
 		ArrayList<DogVO> dList = logService.getDogs(user);
 		//사진이 등록된 년도 가져오기
 		ArrayList<String> regYearList = logService.getRegYearList(user);
 		
+		mv.addObject("member", member);
 		mv.addObject("regYearList", regYearList);
 		mv.addObject("dList", dList);
 		mv.setViewName("/log/mylog");
@@ -87,7 +90,7 @@ public class LogController {
 	
 	/* 나의 일지 상세보기 -------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/mylogDetail/{mb_num}", method = RequestMethod.GET)
-	public ModelAndView logMylogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
+	public ModelAndView logMylogDetailGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
 			int lg_num, Criteria cri, HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//회원이 아니거나 
@@ -103,6 +106,8 @@ public class LogController {
 		//criteria 재설정
 		cri.setPage(1);
 		cri.setPerPageNum(totalCount);
+		//회원정보 가져옴
+		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
 		//일지들 가져오기
 		ArrayList<LogVO> logList = logService.getLogList(cri);
 		//강아지 정보 가져오기
@@ -110,6 +115,7 @@ public class LogController {
 		//인덱스 찾기
 		int index = logService.findIndex(logList, lg_num);
 		
+		mv.addObject("member", member);
 		mv.addObject("index", index);
 		mv.addObject("dogList", dogList);
 		mv.addObject("logList", logList);
@@ -126,6 +132,44 @@ public class LogController {
 		mv.setViewName("/log/feed");
 		return mv;
 	}
+	
+	/* 멍멍피드 상세보기 -------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/feedDetail", method = RequestMethod.GET)
+	public ModelAndView logFeedDetailGet(ModelAndView mv, int lg_num, Criteria cri) {
+		ArrayList<MemberVO> memberList = memberService.getMemberList();
+		//일지 전체 개수 가져오기
+		int totalCount = logService.getLogTotalCount(cri);
+		//criteria 재설정
+		cri.setPage(1);
+		cri.setPerPageNum(totalCount);
+		//일지들 가져오기
+		ArrayList<LogVO> logList = logService.getLogList(cri);
+		//인덱스 찾기
+		int index = logService.findIndex(logList, lg_num);
+		
+		mv.addObject("memberList", memberList);
+		mv.addObject("index", index);
+		mv.addObject("logList", logList);
+		mv.setViewName("/log/feedDetail");
+		return mv;
+	}
+	
+	/* 멍멍친구의 일지 ---------------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/friendlog/{mb_num}", method = RequestMethod.GET)
+	public ModelAndView logFriendlogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num) {
+		MemberVO member = memberService.getMemberByMbnum(mb_num);
+		//강아지 정보 가져오기
+		ArrayList<DogVO> dList = logService.getDogs(member);
+		//사진이 등록된 년도 가져오기
+		ArrayList<String> regYearList = logService.getRegYearList(member);
+		
+		mv.addObject("member", member);
+		mv.addObject("regYearList", regYearList);
+		mv.addObject("dList", dList);
+		mv.setViewName("/log/friendLog");
+		return mv;
+	}
+		
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)

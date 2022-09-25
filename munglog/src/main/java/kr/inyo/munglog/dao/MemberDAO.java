@@ -36,6 +36,8 @@ public interface MemberDAO {
 	void updateMember(MemberVO member);
 	//회원 정보 리스트 가져오기
 	ArrayList<MemberVO> getMemberList();
+	//회원 번호로 회원 정보 가져오기
+	MemberVO selectMemberByMbnum(int mb_num);
 	
 	/* 포인트 ----------------------------------------------------------------------------------- */
 	//포인트 적립

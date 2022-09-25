@@ -34,4 +34,6 @@ public interface MemberService {
 	int findPw(MemberVO member);
 	//회원 리스트 가져오기
 	ArrayList<MemberVO> getMemberList();
+	//회원 번호로 정보 가져오기
+	MemberVO getMemberByMbnum(int mb_num);
 }
