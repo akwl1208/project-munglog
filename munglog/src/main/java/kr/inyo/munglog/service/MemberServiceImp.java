@@ -25,7 +25,7 @@ public class MemberServiceImp implements MemberService {
 	BCryptPasswordEncoder passwordEncoder;
 	
 /* 함수********************************************************************************************************************* */
-	//이메일 보내기-----------------------------------------------------------------------------
+	//이메일 보내기-----------------------------------------------------------------------------------------------------------
 	public boolean sendEmail(String title, String content, String receiver) {
 		try {
 		  MimeMessage message = mailSender.createMimeMessage();
@@ -43,7 +43,7 @@ public class MemberServiceImp implements MemberService {
 		}
 		return true;
 	}
-	//영문대소문자, 숫자를 조합한 랜덤한 문자 만들기-----------------------------------------------------
+	//영문대소문자, 숫자를 조합한 랜덤한 문자 만들기---------------------------------------------------------------------------------------
 	private String createRandom() {
 		String pattern = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String randomStr = "";
@@ -55,7 +55,7 @@ public class MemberServiceImp implements MemberService {
 	}
 	
 /* overide 메소드 *********************************************************************************************************** */
-	/* isMember : 이메일을 주고 DB에 회원 정보가 있는지 확인 ------------------------------*/
+	/* isMember : 이메일을 주고 DB에 회원 정보가 있는지 확인 ------------------------------------------------------------------------*/
 	@Override
 	public boolean isMember(MemberVO member) {
 		//member가 null이면  
@@ -72,7 +72,8 @@ public class MemberServiceImp implements MemberService {
 		//DB에 없으면 true 
 		return true;
 	}
-	/* sendEmail : 회원에게 이메일을 보냄 ----------------------------------------------*/
+	
+	/* sendEmail : 회원에게 이메일을 보냄 ---------------------------------------------------------------------------------------*/
 	@Override
 	public boolean sendVeriCode(MemberVO member) {
 		//member가 null이면
@@ -111,7 +112,8 @@ public class MemberServiceImp implements MemberService {
 			return false;
 		return true;
 	}
-	/* deleteVerification : 회원 메일을 주고 본인인증 삭제 ---------------------------------------------------*/
+	
+	/* deleteVerification : 회원 메일을 주고 본인인증 삭제 -------------------------------------------------------------------------*/
 	@Override
 	public boolean deleteVerification(MemberVO member) {
 		//member가 null이면
@@ -122,7 +124,8 @@ public class MemberServiceImp implements MemberService {
 			return false;
 		return memberDao.deleteVerification(member.getMb_email());
 	}
-	/* checkCode : 인증코드를 잘 작성했는지 확인 ------------------------------------------------------------------*/
+	
+	/* checkCode : 인증코드를 잘 작성했는지 확인 ----------------------------------------------------------------------------------*/
 	@Override
 	public boolean checkCode(VerificationVO veri) {
 		//veri가 null이면
@@ -145,7 +148,8 @@ public class MemberServiceImp implements MemberService {
 		}
 		return true;
 	}
-	/* countFailure : 실패횟수 증가 ------------------------------------------------------------------*/
+	
+	/* countFailure : 실패횟수 증가 -------------------------------------------------------------------------------------------*/
 	@Override
 	public void countFailure(VerificationVO veri) {
 		//veri가 null이면
@@ -165,7 +169,8 @@ public class MemberServiceImp implements MemberService {
 		//DB에 실패횟수 수정
 		memberDao.updateVerifiCation(veri);
 	}
-	/* getFailureCount : 실패횟수 가져옴 ------------------------------------------------------------------*/
+	
+	/* getFailureCount : 실패횟수 가져옴 --------------------------------------------------------------------------------------*/
 	@Override
 	public int getFailureCount(VerificationVO veri) {
 		//veri가 null이면
@@ -181,7 +186,8 @@ public class MemberServiceImp implements MemberService {
 			return -1;	
 		return dbVeri.getVr_failure_count();
 	}
-	/* signup : 회원정보를 DB에 추가 ------------------------------------------------------------------*/
+	
+	/* signup : 회원정보를 DB에 추가 ------------------------------------------------------------------------------------------*/
 	@Override
 	public int signup(MemberVO member) {
 		//member가 null이면
@@ -211,8 +217,12 @@ public class MemberServiceImp implements MemberService {
 		memberDao.insertMember(member);
 		//닉네임 설정
 		dbMember = memberDao.selectMember(member.getMb_email());
+		String profile = "/profile.png";
 		String nickname = "MUNG" + dbMember.getMb_num();
+		String greeting = "만나서 반갑습니다. " + nickname + "님 일지입니다.";
+		dbMember.setMb_profile(profile);
 		dbMember.setMb_nickname(nickname);
+		dbMember.setMb_greeting(greeting);
 		memberDao.updateProfile(dbMember);
 		//본인인증 정보 삭제
 		memberDao.deleteVerification(dbMember.getMb_email());
@@ -220,7 +230,8 @@ public class MemberServiceImp implements MemberService {
 		memberDao.insertPoint(dbMember.getMb_num(),"적립","회원가입",300);
 		return 1;
 	}
-	/* login : 이메일과 비밀번호가 일치하면 로그인 ------------------------------------------------------------------*/
+	
+	/* login : 이메일과 비밀번호가 일치하면 로그인 ----------------------------------------------------------------------------------*/
 	@Override
 	public boolean login(MemberVO member) {
 		//값이 없으면
@@ -243,7 +254,8 @@ public class MemberServiceImp implements MemberService {
 			return false;
 		return true;
 	}
-	/* getMember : 회원정보 가져옴 ------------------------------------------------------------------*/
+	
+	/* getMember : 회원정보 가져옴 --------------------------------------------------------------------------------------------*/
 	@Override
 	public MemberVO getMember(MemberVO member) {
 		//값이 없으면
@@ -259,7 +271,8 @@ public class MemberServiceImp implements MemberService {
 		dbMember.setSaveId(member.isSaveId());
 		return dbMember;
 	}
-	/* updateSession : 회원의 세션 정보 수정 ------------------------------------------------------------------*/
+	
+	/* updateSession : 회원의 세션 정보 수정 ------------------------------------------------------------------------------------*/
 	@Override
 	public void updateSession(MemberVO user) {
 		//값이 없으면
@@ -270,7 +283,8 @@ public class MemberServiceImp implements MemberService {
 		//세션 정보 수정
 		memberDao.updateSession(user);
 	}
-	/* getEmail : 세션아이디로 이메일 정보 가져오기 ------------------------------------------------------------------*/
+	
+	/* getEmail : 세션아이디로 이메일 정보 가져오기 ---------------------------------------------------------------------------------*/
 	@Override
 	public String getEmail(MemberVO member) {
 		//값이 없으면
@@ -284,6 +298,7 @@ public class MemberServiceImp implements MemberService {
 			return "";
 		return email;
 	}
+	
 	/* findEmail : 이름과 전화번호로 이메일 정보 가져오기(아이디 찾기) ------------------------------------------------------------------*/
 	@Override
 	public String findEmail(MemberVO member) {
@@ -300,7 +315,8 @@ public class MemberServiceImp implements MemberService {
 			return null;
 		return dbMember.getMb_email();
 	}
-	/* findPw : 비밀번호 재설정하기(비밀번호 찾기)  ------------------------------------------------------------------*/
+	
+	/* findPw : 비밀번호 재설정하기(비밀번호 찾기)  ---------------------------------------------------------------------------------*/
 	@Override
 	public int findPw(MemberVO member) {
 		//값이 없으면
@@ -339,7 +355,8 @@ public class MemberServiceImp implements MemberService {
 		memberDao.updateMember(dbMember);
 		return 1;
 	}
-	/* getMemberList : 회원 정보들 가져오기  ------------------------------------------------------------------*/
+	
+	/* getMemberList : 회원 정보들 가져오기  -----------------------------------------------------------------------------------*/
 	@Override
 	public ArrayList<MemberVO> getMemberList() {
 		return memberDao.getMemberList();
