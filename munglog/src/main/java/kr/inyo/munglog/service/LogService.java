@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
@@ -41,5 +42,9 @@ public interface LogService {
 	HeartVO getHeart(HeartVO heart, MemberVO user);
 	//일지 가져오기
 	LogVO getLog(LogVO log);
+	//친구 추가 삭제
+	int makeFriend(FriendVO friend, MemberVO user);
+	//친구 정보 가져오기
+	FriendVO getFriend(FriendVO friend, MemberVO user);
 
 }

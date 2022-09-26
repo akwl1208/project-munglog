@@ -78,6 +78,12 @@
 			where ht_mb_num = #{ht_mb_num} and date_format(ht_reg_date,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
 	</select>
 	
+	<!-- 친구 정보 가져오기 -->
+	<select id="selectFriend" resultType="kr.inyo.munglog.vo.FriendVO">
+		select * from friend where fr_mb_num = #{fr_mb_num} and fr_friend = #{fr_friend}
+	</select>
+
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">
@@ -97,7 +103,12 @@
 	
 	<!-- 하트 추가 -->
 	<insert id="insertHeart">
-		insert into heart(ht_lg_num, ht_mb_num) value(#{ht_lg_num}, #{ht_mb_num})
+		insert into heart(ht_lg_num, ht_mb_num) values(#{ht_lg_num}, #{ht_mb_num})
+	</insert>
+	
+	<!-- 친구 추가 -->
+	<insert id="insertFriend">
+		insert into friend(fr_mb_num, fr_friend) values(#{fr_mb_num}, #{fr_friend})
 	</insert>
 	
 	<!-- update *********************************************************** -->
@@ -126,8 +137,14 @@
 	</update>
 	
 	<!-- delete *********************************************************** -->
+	<!-- 피사체 삭제하기 -->
 	<delete id="deleteSubject">
 		delete from subject where sb_lg_num = #{lg_num}
+	</delete>
+	
+	<!-- 친구 삭제하기 -->
+	<delete id="deleteFriend">
+		delete from friend where fr_num = #{fr_num}
 	</delete>
 
 </mapper>

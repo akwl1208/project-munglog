@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>aside-강아지 정보 등록</title>
-<!-- css ************************************************************ -->
+<!-- css ************************************************************************************************************* -->
 <style>
 	.side-main .box-profile,
 	.side-main .box-friend{
@@ -31,7 +31,7 @@
 		margin-top: 10px; text-align: right; font-size: 12px; cursor: pointer;
 	}
 	.side-main .box-profile .box-follow:hover{color: #fb9600;}
-	.side-main .box-profile .box-follow .icon-follow.have{color: #fb9600;}
+	.side-main .box-profile .box-follow .icon-follow.select{color: #fb9600;}
 	/* box-friend -------------------------------------------------------------------------------- */
 	.side-main .box-friend .box-title{
 		text-align: center; font-weight: bold; font-size: 18px;
@@ -66,7 +66,7 @@
 	}
 </style>
 </head>
-<!-- html ************************************************************ -->
+<!-- html ************************************************************************************************************ -->
 <body>
 	<!-- box-profile -------------------------------------------------------- -->
 	<div class="box-profile " style="width: 260px;">
@@ -120,4 +120,74 @@
 		</ul>
 	</div>
 </body>
+<!-- script *********************************************************************************************************** -->
+<script>
+/* 변수 *********************************************************************************************************** */
+	let userNum = '${user.mb_num}';
+	let friendNum = '${member.mb_num}';
+	let friend = {
+		fr_mb_num : userNum,
+		fr_friend : friendNum
+	}
+	$(function(){
+/* 이벤트 *********************************************************************************************************** */	
+		$(document).ready(function(){
+			//친구인지 확인하고 화면 구성 ----------------------------------------------------------------------------------------
+			getFriend(friend);
+		})//
+		
+		//친구 맺기(box-follow) 클릭------------------------------------------------------------------------------------------
+		$(document).on('click', '.side-main .box-profile .box-follow', function(){
+			//로그인 안했으면 로그인 화면으로
+			if(userNum == ''){
+				if(confirm('친구를 맺으려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
+					location.href = '<%=request.getContextPath()%>/account/login';
+					return;
+				}
+			}
+			//본인에게 친구맺기 누르면
+			if(userNum == friendNum){
+				return;					
+			}
+			//친구 맺기/취소
+			makeFriend(friend);
+		})
+	})//
+/* 함수 *********************************************************************************************************** */
+	// makeFriend : 친구 추가/취소하기 -----------------------------------------------------------------------------------
+	function makeFriend(obj){
+		ajaxPost(false, obj, '/make/friend', function(data){
+			//결과에 따라 화면구성 다르게
+    	if(data.res == 1){
+    		$('.side-main .box-profile .box-follow .icon-follow').addClass('select'); //색
+    		$('.side-main .box-profile .box-follow .follow').hide(); //친구 맺기 감춤
+    		$('.side-main .box-profile .box-follow .unfollow').show(); //친구 맺기 취소 보임
+    	}
+    	else if(data.res == 0){
+    		$('.side-main .box-profile .box-follow .icon-follow').removeClass('select'); //색
+    		$('.side-main .box-profile .box-follow .follow').show(); //친구 맺기 보임
+    		$('.side-main .box-profile .box-follow .unfollow').hide(); //친구 맺기 취소 감춤
+    	}
+    	else if(data.res == -1)
+    		alert('로그인하거나 다시 시도해주세요.')
+		});
+	}//
+	
+	// getFriend : 친구인지 확인 -----------------------------------------------------------------------------------
+	function getFriend(obj){
+		ajaxPost(false, obj, '/get/friend', function(data){
+			//결과에 따라 화면구성 다르게
+    	if(data.friend != null){
+    		$('.side-main .box-profile .box-follow .icon-follow').addClass('select'); //색
+    		$('.side-main .box-profile .box-follow .follow').hide(); //친구 맺기 감춤
+    		$('.side-main .box-profile .box-follow .unfollow').show(); //친구 맺기 취소 보임
+    	}
+    	else{
+    		$('.side-main .box-profile .box-follow .icon-follow').removeClass('select'); //색
+    		$('.side-main .box-profile .box-follow .follow').show(); //친구 맺기 보임
+    		$('.side-main .box-profile .box-follow .unfollow').hide(); //친구 맺기 취소 감춤
+    	}
+		});
+	}//
+</script>
 </html>

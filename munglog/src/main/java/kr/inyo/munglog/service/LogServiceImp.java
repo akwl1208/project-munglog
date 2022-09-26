@@ -13,6 +13,7 @@ import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
@@ -311,7 +312,7 @@ public class LogServiceImp implements LogService {
 				return 1;
 			}
 			//클릭한 적 있으면
-			int res = 1;
+			int res = -1;
 			//하트를 누른거면 취소함
 			if(dbHeart.getHt_state().equals("1")) {
 				dbHeart.setHt_state("0");
@@ -320,6 +321,7 @@ public class LogServiceImp implements LogService {
 			//하트를 취소했다가 다시 하트를 누른거면
 			else if(dbHeart.getHt_state().equals("0")) {
 				dbHeart.setHt_state("1");
+				res = 1;
 			}
 			logDao.updateHeart(dbHeart);
 			return res;
@@ -351,6 +353,44 @@ public class LogServiceImp implements LogService {
 		if(log == null || log.getLg_num() < 1)
 			return null;
 		return logDao.selectLog(log.getLg_num());
+	}
+
+	/*makeFriend : 친구 추가 삭제 ------------------------------------------------------------------------------------------*/
+	@Override
+	public int makeFriend(FriendVO friend, MemberVO user) {
+		//값이 없으면
+		if(friend == null || user == null)
+			return -1;
+		//보낸 값과 회원이 다르면
+		if(friend.getFr_mb_num() != user.getMb_num())
+			friend.setFr_mb_num(user.getMb_num());
+		//친구 정보 가져오기
+		FriendVO dbFriend = logDao.selectFriend(friend);
+		int res;
+		//친구 정보가 없으면 친구 추가
+		if(dbFriend == null) {
+			logDao.insertFriend(friend);
+			res = 1;
+		}
+		//친구 정보가 있으면 친구 삭제
+		else {
+			logDao.deleteFriend(dbFriend);
+			res = 0;
+		}
+		return res;
+	}
+
+	/*getFriend : 친구 정보 가져오기 ------------------------------------------------------------------------------------------*/
+	@Override
+	public FriendVO getFriend(FriendVO friend, MemberVO user) {
+		//값이 없으면
+		if(friend == null || user == null)
+			return null;
+		//보낸 값과 회원이 다르면
+		if(friend.getFr_mb_num() != user.getMb_num())
+			friend.setFr_mb_num(user.getMb_num());
+		//친구 정보 가져오기
+		return logDao.selectFriend(friend);
 	}
 
 }

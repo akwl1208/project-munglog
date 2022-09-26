@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.SubjectVO;
@@ -55,4 +56,12 @@ public interface LogDAO {
 	void updateHeart(HeartVO dbHeart);
 	//오늘 누른 하트수 가져오기
 	int selectTodayHeart(int ht_mb_num);
+	
+	/* 친구 ----------------------------------------------------------------------------------- */
+	//친구 정보 가져오기
+	FriendVO selectFriend(FriendVO friend);
+	//친구 추가하기
+	void insertFriend(FriendVO friend);
+	//친구 삭제하기
+	void deleteFriend(FriendVO dbFriend);
 }

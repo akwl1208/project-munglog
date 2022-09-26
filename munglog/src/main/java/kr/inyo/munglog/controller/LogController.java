@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -26,6 +25,7 @@ import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
@@ -334,6 +334,30 @@ public class LogController {
 		LogVO dbLog= logService.getLog(log);
 		
 		map.put("log", dbLog);
+		return map;
+	}
+	
+	/* 친구 맺기/삭제 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/make/friend", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> makeFriend(@RequestBody FriendVO friend, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");	
+		int res = logService.makeFriend(friend, user);
+		
+		map.put("res", res);
+		return map;
+	}
+	
+	/* 친구 정보 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/friend", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getFriend(@RequestBody FriendVO friend, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");	
+		FriendVO dbFriend = logService.getFriend(friend, user);
+		
+		map.put("friend", dbFriend);
 		return map;
 	}
 }
