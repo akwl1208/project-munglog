@@ -169,7 +169,29 @@ public class LogController {
 		mv.setViewName("/log/friendLog");
 		return mv;
 	}
+	
+	/* 멍멍친구 일지 상세보기 -------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/friendlogDetail/{mb_num}", method = RequestMethod.GET)
+	public ModelAndView logfriendlogDetailGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
+			int lg_num, Criteria cri) {
+		//일지 전체 개수 가져오기
+		int totalCount = logService.getLogTotalCount(cri);
+		//criteria 재설정
+		cri.setPage(1);
+		cri.setPerPageNum(totalCount);
+		//회원정보 가져옴
+		MemberVO member = memberService.getMemberByMbnum(mb_num);
+		//일지들 가져오기
+		ArrayList<LogVO> logList = logService.getLogList(cri);
+		//인덱스 찾기
+		int index = logService.findIndex(logList, lg_num);
 		
+		mv.addObject("member", member);
+		mv.addObject("index", index);
+		mv.addObject("logList", logList);
+		mv.setViewName("/log/friendLogDetail");
+		return mv;
+	}	
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)

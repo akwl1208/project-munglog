@@ -221,7 +221,7 @@
 			for(log of data.lList){
 				let criUrl = makeCriUrl(log.lg_num, obj);
 				html += '<li class="log-item">';
-				html +=		'<a href="'+contextPath+'/log/mylogDetail/'+mb_num+criUrl+'" class="log-link"'; 
+				html +=		'<a href="'+contextPath+'/log/friendlogDetail/'+mb_num+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
 				html += '</li>';
 			}
