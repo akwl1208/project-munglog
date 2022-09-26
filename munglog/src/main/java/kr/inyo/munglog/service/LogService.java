@@ -46,5 +46,7 @@ public interface LogService {
 	int makeFriend(FriendVO friend, MemberVO user);
 	//친구 정보 가져오기
 	FriendVO getFriend(FriendVO friend, MemberVO user);
+	//친구들 리스트 가져오기(프로필)
+	ArrayList<MemberVO> getFriendList(FriendVO friend);
 
 }

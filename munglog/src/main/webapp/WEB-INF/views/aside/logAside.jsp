@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>aside-강아지 정보 등록</title>
+<title>aside-일지</title>
 <!-- css ************************************************************************************************************* -->
 <style>
 	.side-main .box-profile,
@@ -27,10 +27,12 @@
 		margin-top: 20px; border-radius: 5px; background-color: #fff7ed;
 		font-size: 12px; padding: 10px;
 	}
-	.side-main .box-profile .box-follow{
+	.side-main .box-profile .box-follow,
+	.side-main .box-profile .box-edit{
 		margin-top: 10px; text-align: right; font-size: 12px; cursor: pointer;
 	}
-	.side-main .box-profile .box-follow:hover{color: #fb9600;}
+	.side-main .box-profile .box-follow:hover,
+	.side-main .box-profile .box-edit:hover .btn-edit{color: #fb9600;}
 	.side-main .box-profile .box-follow .icon-follow.select{color: #fb9600;}
 	/* box-friend -------------------------------------------------------------------------------- */
 	.side-main .box-friend .box-title{
@@ -41,29 +43,27 @@
 		margin-right: 6px; color: #fb9600;
 	}
 	.side-main .box-friend .friend-list{
-		margin: 0px; height: 180px;
+		margin: 0px; max-height: 180px;
 		overflow-y: scroll; 
 	}
 	.side-main .box-friend .friend-list .friend-item{
 		background-color: #fff7ed; margin-bottom: 10px;
-		padding: 5px 0 5px 5px;
+		padding: 5px 0 5px 5px; height: 50px;
 	}
-	.side-main .box-friend .friend-item .thumb{float: left;}
+	.side-main .box-friend .friend-list .friend-link{
+	}
+	.side-main .box-friend .friend-item .thumb{float:left;}
 	.side-main .box-friend .friend-item .thumb img{
 		border-radius: 50px; width: 40px; height: 40px;
 	}
 	.side-main .box-friend .friend-item .nickname{
-		float: left; width: 150px;
-		line-height: 40px; padding-left: 10px;
+		float:left; width: 150px; line-height: 40px; padding-left: 10px;
 		font-weight: bold; overflow: hidden; text-overflow: ellipsis;
 	}
 	.side-main .box-friend .friend-item .btn-delete{
-		float: left; width: 20px; line-height: 40px;
-		text-align: center;
+		width: 20px; height: 40px; float: right; padding: 12px 5px;
 	}
-	.side-main .box-friend .friend-item .fa-xmark:hover{
-		color: #fb9600;
-	}
+	.side-main .box-friend .friend-item .btn-delete:hover{color: #fb9600;}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
@@ -79,6 +79,7 @@
 		<div class="box-greeting">
 			<span>${member.mb_greeting}</span>
 		</div>
+		<!-- box-follow(친구 맺기) -------------------------------------------------------- -->
 		<c:if test="${user == null or user.mb_num != member.mb_num}">
 			<div class="box-follow">
 				<div class="btn-follow">
@@ -86,6 +87,12 @@
 					<span class="follow">친구 맺기</span>
 					<span class="unfollow" style="display:none;">친구 맺기 취소</span>
 				</div>
+			</div>
+		</c:if>
+		<!-- box-(프로필 수정) -------------------------------------------------------- -->
+		<c:if test="${user != null && (user.mb_num == member.mb_num)}">
+			<div class="box-edit">
+					<a class="btn-edit" href="#"><i class="fa-solid fa-user-pen mr-1"></i>프로필 수정</a>
 			</div>
 		</c:if>
 	</div>
@@ -96,28 +103,7 @@
 			<a href="#"><i class="fa-solid fa-dog mr-1"></i><span>멍멍친구들</span></a>
 		</div>
 		<!-- 친구목록 -------------------------------------------------------- -->
-		<ul class="friend-list">
-			<li class="friend-item clearfix">
-				<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
-				<a href="#" class="nickname">MUNG2MUNG2MUNG2</a>
-				<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
-			</li>
-			<li class="friend-item clearfix">
-				<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
-				<a href="#" class="nickname">MUNG2</a>
-				<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
-			</li>
-			<li class="friend-item clearfix">
-				<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
-				<a href="#" class="nickname">MUNG2</a>
-				<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
-			</li>
-			<li class="friend-item clearfix">
-				<a href="#" class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></a>
-				<a href="#" class="nickname">MUNG2</a>
-				<a href="#" class="btn-delete"><i class="fa-solid fa-xmark"></i></a>
-			</li>
-		</ul>
+		<ul class="friend-list"></ul>
 	</div>
 </body>
 <!-- script *********************************************************************************************************** -->
@@ -134,6 +120,8 @@
 		$(document).ready(function(){
 			//친구인지 확인하고 화면 구성 ----------------------------------------------------------------------------------------
 			getFriend(friend);
+			//친구 목록 화면 구성
+			getFriendList(friend);
 		})//
 		
 		//친구 맺기(box-follow) 클릭------------------------------------------------------------------------------------------
@@ -187,6 +175,25 @@
     		$('.side-main .box-profile .box-follow .follow').show(); //친구 맺기 보임
     		$('.side-main .box-profile .box-follow .unfollow').hide(); //친구 맺기 취소 감춤
     	}
+		});
+	}//
+	
+	// getFriendList : 친구 리스트 가져오기 -----------------------------------------------------------------------------------
+	function getFriendList(obj){
+		ajaxPost(false, obj, '/get/friendList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			for(friend of data.friendList){
+			html +=	'<li class="friend-item clearfix">';
+			html +=		'<a href="'+contextPath+'/log/friendlog/'+friend.mb_num+'" class="friend-link">';
+			html +=			'<span class="thumb"><img src="'+contextPath+friend.mb_profile_url+'"></span>';
+			html +=			'<span class="nickname">'+friend.mb_nickname+'</span>';
+			html +=		'</a>';
+			if(userNum == friendNum)
+				html +=	'<div class="btn-delete"><i class="fa-solid fa-xmark"></i></div>';
+			html +=	'</li>';
+			}
+			$('.side-main .box-friend .friend-list').append(html);
 		});
 	}//
 </script>

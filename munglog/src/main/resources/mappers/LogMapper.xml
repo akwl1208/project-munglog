@@ -82,7 +82,13 @@
 	<select id="selectFriend" resultType="kr.inyo.munglog.vo.FriendVO">
 		select * from friend where fr_mb_num = #{fr_mb_num} and fr_friend = #{fr_friend}
 	</select>
-
+	
+	<!-- 친구 리스트 가져오기 -->
+	<select id="selectFriendList" resultType="kr.inyo.munglog.vo.MemberVO">
+		select * from friend
+			join member on friend.fr_friend = member.mb_num
+	    where fr_mb_num = #{fr_friend};
+	</select>
 	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->

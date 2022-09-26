@@ -360,4 +360,15 @@ public class LogController {
 		map.put("friend", dbFriend);
 		return map;
 	}
+	
+	/* 친구 정보 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/friendList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getFriend(@RequestBody FriendVO friend) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		ArrayList<MemberVO> friendList = logService.getFriendList(friend);
+		
+		map.put("friendList", friendList);
+		return map;
+	}
 }

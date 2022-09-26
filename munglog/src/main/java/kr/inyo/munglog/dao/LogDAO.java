@@ -9,6 +9,7 @@ import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
+import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.SubjectVO;
 
 public interface LogDAO {
@@ -64,4 +65,6 @@ public interface LogDAO {
 	void insertFriend(FriendVO friend);
 	//친구 삭제하기
 	void deleteFriend(FriendVO dbFriend);
+	//친구 리스트 가져오기
+	ArrayList<MemberVO> selectFriendList(FriendVO friend);
 }

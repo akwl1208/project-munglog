@@ -361,6 +361,8 @@ public class LogServiceImp implements LogService {
 		//값이 없으면
 		if(friend == null || user == null)
 			return -1;
+		if(friend.getFr_mb_num() < 1 || friend.getFr_friend() < 1 || user.getMb_num() < 1)
+			return -1;
 		//보낸 값과 회원이 다르면
 		if(friend.getFr_mb_num() != user.getMb_num())
 			friend.setFr_mb_num(user.getMb_num());
@@ -386,11 +388,23 @@ public class LogServiceImp implements LogService {
 		//값이 없으면
 		if(friend == null || user == null)
 			return null;
+		if(friend.getFr_friend() < 1 || user.getMb_num() < 1)
+			return null;
 		//보낸 값과 회원이 다르면
 		if(friend.getFr_mb_num() != user.getMb_num())
 			friend.setFr_mb_num(user.getMb_num());
 		//친구 정보 가져오기
 		return logDao.selectFriend(friend);
+	}
+
+	/*getFriendList : 친구 리스트 가져오기 ------------------------------------------------------------------------------------------*/
+	@Override
+	public ArrayList<MemberVO> getFriendList(FriendVO friend) {
+		//값이 없으면
+		if(friend == null || friend.getFr_friend() < 1)
+			return null;
+		//친구 리스트 가져오기
+		return logDao.selectFriendList(friend);
 	}
 
 }
