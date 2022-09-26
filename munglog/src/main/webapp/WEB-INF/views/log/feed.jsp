@@ -117,7 +117,22 @@
 				getLogList(obj);
       }
 		})//
-	})
+		
+		//사진 클릭했을 때 -----------------------------------------------------------------------------------------
+		$(document).on('click', '.main .box-content .log-list .log-link', function(e){
+			let lg_num = $(this).parent().data('lgnum');
+			let obj = {lg_num}
+			//조회수 증가
+			//볼 수 없는 일지를 선택한 경우 조회수 증가 안하고
+			if(!countViews(obj)){
+				alert('볼 수 없는 일지입니다.');
+				e.preventDefault();
+				location.href = '<%=request.getContextPath()%>/log/feed';
+				return;
+			}
+		})
+	})//
+	
 /* 함수 *********************************************************************************************************** */
 	// getLogList -----------------------------------------------------------------------------------------------------
 	function getLogList(obj){
@@ -126,7 +141,7 @@
 			let contextPath = '<%=request.getContextPath()%>';
 			for(log of data.lList){
 				let criUrl = makeCriUrl(log.lg_num, obj, log.lg_mb_num);
-				html += '<li class="log-item" data-lgNum="'+log.lg_num+'" data-mbNum="'+log.lg_mb_num+'">';
+				html += '<li class="log-item" data-lgNum="'+log.lg_num+'">';
 				html +=		'<a href="'+contextPath+'/log/feedDetail'+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
 				html += '</li>';
@@ -134,6 +149,7 @@
 			$('.main .box-content .log-list').append(html);
 		});
 	}//
+	
 	// makeCriUrl -----------------------------------------------------------------------------------------------------
 	function makeCriUrl(lg_num, obj){
 		let lgNumUrl = '?lg_num=' + lg_num;
@@ -143,5 +159,14 @@
 		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;
 		return regYearUrl;
 	}
+	
+	// countViews -----------------------------------------------------------------------------------------------------
+	function countViews(obj){
+		let res = true;
+		ajaxPost(false, obj, '/count/views', function(data){
+			res = data.res;
+		});
+		return res;
+	}//
 </script> 
 </html>

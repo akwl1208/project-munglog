@@ -32,5 +32,7 @@ public interface LogService {
 	int findIndex(ArrayList<LogVO> logList, int lg_num);
 	//일지 삭제
 	boolean deleteLog(LogVO log, MemberVO user);
+	//일지 조회수 증가
+	boolean countViews(LogVO log);
 
 }

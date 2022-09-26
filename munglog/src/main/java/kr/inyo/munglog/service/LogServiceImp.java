@@ -267,4 +267,23 @@ public class LogServiceImp implements LogService {
 		return true;
 	}
 
+	/* countViews: 조회수 증가 --------------------------------------------------------------------------------------------------*/
+	@Override
+	public boolean countViews(LogVO log) {
+		//값이 없는 경우
+		if(log == null || log.getLg_num() < 1)
+			return false;
+		//일지 가져오기
+		LogVO dbLog = logDao.selectLog(log.getLg_num());
+		if(dbLog == null)
+			return false;
+		//삭제되거나 신고당한 일지
+		if(dbLog.getLg_del().equals("1") || dbLog.getLg_report().equals("1"))
+			return false;
+		//조회수 1 증가
+		dbLog.setLg_views(dbLog.getLg_views() + 1);
+		logDao.updateLog(dbLog);
+		return true;
+	}
+
 }

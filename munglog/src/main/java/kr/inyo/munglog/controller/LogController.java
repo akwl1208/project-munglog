@@ -244,4 +244,15 @@ public class LogController {
 		map.put("dogList", dogList);
 		return map;
 	}
+	
+	/* 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/count/views", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> countViews(@RequestBody LogVO log) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		boolean res = logService.countViews(log);
+	
+		map.put("res", res);
+		return map;
+	}
 }
