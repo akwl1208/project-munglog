@@ -3,6 +3,7 @@ package kr.inyo.munglog.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -57,7 +58,11 @@ public class HomeController {
 	
 	/* 로그인 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/account/login", method = RequestMethod.GET)
-	public ModelAndView loginGet(ModelAndView mv, MemberVO member) {	
+	public ModelAndView loginGet(ModelAndView mv, HttpServletRequest request) {	
+		String url = request.getHeader("Referer");
+		if(url != null && !url.contains("/account/login"))
+			request.getSession().setAttribute("prevURL", url);
+		
 		mv.setViewName("/account/login");
 		return mv;
 	}

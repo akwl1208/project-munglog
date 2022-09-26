@@ -51,10 +51,15 @@
 	</beans:bean>
 	
 	<!-- interceptor -->
+	<beans:bean id="redirectInterceptor" class="kr.inyo.munglog.interceptor.RedirectInterceptor"></beans:bean>
 	<beans:bean id="guestInterceptor" class="kr.inyo.munglog.interceptor.GuestInterceptor"></beans:bean>
 	<beans:bean id="memberInterceptor" class="kr.inyo.munglog.interceptor.MemberInterceptor"></beans:bean>
 	<beans:bean id="loginInterceptor" class="kr.inyo.munglog.interceptor.LoginInterceptor"></beans:bean>
 	<interceptors>
+		<interceptor>
+	    <mapping path="/**"/>
+	    <beans:ref bean="redirectInterceptor"/>
+    </interceptor>
 	  <interceptor>
 	    <mapping path="/account/signup"/>
 	    <mapping path="/account/login"/>
