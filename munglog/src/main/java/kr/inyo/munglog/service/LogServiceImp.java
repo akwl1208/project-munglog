@@ -302,6 +302,12 @@ public class LogServiceImp implements LogService {
 			//클릭한 적 없으면 db에 추가
 			if(dbHeart == null) {
 				logDao.insertHeart(heart);
+				//포인트 적립
+				//오늘 누른 하트 수 가져오기
+				int todayHeart = logDao.selectTodayHeart(user.getMb_num());
+				//포인트 지급은 하루에 최대 10번만 가능
+				if(todayHeart < 10)
+					memberDao.insertPoint(user.getMb_num(),"적립","일지 하트누르기",10);					
 				return 1;
 			}
 			//클릭한 적 있으면

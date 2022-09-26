@@ -53,4 +53,6 @@ public interface LogDAO {
 	void insertHeart(HeartVO heart);
 	//하트 상태 수정하기
 	void updateHeart(HeartVO dbHeart);
+	//오늘 누른 하트수 가져오기
+	int selectTodayHeart(int ht_mb_num);
 }
