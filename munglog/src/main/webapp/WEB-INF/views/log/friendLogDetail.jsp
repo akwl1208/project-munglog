@@ -25,6 +25,8 @@
 	.main .box-content .swiper-slide .box-nav{position: relative;}
 	.main .box-content .swiper-slide .box-nav .list-nav{text-align: center;}
 	.main .box-content .swiper-slide .box-nav .item-nav{font-weight: bold;}
+	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart:hover{cursor:pointer;color: #fb9600;}
+	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart.select{color: #fb9600;}
 	.main .box-content .swiper-slide .item-nav .auto-start:hover,
 	.main .box-content .swiper-slide .item-nav .auto-stop:hover{color: #ffa31c; cursor:pointer;}
 	.main .box-content .swiper-slide .item-nav .auto-start.select,
@@ -64,7 +66,7 @@
 						<div class="swiper-slide">
 							<!-- box-nav -------------------------------------------------------------------------------------------- -->
 							<div class="box-nav">
-								<ul class="list-nav list-group list-group-horizontal">
+								<ul class="list-nav list-group list-group-horizontal" data-lgmbnum="${log.lg_mb_num}" data-lgnum="${log.lg_num}">
 									<!-- 등록일 ------------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
 										<span class="lg_reg_date">${log.lg_reg_date_time}</span> 
@@ -74,8 +76,8 @@
 										<i class="fa-regular fa-eye mr-3"></i><span class="lg_views">${log.lg_views}</span>
 									</li>
 									<!-- 하트수 ------------------------------------------------------------------------------------- -->
-									<li class="item-nav list-group-item border-0 flex-fill">
-										<i class="fa-regular fa-face-grin-hearts mr-3"></i><span class="heart">0</span>
+									<li class="box-heart item-nav list-group-item border-0 flex-fill">
+										<i class="btn-heart fa-solid fa-heart mr-3"></i><span class="heart">${log.lg_heart}</span>
 									</li>
 									<!-- 슬라이드쇼 ----------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
@@ -110,8 +112,50 @@
 <script>
 	/* 변수 *********************************************************************************************************** */
 		let slideIndex = '${index}';
+		let userMbNum = '${user.mb_num}';
 	/* 이벤트 *********************************************************************************************************** */
-		$(function(){		
+		$(function(){	
+			$(document).ready(function(){
+				let ul = $('.main .box-nav .list-nav');
+				let size = ul.length;
+				for(let i = 0; i < size; i++){
+					let lg_num = ul.eq(i).data('lgnum');
+					//하트 화면 구성 --------------------------------------------------------------------------------------------------
+					let obj = {
+						ht_lg_num : lg_num,
+						ht_mb_num : userMbNum
+					}
+					getHeart(obj, i);
+				}
+			})//
+			
+			//하트 버튼 클릭(btn-heart) 클릭-----------------------------------------------------------------------------------------
+			$(document).on('click', '.main .box-content .box-heart .btn-heart', function(){
+				//로그인 안했으면 로그인 화면으로
+				if(userMbNum == ''){
+					if(confirm('하트를 누르려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
+						location.href = '<%=request.getContextPath()%>/account/login';
+						return;
+					}
+				}
+				//일지를 쓴 회원이랑 하트를 누른 회원이 같으면
+				let lg_mb_num = $(this).parents('.list-nav').data('lgmbnum');
+				if(lg_mb_num == userMbNum){
+					return;					
+				}
+				//일지 번호 가져오기
+				let lg_num = $(this).parents('.list-nav').data('lgnum');
+				let obj = {
+					ht_lg_num : lg_num,
+					ht_mb_num : userMbNum				
+				}
+				//아이콘 색깔 수정
+				clickHeart(obj, this);
+				//하트 개수 수정
+				obj = {lg_num}
+				getTotalHeart(obj, this);
+			})//
+			
 			//이미지 영역 클릭(box-img) 클릭-----------------------------------------------------------------------------------------
 			$('.main .box-content .box-img').click(function(){
 				$('.auto-stop').click();
@@ -170,7 +214,42 @@
 		})//
 
 /* 함수 *********************************************************************************************************** */
-	//  ------------------------------------------------------------------------------------------------
+		// clickHeart : 하트 누르기 -----------------------------------------------------------------------------------
+	function clickHeart(obj,selector){
+		ajaxPost(false, obj, '/click/heart', function(data){
+			console.log(data.res)
+			//하트 상태에 따라 하트 색깔 다르게
+    	if(data.res == 1)
+    		$(selector).addClass('select')
+    	else if(data.res == 0)
+    		$(selector).removeClass('select');
+    	else if(data.res == -1)
+    		alert('로그인하거나 다시 시도해주세요.')
+		});
+	}//
+	
+	// getHeart : 하트 정보 가져오기 -----------------------------------------------------------------------------------
+	function getHeart(obj, index){
+		ajaxPost(false, obj, '/get/heart', function(data){
+			//없거나 상태가 0이면
+			if(data.heart == null || (data.heart != null && data.heart.ht_state == '0'))
+				$('.main .box-nav .list-nav').eq(index).find('.btn-heart').removeClass('select');	
+			//해당 일지에 좋아요 눌렀으면
+			if(data.heart != null && data.heart.ht_state == '1')
+				$('.main .box-nav .list-nav').eq(index).find('.btn-heart').addClass('select');
+		});
+	}//
+	
+	// getTotalHeart : 하트개수 가져오기 -----------------------------------------------------------------------------------
+	function getTotalHeart(obj, selector){
+		ajaxPost(false, obj, '/get/totalHeart', function(data){
+			$(selector).next().text('');
+			if(data.log == null)
+				$(selector).next().text('0');
+			else
+				$(selector).next().text(data.log.lg_heart)
+		});
+	}//
 
 </script> 
 </html>
