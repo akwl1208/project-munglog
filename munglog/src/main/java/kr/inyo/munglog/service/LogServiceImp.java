@@ -13,6 +13,7 @@ import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.SubjectVO;
@@ -284,6 +285,66 @@ public class LogServiceImp implements LogService {
 		dbLog.setLg_views(dbLog.getLg_views() + 1);
 		logDao.updateLog(dbLog);
 		return true;
+	}
+
+	/* getHeartState: 하트 상태 반환 ------------------------------------------------------------------------------------------*/
+	@Override
+	public int getHeartState(HeartVO heart, MemberVO user) {
+		//값이 없으면
+		if(heart == null || user == null)
+			return -1;
+		//값으로 온 mb_num이랑 user가 다르면
+		if(user.getMb_num() != heart.getHt_mb_num())
+			heart.setHt_mb_num(user.getMb_num());
+		//하트 상태 가져오기
+		HeartVO dbHeart = logDao.selectHeart(heart);
+		try {
+			//클릭한 적 없으면 db에 추가
+			if(dbHeart == null) {
+				logDao.insertHeart(heart);
+				return 1;
+			}
+			//클릭한 적 있으면
+			int res = 1;
+			//하트를 누른거면 취소함
+			if(dbHeart.getHt_state().equals("1")) {
+				dbHeart.setHt_state("0");
+				res = 0;
+			}
+			//하트를 취소했다가 다시 하트를 누른거면
+			else if(dbHeart.getHt_state().equals("0")) {
+				dbHeart.setHt_state("1");
+			}
+			logDao.updateHeart(dbHeart);
+			return res;
+		} catch (Exception e) {
+			e.getStackTrace();
+		} finally {
+			logDao.updateLogHeart(heart.getHt_lg_num());
+		}
+		return -1;
+	}
+
+	/* getHeart: 하트 가져오기 ------------------------------------------------------------------------------------------*/
+	@Override
+	public HeartVO getHeart(HeartVO heart, MemberVO user) {
+		//값이 없으면
+		if(user == null || heart == null)
+			return null;
+		//보낸 값과 회원이 다르면
+		if(user.getMb_num() != heart.getHt_mb_num())
+			heart.setHt_mb_num(user.getMb_num());;
+		
+		return logDao.selectHeart(heart);
+	}
+
+	/* getLog: 일지 가져오기 ------------------------------------------------------------------------------------------*/
+	@Override
+	public LogVO getLog(LogVO log) {
+		//값이 없으면 
+		if(log == null || log.getLg_num() < 1)
+			return null;
+		return logDao.selectLog(log.getLg_num());
 	}
 
 }

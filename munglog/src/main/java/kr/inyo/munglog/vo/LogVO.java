@@ -14,6 +14,7 @@ public class LogVO {
 	private int lg_views;
 	private String lg_report;
 	private String lg_del;
+	private int lg_heart;
 	
 	public String getLg_reg_date_str() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

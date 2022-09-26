@@ -25,6 +25,7 @@ import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.SubjectVO;
@@ -205,7 +206,7 @@ public class LogController {
 		return map;
 	}
 	
-	/* 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
+	/* 일지 리스트 가져오기 --------------------------------------------------------------------------------------------------------- */
 	@RequestMapping(value = "/get/logList", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> getLogList(@RequestBody Criteria cri) {
@@ -256,7 +257,7 @@ public class LogController {
 		return map;
 	}
 	
-	/* 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
+	/* 강아지 리스트 가져오기 --------------------------------------------------------------------------------------------------------- */
 	@RequestMapping(value = "/get/dogList", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> getDogList(@RequestBody MemberVO member) {
@@ -267,7 +268,7 @@ public class LogController {
 		return map;
 	}
 	
-	/* 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
+	/* 일지 조회수 가져오기 --------------------------------------------------------------------------------------------------------- */
 	@RequestMapping(value = "/count/views", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> countViews(@RequestBody LogVO log) {
@@ -286,6 +287,41 @@ public class LogController {
 		MemberVO profile = memberService.getMemberByMbnum(log.getLg_mb_num());
 	
 		map.put("profile", profile);
+		return map;
+	}
+	
+	/* 하트 클릭 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/click/heart", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> clickHeart(@RequestBody HeartVO heart, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");	
+		int res = logService.getHeartState(heart, user);
+		
+		map.put("res", res);
+		return map;
+	}
+	
+	/* 하트 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/heart", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getHeart(@RequestBody HeartVO heart, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");	
+		HeartVO dbHeart= logService.getHeart(heart, user);
+		
+		map.put("heart", dbHeart);
+		return map;
+	}
+	
+	/* 하트 개수 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/totalHeart", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getTotalHeart(@RequestBody LogVO log) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		LogVO dbLog= logService.getLog(log);
+		
+		map.put("log", dbLog);
 		return map;
 	}
 }

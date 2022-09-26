@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.DogVO;
+import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.SubjectVO;
 
@@ -34,6 +35,8 @@ public interface LogDAO {
 	void updateLog(LogVO dbLog);
 	//회원번호 주고 당일 일지리스트 가져오기
 	ArrayList<LogVO> selectTodayLogListByMbNum(int mb_num);
+	//일지 하트수 수정하기
+	void updateLogHeart(int lg_num);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
@@ -43,4 +46,11 @@ public interface LogDAO {
 	//피사체 삭제
 	void deleteSubject(int lg_num);
 	
+	/* 하트 ----------------------------------------------------------------------------------- */
+	//하트 가져오기
+	HeartVO selectHeart(HeartVO heart);
+	//하트 추가하기
+	void insertHeart(HeartVO heart);
+	//하트 상태 수정하기
+	void updateHeart(HeartVO dbHeart);
 }

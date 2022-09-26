@@ -67,6 +67,11 @@
 			where lg_mb_num = #{mb_num} and date_format(lg_reg_date,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
 	</select>
 	
+	<!-- 하트 가져오기 -->
+	<select id="selectHeart" resultType="kr.inyo.munglog.vo.HeartVO">
+		select * from heart where ht_lg_num = #{ht_lg_num} and ht_mb_num = #{ht_mb_num}
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">
@@ -84,13 +89,33 @@
 		insert into subject(sb_lg_num, sb_dg_num) values(#{sb_lg_num}, #{sb_dg_num})
 	</insert>
 	
+	<!-- 하트 추가 -->
+	<insert id="insertHeart">
+		insert into heart(ht_lg_num, ht_mb_num) value(#{ht_lg_num}, #{ht_mb_num})
+	</insert>
+	
 	<!-- update *********************************************************** -->
+	<!-- 일지 수정하기 -->
 	<update id="updateLog">
 		update log 
 			set lg_image = #{lg_image},
 				lg_views = #{lg_views},
 				lg_report = #{lg_report},
 				lg_del = #{lg_del}
+			where lg_num = #{lg_num}
+	</update>
+	
+	<!-- 하트 상태 수정하기 -->
+	<update id="updateHeart">
+		update heart
+			set ht_state = #{ht_state}
+			where ht_num = #{ht_num}
+	</update>
+	
+	<!-- 일지 하트수 수정하기 -->
+	<update id="updateLogHeart">
+		update log
+			set lg_heart = (select count(*) from heart where ht_lg_num = #{lg_num} and ht_state = "1")
 			where lg_num = #{lg_num}
 	</update>
 	

@@ -31,6 +31,8 @@
 	.main .box-content .swiper-slide .box-nav .box-profile .nickname{
 		max-width: 100px;'overflow: hidden; text-overflow: ellipsis; 
 	}
+	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart:hover{cursor:pointer;color: #fb9600;}
+	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart.select{color: #fb9600;}
 	.main .box-content .swiper-slide .item-nav .auto-start:hover,
 	.main .box-content .swiper-slide .item-nav .auto-stop:hover{color: #ffa31c; cursor:pointer;}
 	.main .box-content .swiper-slide .item-nav .auto-start.select,
@@ -70,9 +72,9 @@
 						<div class="swiper-slide">
 							<!-- box-nav -------------------------------------------------------------------------------------------- -->
 							<div class="box-nav">
-								<ul class="list-nav list-group list-group-horizontal">
+								<ul class="list-nav list-group list-group-horizontal" data-lgmbnum="${log.lg_mb_num}" data-lgnum="${log.lg_num}">
 									<!-- 프로필 ------------------------------------------------------------------------------------------- -->
-									<li class="box-profile item-nav list-group-item border-0 flex-fill" data-lgmbnum="${log.lg_mb_num}" data-lgnum="${log.lg_num}">
+									<li class="box-profile item-nav list-group-item border-0 flex-fill">
 									</li>
 									<!-- 등록일 ------------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
@@ -83,8 +85,8 @@
 										<i class="fa-regular fa-eye mr-3"></i><span class="lg_views">${log.lg_views}</span>
 									</li>
 									<!-- 하트수 ------------------------------------------------------------------------------------- -->
-									<li class="item-nav list-group-item border-0 flex-fill">
-										<i class="fa-regular fa-face-grin-hearts mr-3"></i><span class="heart">0</span>
+									<li class="box-heart item-nav list-group-item border-0 flex-fill">
+										<i class="btn-heart fa-solid fa-heart mr-3"></i><span class="heart">${log.lg_heart}</span>
 									</li>
 									<!-- 슬라이드쇼 ----------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
@@ -118,19 +120,52 @@
 <script>
 	/* 변수 *********************************************************************************************************** */
 		let slideIndex = '${index}';
-		let lg_num = 0;
+		let userMbNum = '${user.mb_num}';
 	/* 이벤트 *********************************************************************************************************** */
 		$(function(){
 			$(document).ready(function(){
-				//프로필 화면 구성 --------------------------------------------------------------------------------------------------
-				let li = $('.main .box-nav .list-nav .box-profile');
-				let size = li.length;
+				let ul = $('.main .box-nav .list-nav');
+				let size = ul.length;
 				for(let i = 0; i < size; i++){
-					let lg_num = li.eq(i).data('lgnum');
-					let lg_mb_num = li.eq(i).data('lgmbnum');
+					let lg_num = ul.eq(i).data('lgnum');
+					let lg_mb_num = ul.eq(i).data('lgmbnum');
+					//프로필 화면 구성 --------------------------------------------------------------------------------------------------
 					let obj = {lg_mb_num};
 					getProfile(obj, i, lg_num);
+					//하트 화면 구성 --------------------------------------------------------------------------------------------------
+					obj = {
+						ht_lg_num : lg_num,
+						ht_mb_num : userMbNum
+					}
+					getHeart(obj, i);
 				}
+			})//
+			
+			//하트 버튼 클릭(btn-heart) 클릭-----------------------------------------------------------------------------------------
+			$(document).on('click', '.main .box-content .box-heart .btn-heart', function(){
+				//로그인 안했으면 로그인 화면으로
+				if(userMbNum == ''){
+					if(confirm('하트를 누르려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
+						location.href = '<%=request.getContextPath()%>/account/login';
+						return;
+					}
+				}
+				//일지를 쓴 회원이랑 하트를 누른 회원이 같으면
+				let lg_mb_num = $(this).parents('.list-nav').data('lgmbnum');
+				if(lg_mb_num == userMbNum){
+					return;					
+				}
+				//일지 번호 가져오기
+				let lg_num = $(this).parents('.list-nav').data('lgnum');
+				let obj = {
+					ht_lg_num : lg_num,
+					ht_mb_num : userMbNum				
+				}
+				//아이콘 색깔 수정
+				clickHeart(obj, this);
+				//하트 개수 수정
+				obj = {lg_num}
+				getTotalHeart(obj, this);
 			})//
 			
 			//이미지 영역 클릭(box-img) 클릭-----------------------------------------------------------------------------------------
@@ -167,10 +202,6 @@
 					},
           activeIndexChange: function () {
 	          slideIndex = this.realIndex; //현재 슬라이드 index 갱신
-          },
-          slideChange : function() {
-        	  $('.main .box-content .swiper .box-drop').hide();
-        	  $('.main .box-content .box-nav .btn-modify').removeClass('select');
           }
 	      }
 			});//
@@ -191,33 +222,58 @@
 		})//
 
 /* 함수 *********************************************************************************************************** */
-	// getProfile : 프로필 정보 가져오기 ------------------------------------------------------------------------------------------------
+	// getProfile : 프로필 정보 가져오기 -----------------------------------------------------------------------------------
 	function getProfile(obj, index, lg_num){
 		ajaxPost(false, obj, '/get/profile', function(data){
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
 			let profile = data.profile;
-			let user = '${user}';
-			//회원인 경우 회원 번호 추출
-			let find = 'mb_num=';
-			let startIndex = user.indexOf(find);
-			let userMbNum = 0;
-			if(startIndex != -1){
-				startIndex = startIndex + find.length; 
-				let endIndex = user.indexOf(',');
-				userMbNum = user.substring(startIndex, endIndex);
-			}
 			//화면 구성
-			if(user != '' && (obj.lg_mb_num == userMbNum))
+			if(userMbNum != '' && (obj.lg_mb_num == userMbNum))
 				html += '<a href="'+contextPath+'/log/mylogDetail/'+obj.lg_mb_num+'?lg_num='+lg_num+'">';
-			if(user == '' || (obj.lg_mb_num != userMbNum))
+			if(userMbNum == '' || (obj.lg_mb_num != userMbNum))
 				html += '<a href="'+contextPath+'/log/friendlogDetail/'+obj.lg_mb_num+'?lg_num='+lg_num+'">';
 			html += 	'<span class="mr-2"><img src="'+contextPath+profile.mb_profile_url+'" class="thumb"></span>';
 			html += 	'<span class="nickname">'+profile.mb_nickname+'</span>';
 			html += '</a>';
-			$('.main .box-nav .list-nav .box-profile').eq(index).append(html);	
-			
+			$('.main .box-nav .list-nav').eq(index).children('.box-profile').append(html);		
 		});
-	}
+	}//
+	
+	// clickHeart : 하트 누르기 -----------------------------------------------------------------------------------
+	function clickHeart(obj,selector){
+		ajaxPost(false, obj, '/click/heart', function(data){
+			//하트 상태에 따라 하트 색깔 다르게
+    	if(data.res == 1)
+    		$(selector).addClass('select')
+    	else if(data.res == 0)
+    		$(selector).removeClass('select');
+    	else if(data.res == -1)
+    		alert('로그인하거나 다시 시도해주세요.')
+		});
+	}//
+	
+	// getHeart : 하트 정보 가져오기 -----------------------------------------------------------------------------------
+	function getHeart(obj, index){
+		ajaxPost(false, obj, '/get/heart', function(data){
+			//없거나 상태가 0이면
+			if(data.heart == null || (data.heart != null && data.heart.ht_state == '0'))
+				$('.main .box-nav .list-nav').eq(index).find('.btn-heart').removeClass('select');	
+			//해당 일지에 좋아요 눌렀으면
+			if(data.heart != null && data.heart.ht_state == '1')
+				$('.main .box-nav .list-nav').eq(index).find('.btn-heart').addClass('select');
+		});
+	}//
+	
+	// getTotalHeart : 하트개수 가져오기 -----------------------------------------------------------------------------------
+	function getTotalHeart(obj, selector){
+		ajaxPost(false, obj, '/get/totalHeart', function(data){
+			$(selector).next().text('');
+			if(data.log == null)
+				$(selector).next().text('0');
+			else
+				$(selector).next().text(data.log.lg_heart)
+		});
+	}//
 </script> 
 </html>
