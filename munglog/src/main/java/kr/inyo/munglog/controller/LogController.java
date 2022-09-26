@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -157,7 +158,12 @@ public class LogController {
 	
 	/* 멍멍친구의 일지 ---------------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/friendlog/{mb_num}", method = RequestMethod.GET)
-	public ModelAndView logFriendlogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num) {
+	public ModelAndView logFriendlogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
+			HttpSession session) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//본인 멍멍친구 일지에 들어가면 본인 일지로
+		if(user != null && (user.getMb_num() == mb_num))
+			mv.setViewName("redirect:/log/mylog/"+mb_num);
 		MemberVO member = memberService.getMemberByMbnum(mb_num);
 		//강아지 정보 가져오기
 		ArrayList<DogVO> dList = logService.getDogs(member);
@@ -174,7 +180,13 @@ public class LogController {
 	/* 멍멍친구 일지 상세보기 -------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/friendlogDetail/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView logfriendlogDetailGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
-			int lg_num, Criteria cri) {
+			int lg_num, Criteria cri, HttpSession session) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//본인 멍멍친구 일지 상세보기에 들어가면 본인 일지 상세보기로로
+		if(user != null && (user.getMb_num() == mb_num)) {
+			String url = mb_num + "?lg_num="+lg_num+"&mb_num="+mb_num;
+			mv.setViewName("redirect:/log/mylogDetail/"+url);
+		}
 		//일지 전체 개수 가져오기
 		int totalCount = logService.getLogTotalCount(cri);
 		//criteria 재설정
