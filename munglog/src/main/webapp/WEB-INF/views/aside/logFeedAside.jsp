@@ -21,13 +21,11 @@
 	.side-main .box-search .friend-item .friend-link{
 		display: block; height: 40px; margin: auto 0 ;
 	}
-	.side-main .box-search .friend-item .thumb{float: left;}
 	.side-main .box-search .friend-item .thumb img{
 		border-radius: 50px; width: 40px; height: 40px;
 	}
 	.side-main .box-search .friend-item .nickname{
-		float: left; width: 166px;
-		line-height: 40px; padding-left: 10px;
+		width: 166px; line-height: 40px; padding-left: 10px;
 		font-weight: bold; overflow: hidden; text-overflow: ellipsis;
 	}
 </style>
@@ -41,10 +39,10 @@
 				<li class="friend-item" data-value="${member.mb_num}">
 					<a class="friend-link" href="<c:if test="${user == null or user.mb_num != member.mb_num}"><c:url value="/log/friendlog/${member.mb_num}"></c:url></c:if>
 						<c:if test="${user.mb_num == member.mb_num}"><c:url value="/log/mylog/${user.mb_num}"></c:url></c:if>">
-						<div class="thumb">
+						<span class="thumb">
 							<img src="<c:url value="${member.mb_profile_url}"></c:url>">
-						</div>
-						<div class="nickname">${member.mb_nickname}</div>
+						</span>
+						<span class="nickname">${member.mb_nickname}</span>
 					</a>
 					<div class="box-dog" style="display:none;"></div>
 				</li>

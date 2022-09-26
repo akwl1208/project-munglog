@@ -255,4 +255,15 @@ public class LogController {
 		map.put("res", res);
 		return map;
 	}
+	
+	/* 프로필 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/profile", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getProfile(@RequestBody LogVO log) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO profile = memberService.getMemberByMbnum(log.getLg_mb_num());
+	
+		map.put("profile", profile);
+		return map;
+	}
 }
