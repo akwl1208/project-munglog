@@ -54,7 +54,7 @@
 		display: flex; flex-direction: row; align-items: center;
 	}
 	.main .box-content .swiper .swiper-slide .lg_image{
-		width: 50%; object-fit: cover; display: block; margin: auto;
+		max-width: 50%; max-height: 500px; object-fit: cover; display: block; margin: auto;
 	}
 	.main .box-content .swiper .swiper-button-next,
 	.main .box-content .swiper .swiper-button-prev{
@@ -94,7 +94,7 @@
 									</li>
 									<!-- 하트수 ------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
-										<i class="fa-regular fa-face-grin-hearts mr-3"></i><span class="heart">0</span>
+										<i class="fa-solid fa-heart mr-3"></i><span class="heart">${log.lg_heart}</span>
 									</li>
 									<!-- 슬라이드쇼 ----------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
@@ -128,7 +128,7 @@
 										<!-- file(파일 선택) ------------------------------------------------------------------------------- -->
 										<input type="file" name="file" accept="image/jpg, image/jpeg, image/png, image/gif" style="display: none;">
 									</div>
-										<!-- box-content ------------------------------------------------------------------------------------------------- -->
+									<!-- box-send -------------------------------------------------------------------------------------- -->
 									<div class="box-send">
 										<div class="box-message">사진을 클릭하면 수정할 수 있습니다.</div>
 										<div class="d-flex align-items-end justify-content-between">
@@ -140,6 +140,7 @@
 									</div>
 								</div>
 							</div>
+							<!-- box-img ------------------------------------------------------------------------------------------- -->
 							<div class="box-img">
 								<img class="lg_image" src="<c:url value="${log.lg_image_url}"></c:url>">
 								<div class="btn-swiper swiper-button-next"></div>
@@ -321,8 +322,6 @@
 						$('.main .box-content .swiper .swiper-slide').addClass('changed');
 					},
           activeIndexChange: function () {
-	     	  	console.log('slideIndex'+slideIndex)
-	     	  	console.log('------------------------')
 	          slideIndex = this.realIndex; //현재 슬라이드 index 갱신
           },
           slideChange : function() {
