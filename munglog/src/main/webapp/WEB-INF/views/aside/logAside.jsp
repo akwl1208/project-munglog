@@ -140,6 +140,19 @@
 			//친구 맺기/취소
 			makeFriend(friend);
 		})
+		
+		//친구 삭제(box-delete) 클릭------------------------------------------------------------------------------------------
+		$(document).on('click', '.side-main .box-friend .friend-list .friend-item .btn-delete', function(){
+			//친구 삭제할건지 묻기
+			if(!confirm('친구맺기를 취소하겠습니까?'))
+				return;
+			let fr_friend = $(this).parents('.friend-item').data('value');
+			let friend = {
+				fr_mb_num : userNum,
+				fr_friend
+			}
+			deleteFriend(friend, this);
+		})
 	})//
 /* 함수 *********************************************************************************************************** */
 	// makeFriend : 친구 추가/취소하기 -----------------------------------------------------------------------------------
@@ -184,7 +197,7 @@
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
 			for(friend of data.friendList){
-			html +=	'<li class="friend-item clearfix">';
+			html +=	'<li class="friend-item clearfix" data-value="'+friend.mb_num+'">';
 			html +=		'<a href="'+contextPath+'/log/friendlog/'+friend.mb_num+'" class="friend-link">';
 			html +=			'<span class="thumb"><img src="'+contextPath+friend.mb_profile_url+'"></span>';
 			html +=			'<span class="nickname">'+friend.mb_nickname+'</span>';
@@ -194,6 +207,18 @@
 			html +=	'</li>';
 			}
 			$('.side-main .box-friend .friend-list').append(html);
+		});
+	}//
+	
+	//  -----------------------------------------------------------------------------------
+	function deleteFriend(obj, selector){
+		ajaxPost(false, obj, '/make/friend', function(data){
+    	if(data.res == 0){
+				//삭제하면 li 삭제
+    		$(selector).parents('.friend-item').remove();
+    	}
+    	else
+    		alert('로그인하거나 다시 시도해주세요.')
 		});
 	}//
 </script>
