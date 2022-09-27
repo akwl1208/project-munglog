@@ -23,18 +23,13 @@
 		.header .box-account .account-list>li{
 			display: inline-block; font-size: 12px;
 		}
-		.header .box-account .account-list>li:last-child::before{
+		.header .box-account .account-list>li:nth-child(n+1):not(:last-of-type)::after{
 			display: inline-block; content: ''; margin: 0 6px 3px;
 			width: 1px; height: 12px; background-color: #b9ab9a;
 			vertical-align: middle;
 		}
 		.header .box-account .nickname{line-height: 24px;}
 		.header .box-account .nickname .fa-dog{color: #fb9600; margin-right: 6px;}
-		.header .box-account .nickname::after{
-			display: inline-block; content: ''; margin: 0 6px 6px;
-    	width: 3px; height: 3px; border-radius: 50%; background-color: #b9ab9a;
-    	vertical-align: middle;
-		}
 		.header .box-menu .logo{
 			font-size: 24px; font-weight: 900; text-align: left;
 			line-height: 45px; padding-left: 20px;
@@ -78,6 +73,11 @@
 						<li class="account-item nickname">
 							<span><i class="fa-solid fa-dog"></i>${user.mb_nickname}님</span>
 						</li>
+						<c:if test="${user.mb_level == 'A' ||	user.mb_level == 'S'}">
+							<li class="account-item">
+								<a href="<c:url value="/admin"></c:url>" class="account-link">관리자페이지</a>
+							</li>						
+						</c:if>
 						<li class="account-item">
 							<a href="<c:url value="/"></c:url>" class="account-link">마이페이지</a>
 						</li>
