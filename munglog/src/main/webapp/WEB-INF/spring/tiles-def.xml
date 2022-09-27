@@ -33,6 +33,14 @@
 	  <put-attribute name="logAside" value="/WEB-INF/views/aside/logAside.jsp" />
 	</definition>
 	
+	<!-- 관리자 페이지 레이아웃 -->
+	<definition name="/admin/*" template="/WEB-INF/views/layout/adminLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/admin/{1}.jsp" />
+		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
+	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+	  <put-attribute name="adminMenu" value="/WEB-INF/views/common/adminMenu.jsp" />
+	</definition>
+	
 	<!-- 기본 레이아웃 -->
 	<definition name=".root" template="/WEB-INF/views/layout/baseLayout.jsp">
 	  <put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
