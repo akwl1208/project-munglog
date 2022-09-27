@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.inyo.munglog.dao.AdminDAO">
+	
+	<!-- select *********************************************************** -->
+	
+	<!-- insert *********************************************************** -->
+	<!-- 챌린지 추가 -->
+	<insert id="insertChallenge">
+		insert into challenge(cl_year, cl_month, cl_theme, cl_thumb)
+			values(#{cl_year}, #{cl_month}, #{cl_theme}, #{cl_thumb})
+	</insert>
+	<!-- update *********************************************************** -->
+	
+	<!-- delete *********************************************************** -->
+</mapper>

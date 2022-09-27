@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.util.FileCopyUtils;
 
 public class UploadFileUtils {
+	//폴더형식 년/월/일
 	public static String uploadFile(String uploadPath, String originalName,
 			byte[] fileData)throws Exception{
 		UUID uid = UUID.randomUUID();
@@ -19,6 +20,7 @@ public class UploadFileUtils {
 		return uploadFileName;
 	}
 	
+	//폴더 형식 dir/년/월/일
 	public static String uploadFileDir(String uploadPath, String dir, String originalName,
 			byte[] fileData)throws Exception{
 		UUID uid = UUID.randomUUID();
@@ -27,6 +29,18 @@ public class UploadFileUtils {
 		File target = new File(uploadPath + savedPath, savedName); 
 		FileCopyUtils.copy(fileData, target);
 		String uploadFileName = makeIcon(uploadPath, savedPath, savedName);
+		return uploadFileName;
+	}
+	
+	//폴더 형식 prefix 폴더만들기 없음
+	public static String uploadFilePrefix(String uploadPath, String prefix, String originalName,
+			byte[] fileData)throws Exception{
+		String savedName = originalName;
+		if(prefix != null && prefix.length() != 0)
+			savedName = prefix + "_" + originalName;
+		File target = new File(uploadPath, savedName);
+		FileCopyUtils.copy(fileData, target);
+		String uploadFileName = makeIcon(uploadPath, "", savedName);
 		return uploadFileName;
 	}
 	
