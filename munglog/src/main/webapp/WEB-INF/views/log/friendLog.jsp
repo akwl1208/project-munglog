@@ -48,6 +48,8 @@
 		width: 1px; height: 12px; background-color: #b9ab9a;
 		line-height: 24px;
 	}
+	.main .box-drop .drop-sort .box-choose .sort.select{color:#fb9600; font-weight: bold;}
+	.main .box-drop .drop-sort .box-choose .sort:hover{color:#fb9600;cursor:pointer;}
 	/* main box-content --------------------------------------------------------------------- */
 	.main .box-content{margin: 30px 44px;}
 	.main .box-content .log-list{
@@ -120,9 +122,9 @@
 			<div class="drop drop-sort">
 				<!-- box-choose(정렬 방식 선택) -------------------------------------------------------- -->
 				<div class="box-choose">
-					<span class="sort sort-lastest">최신순</span>
-					<span class="sort sort-oldest">오래된순</span>
-					<span class="sort sort-popularity">인기순</span>
+					<span class="sort sort-date sort-latest select" data-value="desc">최신순</span>
+					<span class="sort sort-date sort-oldest" data-value="asc">오래된순</span>
+					<span class="sort sort-popularity" data-value="1">인기순</span>
 				</div>
 			</div>
 		</div>
@@ -134,7 +136,7 @@
 </body>
 <!-- script ******************************************************************************************************* -->
 <script>
-	/* 변수 *********************************************************************************************************** */
+/* 변수 *********************************************************************************************************** */
 	let page = 1;
 	let mb_num = ${member.mb_num};
 	let obj = {
@@ -142,12 +144,14 @@
 		perPageNum : 12,
 		mb_num,
 		dg_num : 0,
-		regYear : ''
+		regYear : '',
+		order : 'desc',
+		popularity : 0
 	};
+/* 이벤트 *********************************************************************************************************** */		
 	$(function(){
 		//일지들 보여줌
 		getLogList(obj);
-	/* 이벤트 *********************************************************************************************************** */		
 		//필터 아이콘(btn-filter) 클릭------------------------------------------------------------------------------------------
 		$('.main .box-nav .btn-filter').click(function(){
 			$(this).parents('.box-set').siblings('.box-drop').eq(0).siblings('.box-drop').hide();
@@ -195,21 +199,53 @@
 			//화면 재구성
 			$(this).parents('.box-drop').hide();
 			$('.main .box-nav .box-set .set .fa-solid').removeClass('select');
-		})
-	})//
-	
-	//필터 초기화(btn-reset) 클릭 --------------------------------------------------------------------------------------------
-	$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){	
-		//페이지 1로 초기화
-		obj.page = 1;
-		//라디오 박스 값 초기화
-		$('.main .box-drop .drop-filter .box-radio [name=dgNum]').prop('checked', false);
-		obj.dg_num = 0;
-		//select 태그 초기화
-		$('.main .box-drop .drop-filter .box-year [name=regYear]').val("년도").prop('selected', true);
-		obj.regYear = '';
-		//리스트 초기화
-		$('.main .box-drop .drop-filter .box-btn .btn-set').click();
+		})//
+		
+		//필터 초기화(btn-reset) 클릭 --------------------------------------------------------------------------------------------
+		$('.main .box-drop .drop-filter .box-btn .btn-reset').click(function(){	
+			//페이지 1로 초기화
+			obj.page = 1;
+			//라디오 박스 값 초기화
+			$('.main .box-drop .drop-filter .box-radio [name=dgNum]').prop('checked', false);
+			obj.dg_num = 0;
+			//select 태그 초기화
+			$('.main .box-drop .drop-filter .box-year [name=regYear]').val("년도").prop('selected', true);
+			obj.regYear = '';
+			//리스트 초기화
+			$('.main .box-drop .drop-filter .box-btn .btn-set').click();
+		})//
+		
+		//최신순, 오래된 순 클릭(sort-date) 클릭 --------------------------------------------------------------------------------------------
+		$('.main .box-drop .drop-sort .box-choose .sort-date').click(function(){
+			//obj 값 바꾸고
+			let order = $(this).data('value');
+			obj.order = order;
+			obj.popularity = 0;
+			//화면 재구성
+			//ul의 li 비우고
+			$('.main .box-content .log-list .log-item').remove();
+			//리스트 불러오기
+			getLogList(obj);
+			//선택한 값 색 바꾸기
+			$('.main .box-drop .drop-sort .box-choose .sort').removeClass('select');
+			$(this).addClass('select');
+		})//
+		
+		//인기순 클릭(sort-popularity) 클릭 --------------------------------------------------------------------------------------------
+		$('.main .box-drop .drop-sort .box-choose .sort-popularity').click(function(){
+			//obj 값 바꾸고
+			let popularity = $(this).data('value');
+			obj.order = 'desc';
+			obj.popularity = popularity;	
+			//화면 재구성
+			//ul의 li 비우고
+			$('.main .box-content .log-list .log-item').remove();
+			//리스트 불러오기
+			getLogList(obj);
+			//선택한 값 색 바꾸기
+			$('.main .box-drop .drop-sort .box-choose .sort').removeClass('select');
+			$(this).addClass('select');
+		})//
 	})//
 
 /* 함수 *********************************************************************************************************** */
@@ -236,7 +272,9 @@
 		let mbNumUrl = pageUrl + '&mb_num=' +  obj.mb_num;
 		let dgNumUrl = mbNumUrl + '&dg_num=' +  obj.dg_num;
 		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;
-		return regYearUrl;
+		let orderUrl = regYearUrl + '&order=' +  obj.order;
+		let popularityUrl = orderUrl  + '&popularity=' +  obj.popularity;
+		return popularityUrl;
 	}
 </script> 
 </html>
