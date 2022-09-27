@@ -253,6 +253,9 @@
 		
 		//사진 등록 버튼(btn-send) 클릭-----------------------------------------------------------------------------------------
 		$('.main .box-drop .drop-upload .box-send .btn-send').click(function(){
+			//등록할건지 묻기
+			if(!confirm('일지를 등록하시겠습니까?'))
+				return;
 			//선택한 강아지 list에 담기
 			let dList = [];
 			$('.main .box-drop .drop-upload .box-check [name=dg_num]:checked').each(function(){
@@ -265,16 +268,10 @@
 			let lg_image = $('.main .drop-upload .box-file [name=file]').val();
 			if(lg_image == ''){
 				alert('사진을 선택하세요.');
-				//선택한 파일 비우기
-				$('.main .drop-upload .box-file [name=file]').val('');
 				//화면 재구성
-				$('.main .drop-upload .box-file [name=file]').change();
 				$('.main .drop-upload .box-file [name=file]').click();
 				return;
 			}
-			//사진 등록할건지 묻고 취소 버튼 누르면 등록안함
-			if(!confirm('사진을 등록하겠습니까?'))
-				return;
 			//강아지 정보와 사진 정보 서버로 보내기
 			let data = new FormData();
 			data.append('file', $('.main .drop-upload .box-file [name=file]')[0].files[0]);
