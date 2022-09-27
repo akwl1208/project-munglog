@@ -28,9 +28,8 @@
 	}
 	.main .box-nav .box-drop .drop{padding: 20px 40px;}
 	.main .box-drop .drop-sort .box-choose{text-align: right;}
-	.main .box-drop .drop-sort .box-choose .sort{
-		display: inline-block; cursor: pointer;
-	}
+	.main .box-drop .drop-sort .box-choose .sort{display: inline-block;}
+	.main .box-drop .drop-sort .box-choose .sort:hover{color:#fb9600;cursor:pointer;}
 	.main .box-drop .drop-sort .box-choose .sort.select{color:#fb9600; font-weight: bold;}
 	.main .box-drop .drop-sort .box-choose .sort-popularity::before{
 		display: inline-block; content: ''; margin: 0 10px;
@@ -72,8 +71,8 @@
 			<div class="drop drop-sort">
 				<!-- box-choose(정렬 방식 선택) -------------------------------------------------------- -->
 				<div class="box-choose">
-					<div class="sort sort-lastest select">최신순</div>
-					<div class="sort sort-popularity">인기순</div>
+					<div class="sort sort-latest select" data-value="0">최신순</div>
+					<div class="sort sort-popularity" data-value="1">인기순</div>
 				</div>
 			</div>
 		</div>
@@ -92,7 +91,9 @@
 		perPageNum : 12,
 		mb_num : 0,
 		dg_num : 0,
-		regYear : ''
+		regYear : '',
+		order : 'desc',
+		popularity : 0
 	};
 	$(function(){
 		//일지들 보여줌
@@ -130,7 +131,22 @@
 				location.href = '<%=request.getContextPath()%>/log/feed';
 				return;
 			}
-		})
+		})//
+		
+		//최신순, 인기순 클릭(sort-latest) 클릭 --------------------------------------------------------------------------------------------
+		$('.main .box-drop .drop-sort .box-choose .sort').click(function(){
+			//obj 값 바꾸고
+			let popularity = $(this).data('value');
+			obj.popularity = popularity;	
+			//화면 재구성
+			//ul의 li 비우고
+			$('.main .box-content .log-list .log-item').remove();
+			//리스트 불러오기
+			getLogList(obj);
+			//선택한 값 색 바꾸기
+			$('.main .box-drop .drop-sort .box-choose .sort').removeClass('select');
+			$(this).addClass('select');
+		})//
 	})//
 	
 /* 함수 *********************************************************************************************************** */
@@ -157,8 +173,10 @@
 		let mbNumUrl = pageUrl + '&mb_num=' +  obj.mb_num;
 		let dgNumUrl = mbNumUrl + '&dg_num=' +  obj.dg_num;
 		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;
-		return regYearUrl;
-	}
+		let orderUrl = regYearUrl + '&order=' +  obj.order;
+		let popularityUrl = orderUrl  + '&popularity=' +  obj.popularity;
+		return popularityUrl;
+	}//
 	
 	// countViews -----------------------------------------------------------------------------------------------------
 	function countViews(obj){
