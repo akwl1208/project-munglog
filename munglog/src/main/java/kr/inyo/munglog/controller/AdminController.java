@@ -25,6 +25,12 @@ public class AdminController {
 		return mv;
 	}
 	
+	/* 챌린지 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/admin/challenge", method = RequestMethod.GET)
+	public ModelAndView adminChallangeGet(ModelAndView mv) {
+		mv.setViewName("/admin/challenge");
+		return mv;
+	}
 /* ajax **************************************************************************************************************** */
 
 }
