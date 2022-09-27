@@ -32,7 +32,11 @@
 				and year(lg_reg_date) = #{regYear}
 			</if>
 			group by lg_num
-			order by lg_reg_date desc
+			order by 
+				<if test = "popularity == 1">
+					lg_heart desc,
+				</if>
+				lg_reg_date ${order}
 			limit #{pageStart}, #{perPageNum}
 	</select>
 	

@@ -48,6 +48,8 @@
 		width: 1px; height: 12px; background-color: #b9ab9a;
 		line-height: 24px;
 	}
+	.main .box-drop .drop-sort .box-choose .sort.select{color:#fb9600; font-weight: bold;}
+	.main .box-drop .drop-sort .box-choose .sort:hover{color:#fb9600;cursor:pointer;}
 	/* main box-content --------------------------------------------------------------------- */
 	.main .box-content{margin: 30px 44px;}
 	.main .box-content .log-list{
@@ -156,9 +158,9 @@
 			<div class="drop drop-sort">
 				<!-- box-choose(정렬 방식 선택) -------------------------------------------------------- -->
 				<div class="box-choose">
-					<span class="sort sort-lastest">최신순</span>
-					<span class="sort sort-oldest">오래된순</span>
-					<span class="sort sort-popularity">인기순</span>
+					<span class="sort sort-date sort-latest select" data-value="desc">최신순</span>
+					<span class="sort sort-date sort-oldest" data-value="asc">오래된순</span>
+					<span class="sort sort-popularity" data-value="1">인기순</span>
 				</div>
 			</div>
 		</div>
@@ -178,7 +180,9 @@
 		perPageNum : 12,
 		mb_num,
 		dg_num : 0,
-		regYear : ''
+		regYear : '',
+		order : 'desc',
+		popularity : 0
 	};
 	$(function(){
 		//일지들 보여줌
@@ -362,6 +366,38 @@
 		$('.main .box-drop .drop-filter .box-btn .btn-set').click();
 	})//
 
+	//최신순, 오래된 순 클릭(sort-date) 클릭 --------------------------------------------------------------------------------------------
+	$('.main .box-drop .drop-sort .box-choose .sort-date').click(function(){
+		//obj 값 바꾸고
+		let order = $(this).data('value');
+		obj.order = order;
+		obj.popularity = 0;
+		//화면 재구성
+		//ul의 li 비우고
+		$('.main .box-content .log-list .log-item').remove();
+		//리스트 불러오기
+		getLogList(obj);
+		//선택한 값 색 바꾸기
+		$('.main .box-drop .drop-sort .box-choose .sort').removeClass('select');
+		$(this).addClass('select');
+	})//
+	
+	//인기순 클릭(sort-popularity) 클릭 --------------------------------------------------------------------------------------------
+	$('.main .box-drop .drop-sort .box-choose .sort-popularity').click(function(){
+		//obj 값 바꾸고
+		let popularity = $(this).data('value');
+		obj.order = 'desc';
+		obj.popularity = popularity;	
+		//화면 재구성
+		//ul의 li 비우고
+		$('.main .box-content .log-list .log-item').remove();
+		//리스트 불러오기
+		getLogList(obj);
+		//선택한 값 색 바꾸기
+		$('.main .box-drop .drop-sort .box-choose .sort').removeClass('select');
+		$(this).addClass('select');
+	})//
+	
 /* 함수 *********************************************************************************************************** */
 	// getLogList -----------------------------------------------------------------------------------------------------
 	function getLogList(obj){
@@ -376,6 +412,7 @@
 				html += '</li>';
 			}
 			$('.main .box-content .log-list').append(html);
+			console.log(data.pm)
 		});
 	}//
 	
@@ -386,7 +423,9 @@
 		let mbNumUrl = pageUrl + '&mb_num=' +  obj.mb_num;
 		let dgNumUrl = mbNumUrl + '&dg_num=' +  obj.dg_num;
 		let regYearUrl = dgNumUrl + '&regYear=' +  obj.regYear;
-		return regYearUrl;
+		let orderUrl = regYearUrl + '&order=' +  obj.order;
+		let popularityUrl = orderUrl  + '&popularity=' +  obj.popularity;
+		return popularityUrl;
 	}
 </script> 
 </html>

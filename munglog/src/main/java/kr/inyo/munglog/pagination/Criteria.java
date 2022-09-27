@@ -15,6 +15,10 @@ public class Criteria {
 	private int dg_num;
 	//년도
 	private String regYear; 
+	//날짜순
+	private String order;
+	//인기순
+	private int popularity;
 	
 	
 	//Criteria 디폴트 생성자 : 현재 페이지를 1페이지로, 한 페이지에 12개의 컨텐츠
@@ -24,6 +28,8 @@ public class Criteria {
 		this.mb_num = 0;
 		this.dg_num = 0;
 		this.regYear = "";
+		this.order = "desc";
+		this.popularity = 0;
 	}
 	
 	/* 쿼리문에서 limit에 사용되는 인덱스를 계산하는 getter */
