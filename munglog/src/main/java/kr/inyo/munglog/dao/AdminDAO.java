@@ -15,5 +15,9 @@ public interface AdminDAO {
 	ArrayList<ChallengeVO> selectChallengeList(Criteria cri);
 	//등록된 챌린지 총 개수 가져오기
 	int selectChallengeTotalCount();
+	//챌린지 번호로 챌린지 가져오기
+	ChallengeVO selectChallenge(int cl_num);
+	//챌린지 수정하기
+	void updateChallenge(ChallengeVO dbChallenge);
 
 }

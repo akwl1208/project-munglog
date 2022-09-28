@@ -15,5 +15,8 @@ public interface AdminService {
 	ArrayList<ChallengeVO> getChallengeList(Criteria cri);
 	//등록된 챌린지 총 개수 가져오기
 	int getChallengeTotalCount();
+	//챌린지 수정
+	boolean modifyChallenge(MultipartFile file, ChallengeVO challenge, MemberVO user, String oriYear, String oriMonth);
+
 	
 }

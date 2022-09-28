@@ -75,4 +75,22 @@ public class AdminController {
 		map.put("challengeList", challengeList);
 		return map;
 	}
+	
+	/* 챌린지 수정 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/modify/challenge", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> modifyChallenge(@RequestParam(value="file",required=false) MultipartFile file, 
+			@RequestParam("cl_num") int cl_num, @RequestParam("cl_year") String cl_year, @RequestParam("cl_month") String cl_month,
+			@RequestParam("oriYear") String oriYear, @RequestParam("oriMonth") String oriMonth,
+			@RequestParam("cl_theme") String cl_theme, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		ChallengeVO challenge = new ChallengeVO(cl_num, cl_year, cl_month, cl_theme);
+		boolean res = adminService.modifyChallenge(file, challenge, user, oriYear, oriMonth);
+		
+		map.put("res", res);
+		return map;
+	}
+	
+
 }

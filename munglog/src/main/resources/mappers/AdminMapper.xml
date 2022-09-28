@@ -19,6 +19,12 @@
 	<select id="selectChallengeTotalCount" resultType="int">
 		select count(*) from challenge
 	</select>
+	
+	<!-- 챌린지 번호로 챌린지 가져오기 -->
+	<select id="selectChallenge" resultType="kr.inyo.munglog.vo.ChallengeVO">
+		select * from challenge where cl_num = #{cl_num}
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 챌린지 추가 -->
 	<insert id="insertChallenge">
@@ -27,6 +33,15 @@
 	</insert>
 	
 	<!-- update *********************************************************** -->
+	<!-- 챌린지 수정 -->
+	<update id="updateChallenge">
+		update challenge 
+			set cl_year = #{cl_year},
+				cl_month = #{cl_month},
+				cl_theme = #{cl_theme},
+				cl_thumb = #{cl_thumb}
+			where cl_num = #{cl_num}
+	</update>
 	
 	<!-- delete *********************************************************** -->
 </mapper>
