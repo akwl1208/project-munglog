@@ -1,5 +1,6 @@
 package kr.inyo.munglog.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dao.AdminDAO;
+import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.ChallengeVO;
@@ -20,7 +22,7 @@ public class AdminServiceImp implements AdminService {
 	
 	String challengeUploadPath = "D:\\git\\munglog\\challenge";
 	
-	/* registerChallenge : 챌린지 등록 -------------------------------------------------------------- */
+	/* registerChallenge : 챌린지 등록 ----------------------------------------------------------------------------------------- */
 	@Override
 	public boolean registerChallenge(MultipartFile file, ChallengeVO challenge, MemberVO user) {
 		//값이 없으면
@@ -58,5 +60,20 @@ public class AdminServiceImp implements AdminService {
 		//챌린지 등록
 		adminDao.insertChallenge(challenge);
 		return true;
+	}
+
+	/* getChallengeList : 챌린지 리스트 가져오기 ----------------------------------------------------------------------------------- */
+	@Override
+	public ArrayList<ChallengeVO> getChallengeList(Criteria cri) {
+		//크리가 안왔으면
+		if(cri == null)
+			cri = new Criteria();
+		return adminDao.selectChallengeList(cri);
+	}
+
+	/* getChallengeTotalCount : 등록된 챌린지 총 개수 가져오기 ----------------------------------------------------------------------------------- */
+	@Override
+	public int getChallengeTotalCount() {
+		return adminDao.selectChallengeTotalCount();
 	}
 }

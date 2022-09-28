@@ -1,5 +1,8 @@
 package kr.inyo.munglog.dao;
 
+import java.util.ArrayList;
+
+import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.ChallengeVO;
 
 public interface AdminDAO {
@@ -8,5 +11,9 @@ public interface AdminDAO {
 	void insertChallenge(ChallengeVO challenge);
 	//년도와 월로 챌린지 가져오기
 	ChallengeVO selectChallengeBydate(ChallengeVO challenge);
+	//챌린지 리스트 가져오기
+	ArrayList<ChallengeVO> selectChallengeList(Criteria cri);
+	//등록된 챌린지 총 개수 가져오기
+	int selectChallengeTotalCount();
 
 }

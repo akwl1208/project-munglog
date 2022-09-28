@@ -10,6 +10,15 @@
 		select * from challenge where cl_year = #{cl_year} and cl_month = #{cl_month}
 	</select>
 	
+	<!-- 챌린지 리스트 가져오기 -->
+	<select id="selectChallengeList" resultType="kr.inyo.munglog.vo.ChallengeVO">
+		select * from challenge order by cl_num desc limit #{pageStart}, #{perPageNum}
+	</select>
+	
+	<!-- 등록된 챌린지 총 개수 가져오기 -->
+	<select id="selectChallengeTotalCount" resultType="int">
+		select count(*) from challenge
+	</select>
 	<!-- insert *********************************************************** -->
 	<!-- 챌린지 추가 -->
 	<insert id="insertChallenge">

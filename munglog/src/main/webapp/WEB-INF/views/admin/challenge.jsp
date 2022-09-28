@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +41,18 @@
 		width: 370px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 	}
 	.main .box-content .box-list .item-modify:hover .btn-modify,
-	.main .box-content .box-list .item-delete:hover .btn-delete{color: fb9600; cursor:pointer;}
+	.main .box-content .box-list .item-delete:hover .btn-delete{color: #fb9600; cursor:pointer;}
+	.main .box-content .box-list .page-link {
+	  color: #402E32;
+	}
+	.main .box-content .box-list .page-item.active .page-link {
+	 z-index: 1; color: #fb9600; font-weight:bold;
+	 background : #fff; border-color: #DFE0DF;	 
+	}	
+	.main .box-content .box-list .page-link:focus,
+	.main .box-content .box-list .page-link:hover {
+	  color: #000; background-color: #DFE0DF; border-color: #ccc;
+	}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
@@ -86,30 +97,10 @@
 					<th width="5%"></th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td class="item-thumb">
-						<div class="thumb">
-							<img class="cl_thumb" src="">
-						</div>
-					</td>
-					<td class="cl_year">2022</td>
-					<td class="cl_month">9</td>
-					<td class="item-theme">
-						<div class="cl_theme">단풍과 함께 강아지 사진을 찍어주세요.</div>
-					</td>
-					<td class="item-modify"><i class="btn-modify fa-solid fa-pen-to-square"></i></td>
-					<td class="item-delete"><i class="btn-delete fa-solid fa-trash"></i></td>
-				</tr>
-			</tbody>
+			<tbody></tbody>
 		</table>
+		<ul class="pagination justify-content-center mt-5"></ul>
 	</div>
-	<ul class="pagination justify-content-center mt-5">
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">Previous</a></li>
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">1</a></li>
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">2</a></li>
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">Next</a></li>
-	</ul>
 </div>
 </body>
 <!-- script *********************************************************************************************************** -->
@@ -117,8 +108,18 @@
 /* 변수 *********************************************************************************************************** */
 	let yearRegex = /^(\d{4})$/;
 	let monthRegex = /^(\d{2})$/;
+	let page = 1;
+	let cri = {
+		page,
+		perPageNum : 12
+	}
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
+		$(document).ready(function(){
+			// 챌린지 리스트 화면 구성
+			getChallengeList(cri);		
+		})
+		
 		// textarea 글자수 제한 이벤트 ----------------------------------------------------------------------------------
     $('.main .box-content .box-register .box-detail .clTheme').on('keyup', function() {	 
       if($(this).val().length > 100) {
@@ -157,7 +158,7 @@
 			$('.main .box-content .box-register .box-file [name=file]').change();
 		})//
 		
-		//챌린지 등록(btn-register 클릭---------------------------------------------------------------------------------------
+		//챌린지 등록(btn-register) 클릭---------------------------------------------------------------------------------------
 		$('.main .box-content .box-register .btn-register').click(function(){
 			//챌린지 등록할건지 묻기
 			if(!confirm('챌린지를 등록하시겠습니까?'))
@@ -221,9 +222,17 @@
 			data.append('cl_theme', cl_theme);
 			registerChallenge(data);
 		})//
-	});
 		
+		//페이지네이션(page-link) 클릭-------------------------------------------------------------------------------------
+		$(document).on('click','.main .box-content .box-list .page-link',function(e){
+			e.preventDefault();
+			cri.page = $(this).data('page');
+			getChallengeList(cri);
+		})//
+	});		
+	
 /* 함수 *********************************************************************************************************** */
+	// registerChallenge : 챌린지 등록 --------------------------------------------------------------------------------
 	function registerChallenge(data){
 		$.ajax({
 			async: false,
@@ -243,9 +252,75 @@
 					$('.main .box-content .box-register .box-file [name=file]').change();
 					$('.main .box-content .box-register .box-detail .clYear').val(''); //년도 비우기
 					$('.main .box-content .box-register .box-detail .clMonth').val('');	//월 비우기
+					//화면 새로고침
+					location.reload();
 				}
 			}
 		});		
+	}//
+	
+	// getChallengeList : 챌린지 리스트 가져오기 -------------------------------------------------------------------------------
+	function getChallengeList(obj){
+		ajaxPost(false, obj, '/get/challengeList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			const now = new Date();
+			const thisYear = now.getFullYear();
+			const thisMonth = now.getMonth()+1;
+			//리스트 구현
+			for(challenge of data.challengeList){
+				html += '<tr>';
+				html += 	'<td class="item-thumb">';
+				html += 		'<div class="thumb">';
+				html += 			'<img class="cl_thumb" src="'+contextPath+challenge.cl_thumb_url+'">';
+				html += 		'</div>';
+				html += 	'</td>';
+				html += 	'<td class="item-year"><span class="cl_year">'+challenge.cl_year+'</span></td>';
+				html += 	'<td class="item_month"><span class="cl_month">'+challenge.cl_month+'</span></td>';
+				html += 	'<td class="item-theme">';
+				html += 		'<div class="cl_theme">'+challenge.cl_theme+'</div>';
+				html += 	'</td>';
+				html += 	'<td class="item-modify"><i class="btn-modify fa-solid fa-pen-to-square"></i></td>';
+				//진행중이거나 지난 챌린지 삭제 못하도록 막음
+				let year = Number(challenge.cl_year);
+				let month = Number(challenge.cl_month);
+				html += 	'<td class="item-delete">';
+				if(year >= thisYear && month > thisMonth)
+					html += 	'<i class="btn-delete fa-solid fa-trash"></i>';
+				html += 	'</td>';
+				html += '</tr>';
+			}
+			$('.main .box-content .box-list tbody').html(html);
+			
+			//페이지네이션 구현
+			html = '';
+			let pm = data.pm;
+			//이전
+			html += 	'<li class="page-item';
+			if(!pm.prev)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link" href="#" data-page="'+(pm.startPage-1)+'">이전</a>';
+			html += 	'</li>';
+			//페이지 숫자
+			for(let i = pm.startPage; i <= pm.endPage; i++){
+				html += '<li class="page-item';
+				if(pm.cri.page == i)
+					html += ' active';
+				html += '">';
+				html += 	'<a class="page-link" href="#" data-page="'+i+'">'+i+'</a>';
+				html += '</li>';				
+			}
+			//다음
+			html += 	'<li class="page-item';
+			if(!pm.next)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
+			html += 	'</li>';
+			$('.main .box-content .box-list .pagination').html(html);			
+		});
+		
 	}//
 </script>
 

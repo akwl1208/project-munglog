@@ -18,4 +18,8 @@ public class ChallengeVO {
 		this.cl_month = cl_month;
 		this.cl_theme = cl_theme;
 	}
+	
+	public String getCl_thumb_url() {
+		return "/challenge/img" + cl_thumb;
+	}
 }
