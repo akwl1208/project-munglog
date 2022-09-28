@@ -148,4 +148,24 @@ public class AdminServiceImp implements AdminService {
 		return true;
 	}
 	
+	/* deleteChallenge : 챌린지 삭제 ----------------------------------------------------------------------------------------- */
+	@Override
+	public int deleteChallenge(ChallengeVO challenge, MemberVO user) {
+		//값이 없으면
+		if(challenge == null || user == null)
+			return -1;
+		if(challenge.getCl_num() < 1)
+			return -1;
+		//관리자가 아니면
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			return -1;
+		//챌린지 가져오기
+		ChallengeVO dbChallenge = adminDao.selectChallenge(challenge.getCl_num());
+		if(dbChallenge == null)
+			return -1;
+		//이미 진행중이거나 진행된 챌린지는 삭제할 수 없음
+		if(!notPast(dbChallenge.getCl_year(), dbChallenge.getCl_month()))
+			return 0;
+		return adminDao.deleteChallenge(dbChallenge) ? 1 : -1;
+	}
 }

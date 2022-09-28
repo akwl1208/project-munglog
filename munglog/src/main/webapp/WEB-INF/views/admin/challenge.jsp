@@ -291,8 +291,6 @@
 				let cl_month = $('.main .box-content .box-register .box-detail .clMonth').focus();
 				return;
 			}
-			console.log(oriYear)
-			console.log(oriMonth)
 			let data = new FormData();
 			data.append('file', $('.main .box-content .box-register .box-file [name=file]')[0].files[0]);
 			data.append('cl_num', Number(cl_num));
@@ -305,7 +303,31 @@
 			ajaxPostData(data, '/modify/challenge', modifyChallengeSuccess);
 		})//
 		
-
+		//삭제 아이콘(btn-delete) 클릭-------------------------------------------------------------------------------------
+		$(document).on('click','.main .box-content .box-list .item-delete .btn-delete',function(){
+			if(!confirm('해당 챌린지를 삭제하겠습니까?'))
+				return;
+			let cl_num = $(this).data('value');
+			//값이 없으면
+			if(typeof(cl_num) == 'undefined' || cl_num < 1)
+				return;
+			//챌린지 삭제
+			let obj = {
+				cl_num
+			}
+			ajaxPost(false, obj, '/delete/challenge', function(data){
+				//진행중인 챌린지 삭제 했을 때
+				if(data.res == 0)
+					alert('진행중이거나 진행된 챌린지는 삭제할 수 없습니다.')
+				//삭제했을 때
+				else if(data.res == 1){
+					alert('챌린지를 삭제했습니다.')
+					//화면 새로고침
+					location.reload();
+				} else
+					alert('챌린지 삭제에 실패했습니다.')
+			});
+		})
 	});		
 	
 /* 함수 *********************************************************************************************************** */

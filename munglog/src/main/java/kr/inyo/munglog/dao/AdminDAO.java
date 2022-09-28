@@ -18,6 +18,7 @@ public interface AdminDAO {
 	//챌린지 번호로 챌린지 가져오기
 	ChallengeVO selectChallenge(int cl_num);
 	//챌린지 수정하기
-	void updateChallenge(ChallengeVO dbChallenge);
-
+	void updateChallenge(ChallengeVO Challenge);
+	//챌린지 삭제하기
+	boolean deleteChallenge(ChallengeVO Challenge);
 }

@@ -17,6 +17,7 @@ public interface AdminService {
 	int getChallengeTotalCount();
 	//챌린지 수정
 	boolean modifyChallenge(MultipartFile file, ChallengeVO challenge, MemberVO user, String oriYear, String oriMonth);
+	//챌린지 삭제
+	int deleteChallenge(ChallengeVO challenge, MemberVO user);
 
-	
 }

@@ -92,5 +92,16 @@ public class AdminController {
 		return map;
 	}
 	
-
+	/* 챌린지 삭제 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/delete/challenge", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> deleteChallenge(@RequestBody ChallengeVO challenge, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		System.out.println(challenge);
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		int res = adminService.deleteChallenge(challenge, user);
+		
+		map.put("res", res);
+		return map;
+	}
 }

@@ -44,4 +44,8 @@
 	</update>
 	
 	<!-- delete *********************************************************** -->
+	<!-- 챌린지 삭제 -->
+	<delete id="deleteChallenge">
+		delete from challenge where cl_num = #{cl_num}
+	</delete>
 </mapper>
