@@ -220,8 +220,8 @@
 			$(this).toggleClass('select');
 		})
 		
-		//사진 선택 버튼(btn-file) 클릭-----------------------------------------------------------------------------------------
-		$('.main .drop-upload .box-file .btn-file').click(function(){
+		//사진 선택 버튼(btn-file), 미리보기 사진(box-preview) 클릭-----------------------------------------------------------------------------------------
+		$('.main .drop-upload .box-file .btn-file, .main .box-drop .drop-upload .box-send .box-preview').click(function(){
 			$('.main .drop-upload .box-file [name=file]').click();
 		})//
 		
@@ -244,26 +244,12 @@
 		  }
 		  reader.readAsDataURL(file);
 		})//
-	
-		//미리보기 사진(box-preview) 클릭---------------------------------------------------------------------------------------
-		$('.main .box-drop .drop-upload .box-send .box-preview').click(function(){
-			$('.main .drop-upload .box-file [name=file]').click();
-			$('.main .drop-upload .box-file [name=file]').change();
-		})//
 		
 		//사진 등록 버튼(btn-send) 클릭-----------------------------------------------------------------------------------------
 		$('.main .box-drop .drop-upload .box-send .btn-send').click(function(){
 			//등록할건지 묻기
 			if(!confirm('일지를 등록하시겠습니까?'))
 				return;
-			//선택한 강아지 list에 담기
-			let dList = [];
-			$('.main .box-drop .drop-upload .box-check [name=dg_num]:checked').each(function(){
-				//강아지 번호 추출
-				let dg_num = $(this).val();
-				//강아지 리스트에 담기
-        dList.push(dg_num);
-			})
 			//사진을 선택하지 않았으면
 			let lg_image = $('.main .drop-upload .box-file [name=file]').val();
 			if(lg_image == ''){
@@ -272,6 +258,14 @@
 				$('.main .drop-upload .box-file [name=file]').click();
 				return;
 			}
+			//선택한 강아지 list에 담기
+			let dList = [];
+			$('.main .box-drop .drop-upload .box-check [name=dg_num]:checked').each(function(){
+				//강아지 번호 추출
+				let dg_num = $(this).val();
+				//강아지 리스트에 담기
+        dList.push(dg_num);
+			})
 			//강아지 정보와 사진 정보 서버로 보내기
 			let data = new FormData();
 			data.append('file', $('.main .drop-upload .box-file [name=file]')[0].files[0]);
@@ -357,7 +351,7 @@
 		$('.main .box-drop .drop-filter .box-radio [name=dgNum]').prop('checked', false);
 		obj.dg_num = 0;
 		//select 태그 초기화
-		$('.main .box-drop .drop-filter .box-year [name=regYear]').val("년도").prop('selected', true);
+		$('.main .box-drop .drop-filter .box-year [name=regYear]').val('년도').prop('selected', true);
 		obj.regYear = '';
 		//리스트 초기화
 		$('.main .box-drop .drop-filter .box-btn .btn-set').click();
@@ -405,11 +399,10 @@
 				let criUrl = makeCriUrl(log.lg_num, obj);
 				html += '<li class="log-item">';
 				html +=		'<a href="'+contextPath+'/log/mylogDetail/'+mb_num+criUrl+'" class="log-link"'; 
-				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
+				html +=			'style="background-image: url('+contextPath+log.lg_image_url+')"></a>';
 				html += '</li>';
 			}
 			$('.main .box-content .log-list').append(html);
-			console.log(data.pm)
 		});
 	}//
 	

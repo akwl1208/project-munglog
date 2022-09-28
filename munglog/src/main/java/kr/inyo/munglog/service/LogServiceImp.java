@@ -140,7 +140,7 @@ public class LogServiceImp implements LogService {
 	public int getLogTotalCount(Criteria cri) {
 		//값이 없으면
 		if(cri == null || cri.getMb_num() < 1)
-			cri = new Criteria();
+			return 0;
 		return logDao.selectLogTotalCount(cri);
 	}
 	
