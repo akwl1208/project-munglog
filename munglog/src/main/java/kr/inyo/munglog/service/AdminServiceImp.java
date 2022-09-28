@@ -43,6 +43,10 @@ public class AdminServiceImp implements AdminService {
 		if((Integer.parseInt(challenge.getCl_year()) < Integer.parseInt(thisYear)) ||
 				(Integer.parseInt(challenge.getCl_month()) < Integer.parseInt(thisMonth)))
 			return false;
+		//이미 등록한 년과 월은 중복 등록할 수 없다.
+		ChallengeVO dbChallenge = adminDao.selectChallengeBydate(challenge);
+		if(dbChallenge != null)
+			return false;
 		//파일업로드
 		try {
 			String prefix = challenge.getCl_year() + challenge.getCl_month(); //202209

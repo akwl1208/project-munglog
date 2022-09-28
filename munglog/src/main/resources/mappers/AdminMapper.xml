@@ -5,6 +5,10 @@
 <mapper namespace="kr.inyo.munglog.dao.AdminDAO">
 	
 	<!-- select *********************************************************** -->
+	<!-- 년도와 월로 챌린지 가져오기 -->
+	<select id="selectChallengeBydate" resultType="kr.inyo.munglog.vo.ChallengeVO">
+		select * from challenge where cl_year = #{cl_year} and cl_month = #{cl_month}
+	</select>
 	
 	<!-- insert *********************************************************** -->
 	<!-- 챌린지 추가 -->
@@ -12,6 +16,7 @@
 		insert into challenge(cl_year, cl_month, cl_theme, cl_thumb)
 			values(#{cl_year}, #{cl_month}, #{cl_theme}, #{cl_thumb})
 	</insert>
+	
 	<!-- update *********************************************************** -->
 	
 	<!-- delete *********************************************************** -->

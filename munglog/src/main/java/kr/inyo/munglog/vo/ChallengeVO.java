@@ -1,8 +1,10 @@
 package kr.inyo.munglog.vo;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ChallengeVO {
 	private int cl_num;
 	private String cl_thumb;
