@@ -156,76 +156,75 @@
 </body>
 <!-- script ******************************************************************************************************* -->
 <script>
-	/* 변수 *********************************************************************************************************** */
-		let slideIndex = '${index}';
-		let deleteDList = [];
-	/* 이벤트 *********************************************************************************************************** */
-		$(function(){
-			// 수정 버튼 클릭(btn-modify)---------------------------------------------------------------------------------------
-			$('.main .box-content .box-nav .btn-modify').click(function(){
-				$(this).toggleClass('select');
-				//체크박스 체크 해제
-				$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('checked', false);
-				//사진의 lg_num 가져옴
-				let lg_num = $(this).data('value');
-				//사진의 피사체에 체크
-				getSubjectList(lg_num);
-				//만약 수정 시 삭제할 피사체 담기
-				deleteDList = pushDgNum();
-				//사진 초기화
-				$('.main .swiper-slide-active .box-drop .box-select [name=file]').val('');
-				let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
-				$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
-				$('.main .box-content .swiper-slide-active .box-drop').toggle();	
-			})//
-			
-			//사진 선택했으면(input:file)------------------------------------------------------------------------------------------
-			$('.main .box-drop .box-select [name=file]').on('change', function(event) {
-				//파일을 안했으면 유지
-				if(event.target.files.length == 0)
-					return;		
-			  let file = event.target.files[0];
-			  let reader = new FileReader();
-			  //선택한 파일 미리보기에 넣기
-			  reader.onload = function(e) {
-			  	$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', e.target.result);
-			  }
-			  reader.readAsDataURL(file);
-			})//
+/* 변수 *********************************************************************************************************** */
+	let slideIndex = '${index}';
+	let deleteDList = [];
+/* 이벤트 *********************************************************************************************************** */
+	$(function(){
+		// 수정 버튼 클릭(btn-modify)---------------------------------------------------------------------------------------
+		$('.main .box-content .box-nav .btn-modify').click(function(){
+			$(this).toggleClass('select');
+			//체크박스 체크 해제
+			$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('checked', false);
+			//사진의 lg_num 가져옴
+			let lg_num = $(this).data('value');
+			//사진의 피사체에 체크
+			getSubjectList(lg_num);
+			//만약 수정 시 삭제할 피사체 담기
+			deleteDList = pushDgNum();
+			//사진 초기화
+			previewInit();
+			$('.main .box-content .swiper-slide-active .box-drop').toggle();	
+		})//
 		
-			//미리보기 사진(box-preview) 클릭---------------------------------------------------------------------------------------
-			$('.main .box-drop .box-send .box-preview').click(function(){
-				$('.main .swiper-slide-active .box-drop .box-select [name=file]').click();
-				$('.main .swiper-slide-active .box-drop .box-select [name=file]').change();
-			})//
-			
-			//사진 수정 버튼(btn-send) 클릭-----------------------------------------------------------------------------------------
-			$('.main .box-drop .box-send .btn-send').click(function(){
-				//수정할 강아지 번호 저장
-				let modifyDList = pushDgNum();
-				//사진의 lg_num 가져옴
-				let lg_num = $(this).data('value');
-				//파일 가져옴
-				let file = $('.main .swiper-slide-active .box-drop .box-select [name=file]')[0].files[0];
-				//강아지 체크도 바꾸지 않고 파일도 안바꿨으면 
-				if((JSON.stringify(deleteDList) === JSON.stringify(modifyDList)) && typeof(file) == 'undefined'){
-					alert('사진 속 강아지나 사진을 변경해주세요.');					
-					return;
-				}
-				//수정할건지 묻기
-				if(!confirm('사진을 수정하겠습니까?'))
-					return;
-				//강아지 정보와 사진 정보 서버로 보내기
-				let data = new FormData();
-				data.append('file', file);
-				data.append('d_dg_nums[]', deleteDList);
-				data.append('m_dg_nums[]', modifyDList);
-				data.append('lg_num', lg_num);
-				$.ajax({
-					async: false,
-					type:'POST',
-					data: data,
-					url: "<%=request.getContextPath()%>/modify/log",
+		//사진 선택했으면(input:file)------------------------------------------------------------------------------------------
+		$('.main .box-drop .box-select [name=file]').on('change', function(event) {
+			//파일을 안했으면 유지
+			if(event.target.files.length == 0){
+				previewInit();
+				return;		
+			}
+		  let file = event.target.files[0];
+		  let reader = new FileReader();
+		  //선택한 파일 미리보기에 넣기
+		  reader.onload = function(e) {
+		  	$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', e.target.result);
+		  }
+		  reader.readAsDataURL(file);
+		})//
+	
+		//미리보기 사진(box-preview) 클릭---------------------------------------------------------------------------------------
+		$('.main .box-drop .box-send .box-preview').click(function(){
+			$('.main .swiper-slide-active .box-drop .box-select [name=file]').click();
+		})//
+		
+		//사진 수정 버튼(btn-send) 클릭-----------------------------------------------------------------------------------------
+		$('.main .box-drop .box-send .btn-send').click(function(){
+			//수정할건지 묻기
+			if(!confirm('사진을 수정하겠습니까?'))
+				return;
+			//수정할 강아지 번호 저장
+			let modifyDList = pushDgNum();
+			//사진의 lg_num 가져옴
+			let lg_num = $(this).data('value');
+			//파일 가져옴
+			let file = $('.main .swiper-slide-active .box-drop .box-select [name=file]')[0].files[0];
+			//강아지 체크도 바꾸지 않고 파일도 안바꿨으면 
+			if((JSON.stringify(deleteDList) === JSON.stringify(modifyDList)) && typeof(file) == 'undefined'){
+				alert('사진 속 강아지나 사진을 변경해주세요.');					
+				return;
+			}
+			//강아지 정보와 사진 정보 서버로 보내기
+			let data = new FormData();
+			data.append('file', file);
+			data.append('d_dg_nums[]', deleteDList);
+			data.append('m_dg_nums[]', modifyDList);
+			data.append('lg_num', lg_num);
+			$.ajax({
+				async: false,
+				type:'POST',
+				data: data,
+				url: "<%=request.getContextPath()%>/modify/log",
 					processData : false,
 					contentType : false,
 					dataType: "json",
@@ -233,11 +232,8 @@
 						//이미지 파일이 아닐 때
 						if(data.res == 0){
 							alert('이미지 파일만 등록가능 합니다.');
-							//선택한 파일 비우기
-							$('.main .swiper-slide-active .box-drop .box-select [name=file]').val('');
 							//화면 재구성
-							let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
-							$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
+							previewInit();
 							$('.main .swiper-slide-active .box-drop .box-select [name=file]').click();
 						}
 						//성공했을 때
@@ -248,18 +244,15 @@
 						}
 						//실패했을 때
 						else if(data.res == -1){
-							alert('일지 등록에 실팼습니다. 다시 시도해주세요.');
+							alert('일지 수정에 실팼습니다. 다시 시도해주세요.');
 							//체크박스 체크 해제
 							$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('checked', false);
 							//사진의 lg_num 가져옴
 							let lg_num = $(this).data('value');
 							//사진의 피사체에 체크
 							getSubjectList(lg_num);
-							//선택한 파일 비우기
-							$('.main .swiper-slide-active .box-drop .box-select .box-file [name=file]').val('');
 							//화면 재구성
-							let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
-							$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
+							previewInit();
 						}
 					}
 				});
@@ -284,10 +277,10 @@
 				ajaxPost(false, obj, '/delete/log', function(data){
 					//삭제 실패했을 때
 					if(!data.res)
-						alert('사진 삭제에 실패했습니다. 다시 시도해주세요.')
+						alert('일지 삭제에 실패했습니다. 다시 시도해주세요.')
 					//삭제했을 때
 					else{
-						alert('사직을 삭제했습니다.')
+						alert('일지를 삭제했습니다.')
 						//화면 새로고침
 						location.reload();
 					}
@@ -337,6 +330,7 @@
 				$('.auto-start').addClass('select');
 				swiper.autoplay.start();
 			});//
+			
 			//슬라이드쇼 정지
 			$('.auto-stop').on('click', function() {
 				$('.auto-start').removeClass('select');
@@ -381,5 +375,11 @@
 		})
 		return dList;
 	}//
+	
+	function previewInit(){
+		$('.main .swiper-slide-active .box-drop .box-select [name=file]').val('');
+		let url = $('.main .swiper-slide-active .box-img .lg_image').attr('src');
+		$('.main .swiper-slide-active .box-drop .box-send .preview').attr('src', url);
+	}
 </script> 
 </html>
