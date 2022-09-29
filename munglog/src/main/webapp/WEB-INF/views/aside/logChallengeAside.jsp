@@ -45,7 +45,9 @@
 			<span class="title"><i class="fa-solid fa-paw ml-1 mr-2"></i>지난 챌린지 보기</span>
 			<select class="form-control">
 				<c:forEach items="${challengeList}" var="challenge">
-					<option value="${challenge.cl_num}">${challenge.cl_year}년 ${challenge.cl_month}월</option>
+					<option value="${challenge.cl_num}" data-year="${challenge.cl_year}" data-month="${challenge.cl_month}">
+						${challenge.cl_year}년 ${challenge.cl_month}월				
+					</option>
 				</c:forEach>
 			</select>
 		</div>
@@ -53,10 +55,21 @@
 </body>
 <!-- script ******************************************************************************************************* -->
 <script>
-
-	
-/* 함수 *********************************************************************************************************** */
-	//  -----------------------------------------------------------------------------------------------------
-
+/* 이벤트 *********************************************************************************************************** */
+	// select 선텍 깂 바꿔줌
+	$(document).ready(function(){
+		let cl_num = ${challenge.cl_num};
+		$('.side-main .box-previous select').val(cl_num).prop('selected', true);
+	})
+	//select 값이 바뀌면 ------------------------------------------------------------------------
+	$('.side-main .box-previous select').change(function(){
+		//값 가져오기
+		let year = $('.side-main .box-previous select option:selected').data('year');
+		let month = $('.side-main .box-previous select option:selected').data('month');
+		if(typeof(year) == 'undefined' || typeof(month) == 'undefined')
+			return;
+		//선택 챌린지한 지난 챌린지 일지를 보도록 함
+		location.href = '<%=request.getContextPath()%>/log/challenge?year='+year+'&month='+month;
+	})
 </script>
 </html>
