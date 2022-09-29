@@ -446,6 +446,13 @@ public class LogServiceImp implements LogService {
 			return -2;
 		if(file == null || file.getOriginalFilename().length() == 0 || user.getMb_num() < 1 || cl_num < 1)
 			return -1;
+		//등록된 챌린지인지 확인		
+		ChallengeVO dbChallenge = logDao.selectChallenge(cl_num);
+		if(dbChallenge == null)
+			return -1;
+		//진행 중인 챌린지가 아닌 경우
+		if(!dbChallenge.getCl_year().equals(thisYear) || !dbChallenge.getCl_month().equals(thisMonth))
+			return -1;
 		//이미 참여한 챌린지인지 확인
 		ParticipateVO dbParticipate = logDao.selectParticipate(cl_num, user.getMb_num());
 		if(dbParticipate != null)
@@ -465,6 +472,9 @@ public class LogServiceImp implements LogService {
 			return -1;
 		//챌린지 참여
 		logDao.insertParticipate(cl_num, dbLog.getLg_num());
+		//포인트 지급
+		String pointHistory = dbChallenge.getCl_year() + "년" + dbChallenge.getCl_month() + "월 챌린지 참여";
+		memberDao.insertPoint(user.getMb_num(),"적립",pointHistory,300);
 		return 2;
 	}
 	

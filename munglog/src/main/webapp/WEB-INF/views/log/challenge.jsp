@@ -93,6 +93,9 @@
 		perPageNum : 12,
 		cl_num
 	};
+	const now = new Date();
+	const thisYear = now.getFullYear();
+	const thisMonth = now.getMonth()+1;
 	$(function(){
 /* 이벤트 *********************************************************************************************************** */		
 		$(document).ready(function(){
@@ -101,6 +104,13 @@
 		
 		//카메라 아이콘(btn-upload) 클릭 ------------------------------------------------------------------------------------
 		$('.main .box-nav .box-upload .btn-upload').click(function(){
+			//진행 중인 챌린지만 참여 가능
+			let clYear = ${challenge.cl_year};
+			let clMonth = ${challenge.cl_month};
+			if(clYear != thisYear || clMonth != thisMonth){
+				alert('현재 진행 중인 챌린지에만 참여할 수 있습니다.')
+				return;
+			}
 			//로그인한 회원만 참여 가능
 			if(user == ''){
 				if(confirm('챌린지를 참여하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
