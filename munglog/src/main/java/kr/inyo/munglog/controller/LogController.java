@@ -159,8 +159,10 @@ public class LogController {
 			HttpSession session) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//본인 멍멍친구 일지에 들어가면 본인 일지로
-		if(user != null && (user.getMb_num() == mb_num))
+		if(user != null && (user.getMb_num() == mb_num)) {
 			mv.setViewName("redirect:/log/mylog/"+mb_num);
+			return mv;
+		}
 		MemberVO member = memberService.getMemberByMbnum(mb_num);
 		//강아지 정보 가져오기
 		ArrayList<DogVO> dList = logService.getDogs(member);
@@ -183,6 +185,7 @@ public class LogController {
 		if(user != null && (user.getMb_num() == mb_num)) {
 			String url = mb_num + "?lg_num="+lg_num+"&mb_num="+mb_num;
 			mv.setViewName("redirect:/log/mylogDetail/"+url);
+			return mv;
 		}
 		//일지 전체 개수 가져오기
 		int totalCount = logService.getLogTotalCount(cri);
@@ -279,7 +282,7 @@ public class LogController {
 	public Map<Object, Object> deleteLog(@RequestBody LogVO log, HttpSession session) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		MemberVO user = (MemberVO)session.getAttribute("user");	
-		boolean res = logService.deleteLog(log, user);
+		int res = logService.deleteLog(log, user);
 
 		map.put("res", res);
 		return map;

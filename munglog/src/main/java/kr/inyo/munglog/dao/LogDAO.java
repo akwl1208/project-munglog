@@ -81,8 +81,10 @@ public interface LogDAO {
 	ChallengeVO selectChallenge(int cl_num);
 	
 	/* 참여 ----------------------------------------------------------------------------------- */
-	//챌린지 참여 정보 가져오기
+	//챌린지 번호랑 회원 번호주고 챌린지 참여 정보 가져오기
 	ParticipateVO selectParticipate(@Param("cl_num")int cl_num, @Param("mb_num")int mb_num);
 	//챌린지 참여 추가하기
 	void insertParticipate(@Param("cl_num")int cl_num, @Param("lg_num")int lg_num);
+	//일지 번호 주고 챌린지 참여 정보 가져오기
+	ParticipateVO selectParticipateByLgNum(int lg_num);
 }

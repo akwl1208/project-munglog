@@ -34,7 +34,7 @@ public interface LogService {
 	//슬라이드 인덱스 찾기
 	int findIndex(ArrayList<LogVO> logList, int lg_num);
 	//일지 삭제
-	boolean deleteLog(LogVO log, MemberVO user);
+	int deleteLog(LogVO log, MemberVO user);
 	//일지 조회수 증가
 	boolean countViews(LogVO log);
 	//일지 하트 

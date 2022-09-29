@@ -25,6 +25,7 @@
 	.main .box-content .swiper-slide .box-nav{position: relative;}
 	.main .box-content .swiper-slide .box-nav .list-nav{text-align: center;}
 	.main .box-content .swiper-slide .box-nav .item-nav{font-weight: bold;}
+	.main .box-content .swiper-slide .box-nav .item-nav .box-set .btn-modify{line-height : 24px;}
 	.main .box-content .swiper-slide .item-nav .auto-start:hover,
 	.main .box-content .swiper-slide .item-nav .auto-stop:hover,
 	.main .box-content .swiper-slide .item-nav .btn-modify:hover,
@@ -107,7 +108,9 @@
 									<li class="item-nav list-group-item border-0 flex-fill">
 										<div class="box-set">
 											<i class="btn-modify fa-solid fa-camera-rotate mr-4" data-value="${log.lg_num}"></i>
-											<i class="btn-delete fa-solid fa-trash-can" data-value="${log.lg_num}"></i>
+											<c:if test="${log.pt_num == 0}">
+												<i class="btn-delete fa-solid fa-trash-can" data-value="${log.lg_num}"></i>										
+											</c:if>
 										</div>
 									</li>
 								</ul>
@@ -275,15 +278,15 @@
 				}
 				//일지 삭제
 				ajaxPost(false, obj, '/delete/log', function(data){
-					//삭제 실패했을 때
-					if(!data.res)
-						alert('일지 삭제에 실패했습니다. 다시 시도해주세요.')
-					//삭제했을 때
-					else{
+					if(data.res == 0)
+						alert('챌린지에 참여한 일지는 삭제할 수 없습니다.')
+					else if(data.res == 1){
 						alert('일지를 삭제했습니다.')
 						//화면 새로고침
 						location.reload();
 					}
+					else
+						alert('일지 삭제에 실패했습니다. 다시 시도해주세요.')
 				});
 			})//
 			

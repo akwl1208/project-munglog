@@ -15,6 +15,8 @@ public class LogVO {
 	private String lg_report;
 	private String lg_del;
 	private int lg_heart;
+	//챌린지 참여
+	private int pt_num;
 	
 	public String getLg_reg_date_str() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

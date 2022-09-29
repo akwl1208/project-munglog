@@ -263,16 +263,23 @@ public class LogServiceImp implements LogService {
 
 	/* deleteLog: 일지 삭제 --------------------------------------------------------------------------------------------------*/
 	@Override
-	public boolean deleteLog(LogVO log, MemberVO user) {
+	public int deleteLog(LogVO log, MemberVO user) {
 		//값이 없으면
 		if(user == null || user.getMb_num() < 1)
-			return false;
+			return -1;
 		if(log == null || log.getLg_num() < 1)
-			return false;
+			return -1;
 		//로그 정보 가져오기
 		LogVO dbLog = logDao.selectLog(log.getLg_num());
 		if(dbLog == null)
-			return false;
+			return -1;
+		//일지를 올린 회원이 삭제한 경우가 아님
+		if(dbLog.getLg_mb_num() != user.getMb_num())
+			return -1;
+		//챌린지에 참여한 일지는 삭제 못함
+		ParticipateVO dbParticipate = logDao.selectParticipateByLgNum(log.getLg_num());
+		if(dbParticipate != null)
+			return 0;
 		//일지 삭제하기
 		dbLog.setLg_del("1");
 		logDao.updateLog(dbLog);
@@ -280,7 +287,7 @@ public class LogServiceImp implements LogService {
 		UploadFileUtils.deleteFile(logUploadPath, dbLog.getLg_image());
 		//피사체 삭제하기
 		logDao.deleteSubject(dbLog.getLg_num());
-		return true;
+		return 1;
 	}
 
 	/* countViews: 조회수 증가 --------------------------------------------------------------------------------------------------*/
