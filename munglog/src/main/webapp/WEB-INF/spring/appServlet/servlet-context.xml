@@ -68,6 +68,7 @@
 	    <beans:ref bean="guestInterceptor"/>
     </interceptor>
 		<interceptor>
+			<mapping path="/admin/challenge"/>
 			<mapping path="/log/mylog"/>
 			<mapping path="/log/mglogDetail"/>
 	    <mapping path="/log/register"/>

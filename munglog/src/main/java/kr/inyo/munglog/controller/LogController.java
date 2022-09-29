@@ -69,13 +69,11 @@ public class LogController {
 			HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//회원이 아니거나 
-		if(user == null) {
+		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
-		}
 		//회원번호가 다르면 접근 할 수 없음
-		if(user.getMb_num() != mb_num) {
+		if(user.getMb_num() != mb_num)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
-		}
 		//회원정보 가져옴
 		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
 		//강아지 정보 가져오기

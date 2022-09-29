@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,15 @@ public class AdminController {
 	
 	/* 챌린지 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/admin/challenge", method = RequestMethod.GET)
-	public ModelAndView adminChallangeGet(ModelAndView mv) {
+	public ModelAndView adminChallangeGet(ModelAndView mv, HttpSession session,
+			HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//로그인 안했거나
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		//회원번호가 다르면 접근 할 수 없음
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		mv.setViewName("/admin/challenge");
 		return mv;
 	}
