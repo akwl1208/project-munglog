@@ -9,20 +9,20 @@
 		<put-attribute name="body" value="/WEB-INF/views/account/{1}.jsp" />
 	</definition>
 	
-	<!-- log feed 레이아웃 -->
-	<definition name="/log/feed" template="/WEB-INF/views/layout/logFeedLayout.jsp">
-		<put-attribute name="body" value="/WEB-INF/views/log/feed.jsp" />
+	<!-- log challenge 레이아웃 -->
+	<definition name="/log/challenge*" template="/WEB-INF/views/layout/logLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/log/challenge{1}.jsp" />
 		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
 	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
-	  <put-attribute name="logFeedAside" value="/WEB-INF/views/aside/logFeedAside.jsp" />
+	  <put-attribute name="logAside" value="/WEB-INF/views/aside/logChallengeAside.jsp" />
 	</definition>
 	
-	<!-- log feedDetail 레이아웃 -->
-	<definition name="/log/feedDetail" template="/WEB-INF/views/layout/logFeedLayout.jsp">
-		<put-attribute name="body" value="/WEB-INF/views/log/feedDetail.jsp" />
+	<!-- log feed 레이아웃 -->
+	<definition name="/log/feed*" template="/WEB-INF/views/layout/logLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/log/feed{1}.jsp" />
 		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
 	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
-	  <put-attribute name="logFeedAside" value="/WEB-INF/views/aside/logFeedAside.jsp" />
+	  <put-attribute name="logAside" value="/WEB-INF/views/aside/logFeedAside.jsp" />
 	</definition>
 	
 	<!-- log 레이아웃 -->
