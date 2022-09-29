@@ -11,6 +11,7 @@ import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.ParticipateVO;
 import kr.inyo.munglog.vo.SubjectVO;
 
 public interface LogDAO {
@@ -74,4 +75,10 @@ public interface LogDAO {
 	ChallengeVO getThisChallenge(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
 	//진행한 챌린지 가져오기
 	ArrayList<ChallengeVO> selectPastChallengeList(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
+	
+	/* 참여 ----------------------------------------------------------------------------------- */
+	//챌린지 참여 정보 가져오기
+	ParticipateVO selectParticipate(@Param("cl_num")int cl_num, @Param("mb_num")int mb_num);
+	//챌린지 참여 추가하기
+	void insertParticipate(@Param("cl_num")int cl_num, @Param("lg_num")int lg_num);
 }

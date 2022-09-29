@@ -95,13 +95,11 @@ public class LogController {
 			int lg_num, Criteria cri, HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//회원이 아니거나 
-		if(user == null) {
+		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
-		}
 		//회원번호가 다르면 접근 할 수 없음
-		if(user.getMb_num() != mb_num) {
+		if(user.getMb_num() != mb_num)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
-		}
 		//일지 전체 개수 가져오기
 		int totalCount = logService.getLogTotalCount(cri);
 		//criteria 재설정
@@ -176,23 +174,6 @@ public class LogController {
 		return mv;
 	}
 	
-	/* 챌린지 --------------------------------------------------------------------------------------------------------------*/
-	@RequestMapping(value = "/log/challenge", method = RequestMethod.GET)
-	public ModelAndView logChallengeGet(ModelAndView mv) {
-		//이번 달 챌린지 가져오기
-		ChallengeVO challenge = logService.getThisChallenge();
-		System.out.println(challenge);
-		//진행 한챌린지 리스트 가져오기
-		ArrayList<ChallengeVO> challengeList = logService.getPastChallengeList();
-		System.out.println(challengeList);
-		
-		mv.addObject("challengeList", challengeList);
-		mv.addObject("challenge", challenge);
-		mv.setViewName("/log/challenge");
-		return mv;
-	}
-	
-	
 	/* 멍멍친구 일지 상세보기 -------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/friendlogDetail/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView logfriendlogDetailGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
@@ -221,6 +202,22 @@ public class LogController {
 		mv.setViewName("/log/friendLogDetail");
 		return mv;
 	}	
+	
+	/* 챌린지 --------------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/challenge", method = RequestMethod.GET)
+	public ModelAndView logChallengeGet(ModelAndView mv) {
+		//이번 달 챌린지 가져오기
+		ChallengeVO challenge = logService.getThisChallenge();
+		System.out.println(challenge);
+		//진행 한챌린지 리스트 가져오기
+		ArrayList<ChallengeVO> challengeList = logService.getPastChallengeList();
+		System.out.println(challengeList);
+		
+		mv.addObject("challengeList", challengeList);
+		mv.addObject("challenge", challenge);
+		mv.setViewName("/log/challenge");
+		return mv;
+	}
 	
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
@@ -386,6 +383,19 @@ public class LogController {
 		ArrayList<MemberVO> friendList = logService.getFriendList(friend);
 		
 		map.put("friendList", friendList);
+		return map;
+	}
+	
+	/* 챌린지 참여 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/participate/challenge", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> participateChallenge(@RequestParam("file") MultipartFile file,
+			@RequestParam("cl_num") int cl_num, HttpSession session, HttpServletResponse response) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		int res = logService.participageChallenge(file, cl_num, user);
+		
+		map.put("res", res);
 		return map;
 	}
 }

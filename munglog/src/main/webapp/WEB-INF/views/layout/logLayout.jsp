@@ -52,6 +52,21 @@
 			}
 		});
 	}
+	
+	function ajaxPostData(data, url, func){
+		$.ajax({
+			async: false,
+			type:'POST',
+			data: data,
+			url: "<%=request.getContextPath()%>" + url,
+			processData : false,
+			contentType : false,
+			dataType: "json",
+			success : function(data){
+				func(data)
+			}
+		});		
+	}//
 </script>
 </body>
 </html>

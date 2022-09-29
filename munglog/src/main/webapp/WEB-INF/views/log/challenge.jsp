@@ -69,7 +69,7 @@
 		<!-- box-drop -------------------------------------------------------- -->
 		<div class="box-drop" style="display: none;">
 			<div class="box-participate d-flex align-items-end justify-content-between">
-				<input type="file" name="file" style="display: none;">
+				<input type="file" name="file" accept="image/jpg, image/jpeg, image/png, image/gif" style="display: none;">
 				<div class="box-preview">
 					<img class="preview">
 				</div>
@@ -85,6 +85,8 @@
 <!-- script ******************************************************************************************************* -->
 <script>
 	/* 변수 *********************************************************************************************************** */
+	let user = '${user}';
+	let cl_num = ${challenge.cl_num}
 	let page = 1;
 	let obj = {
 		page,
@@ -94,15 +96,22 @@
 /* 이벤트 *********************************************************************************************************** */		
 		//카메라 아이콘(btn-upload) 클릭 ------------------------------------------------------------------------------------
 		$('.main .box-nav .box-upload .btn-upload').click(function(){
+			//로그인한 회원만 참여 가능
+			if(user == ''){
+				if(confirm('챌린지를 참여하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
+					location.href = '<%=request.getContextPath()%>/account/login';
+					return;
+				}
+			}
 			$('.main .box-drop .box-preview').hide();
 			//드롭박스를 열면 파일 선택하도록 함
 			let hasSelect = $(this).attr('class').indexOf('select');
 			if(hasSelect == -1)
 				$('.main .box-nav .box-drop [name=file]').click();
+			//파일을 선택하지 않으면 드롭박스 안열림
 			let file = $('.main .box-nav .box-drop [name=file]').val();
-			if(file == ''){
+			if(file == '')
 				return;
-			}
 			//아이콘 색깔 변경
 			$(this).toggleClass('select');
 			//드롭 박스
@@ -113,9 +122,7 @@
 		$('.main .box-nav .box-drop [name=file]').on('change', function(event) {
 			//파일을 선택하지 않았으면
 			if(event.target.files.length == 0){
-				$('.main .box-drop .box-preview').hide();
-				$('.main .box-nav .box-drop').hide();
-				$('.main .box-nav .box-upload .btn-upload').removeClass('select');
+				init();
 				return;
 			} else{
 				$('.main .box-drop .box-preview').show();
@@ -135,11 +142,54 @@
 		$('.main .box-drop .box-preview').click(function(){
 			$('.main .box-nav .box-drop [name=file]').click();
 		})//
+		
+		//챌린지 참여 버튼(btn-participages) 클릭-----------------------------------------------------------------------------------------
+		$('.main .box-drop .box-participate .btn-participate').click(function(){
+			//참여할건지 묻기
+			if(!confirm('챌린지에 참여하시겠습니까? 챌린지에 참여한 사진은 수정/삭제에 제한이 있으니 신중하게 선택해주세요.'))
+				return;
+			//사진을 선택하지 않았으면
+			let image = $('.main .box-nav .box-drop [name=file]').val();
+			if(image == ''){
+				alert('사진을 선택하세요.');
+				//화면 재구성
+				init();
+				$('.main .box-nav .box-drop [name=file]').click();
+				return;
+			}
+			//강아지 정보와 사진 정보 서버로 보내기
+			let data = new FormData();
+			data.append('file', $('.main .box-nav .box-drop [name=file]')[0].files[0]);
+			data.append('cl_num', cl_num);
+			//챌린지 등록
+			ajaxPostData(data, '/participate/challenge', function(data){
+				init();				
+				if(data.res == 2)
+					alert('챌린지 참여했습니다.')
+				else if(data.res == 0)
+					alert('이미 참여한 챌린지 입니다.')
+				else if(data.res == 1){
+					alert('이미지 파일만 등록 가능합니다.');
+					$('.main .box-nav .box-drop [name=file]').click();	
+				}
+				else if(data.res == -2){
+					alert('로그인한 회원만 챌린지 참여 가능합니다.')
+					location.href = '<%=request.getContextPath()%>/account/login';
+				}
+				else
+					alert('챌린지 참여에 실패했습니다. 다시 시도해주세요.')
+			});
+
+		})//
 	});
 	
 /* 함수 *********************************************************************************************************** */
-	//  -----------------------------------------------------------------------------------------------------
-
+	// init : 화면 초기화 -----------------------------------------------------------------------------------------------------
+	function init(){
+		$('.main .box-drop .box-preview').hide();
+		$('.main .box-nav .box-drop').hide();
+		$('.main .box-nav .box-upload .btn-upload').removeClass('select');
+	}
 
 </script> 
 </html>

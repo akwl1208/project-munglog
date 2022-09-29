@@ -106,6 +106,13 @@
 			order by cl_year desc, cl_month desc
 	</select>
 	
+	<!-- 일지 번호랑 챌린지 번호로 챌린지 참여 정보 가져오기 -->
+	<select id="selectParticipate" resultType="kr.inyo.munglog.vo.ParticipateVO">
+		select * from participate 
+		 	join log on participate.pt_lg_num = log.lg_num
+ 			where pt_cl_num = #{cl_num} and lg_mb_num = #{mb_num};
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">
@@ -131,6 +138,11 @@
 	<!-- 친구 추가 -->
 	<insert id="insertFriend">
 		insert into friend(fr_mb_num, fr_friend) values(#{fr_mb_num}, #{fr_friend})
+	</insert>
+	
+	<!-- 챌린지 참여 추가 -->
+	<insert id="insertParticipate">
+		insert into participate(pt_cl_num, pt_lg_num) values(#{cl_num},#{lg_num})
 	</insert>
 	
 	<!-- update *********************************************************** -->

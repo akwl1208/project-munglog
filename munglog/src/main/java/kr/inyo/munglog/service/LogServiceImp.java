@@ -19,6 +19,7 @@ import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
 import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.ParticipateVO;
 import kr.inyo.munglog.vo.SubjectVO;
 
 @Service
@@ -36,8 +37,25 @@ public class LogServiceImp implements LogService {
 	String thisMonth = String.format("%tm", today);
 
 /* 함수********************************************************************************************************************* */
-	//-----------------------------------------------------------------------------
-
+	// 이미지 파일인지 확인 ----------------------------------------------------------------------------
+	public boolean isImg(MultipartFile file) {
+		String originalName = file.getOriginalFilename();
+		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
+		if(MediaUtils.getMediaType(formatName) == null)
+			return false;
+		return true;
+	}
+	
+	// 파일 없로드 ----------------------------------------------------------------------------
+	public String uploadFile(MultipartFile file, int mb_num) {
+		String lg_image = "";
+		try {
+			lg_image = UploadFileUtils.uploadFileDir(logUploadPath, String.valueOf(mb_num), file.getOriginalFilename(), file.getBytes());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return lg_image;
+	}
 /* overide 메소드 *********************************************************************************************************** */
 	/*  getDogs : 회원의 강아지 정보 가져옴 ------------------------------------------------------------------------------------------*/
 	@Override
@@ -96,17 +114,12 @@ public class LogServiceImp implements LogService {
 		//포인트 적립을 위해 오늘 적립한 로그 가져옴
 		ArrayList<LogVO> dbLogList = logDao.selectTodayLogListByMbNum(user.getMb_num());
 		//이미지 파일인지 확인
-		String originalName = file.getOriginalFilename();
-		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
-		if(MediaUtils.getMediaType(formatName) == null)
+		if(!isImg(file))
 			return 0;
 		//파일업로드
-		String lg_image = "";
-		try {
-			lg_image = UploadFileUtils.uploadFileDir(logUploadPath, String.valueOf(user.getMb_num()), file.getOriginalFilename(), file.getBytes());
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
+		String lg_image = uploadFile(file, user.getMb_num());
+		if(lg_image == "")
+			return -1;
 		//일지 등록
 		logDao.insertLog(user.getMb_num(), lg_image);
 		//회원 정보로 로그 정보 가져옴
@@ -217,19 +230,14 @@ public class LogServiceImp implements LogService {
 		//사진 수정 ---------------------------------------------------------
 		if(file != null) {
 			//이미지 파일인지 확인
-			String originalName = file.getOriginalFilename();
-			String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
-			if(MediaUtils.getMediaType(formatName) == null)
+			if(!isImg(file))
 				return 0;
 			//기존 파일 삭제
 			UploadFileUtils.deleteFile(logUploadPath, dbLog.getLg_image());
 			//새로운 파일업로드
-			String lg_image = "";
-			try {
-				lg_image = UploadFileUtils.uploadFileDir(logUploadPath, String.valueOf(user.getMb_num()), file.getOriginalFilename(), file.getBytes());
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
+			String lg_image = uploadFile(file, user.getMb_num());
+			if(lg_image == "")
+				return -1;
 			//이미지 수정
 			dbLog.setLg_image(lg_image);
 			logDao.updateLog(dbLog);
@@ -420,10 +428,40 @@ public class LogServiceImp implements LogService {
 		return logDao.getThisChallenge(thisYear, thisMonth);
 	}
 
-	/*getPastChallengeList : 진행한 챌린지 가져오기 ---------------------------------------------------------------------------------*/
+	/*getPastChallengeList : 진행한 챌린지 가져오기 -------------------------------------------------------------------------------*/
 	@Override
 	public ArrayList<ChallengeVO> getPastChallengeList() {
 		return logDao.selectPastChallengeList(thisYear, thisMonth);
+	}
+
+	/*participageChallenge : 챌린지 참여하기 -----------------------------------------------------------------------------------*/
+	@Override
+	public int participageChallenge(MultipartFile file, int cl_num, MemberVO user) {
+		//값이 없으면
+		if(user == null)
+			return -2;
+		if(file == null || file.getOriginalFilename().length() == 0 || user.getMb_num() < 1 || cl_num < 1)
+			return -1;
+		//이미 참여한 챌린지인지 확인
+		ParticipateVO dbParticipate = logDao.selectParticipate(cl_num, user.getMb_num());
+		if(dbParticipate != null)
+			return 0;
+		//이미지 파일인지 확인
+		if(!isImg(file))
+			return 1;
+		//파일업로드
+		String lg_image = uploadFile(file, user.getMb_num());
+		if(lg_image == "")
+			return -1;
+		//일지 등록
+		logDao.insertLog(user.getMb_num(), lg_image);
+		//회원 정보로 일지 정보 가져옴
+		LogVO dbLog = logDao.selectLogByImg(user.getMb_num(), lg_image);
+		if(dbLog == null)
+			return -1;
+		//챌린지 참여
+		logDao.insertParticipate(cl_num, dbLog.getLg_num());
+		return 2;
 	}
 
 }
