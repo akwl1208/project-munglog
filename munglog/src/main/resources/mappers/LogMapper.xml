@@ -20,9 +20,13 @@
 	<select id="selectLogList" resultType="kr.inyo.munglog.vo.LogVO">
 		select * from log
 			left join subject on log.lg_num = subject.sb_lg_num
+			left join participate on log.lg_num = participate.pt_lg_num
 			where 
 				<if test="mb_num != 0">
 					lg_mb_num = #{mb_num} and
+				</if>
+				<if test="mb_num == 0">
+					pt_num is null and
 				</if>
 				lg_del = '0' and lg_report = '0'
 			<if test="dg_num != 0">
@@ -123,7 +127,7 @@
 		select * from log 
 			join participate on log.lg_num = participate.pt_lg_num
       where lg_report = '0' and pt_cl_num = #{cl_num}
-      order by lg_reg_date
+      order by lg_reg_date desc
       limit #{pageStart}, #{perPageNum};
 	</select>
 	
