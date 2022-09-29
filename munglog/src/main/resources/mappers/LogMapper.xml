@@ -94,6 +94,18 @@
 	    where fr_mb_num = #{fr_friend};
 	</select>
 	
+	<!-- 이번 년도와 이번 달 주고 진행 중인 챌린지 가져오기 -->
+	<select id="getThisChallenge" resultType="kr.inyo.munglog.vo.ChallengeVO">
+		select * from challenge where cl_year = #{cl_year} and cl_month = #{cl_month}
+	</select>
+	
+	<!-- 진행한 모든 챌린지 가져오기 -->
+	<select id="selectPastChallengeList" resultType="kr.inyo.munglog.vo.ChallengeVO">
+		select * from challenge 
+			where <![CDATA[cl_year <= #{cl_year} and cl_month <= #{cl_month}]]> 
+			order by cl_year desc, cl_month desc
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">

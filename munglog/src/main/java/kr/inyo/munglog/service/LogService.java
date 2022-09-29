@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.ChallengeVO;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
@@ -48,5 +49,9 @@ public interface LogService {
 	FriendVO getFriend(FriendVO friend, MemberVO user);
 	//친구들 리스트 가져오기(프로필)
 	ArrayList<MemberVO> getFriendList(FriendVO friend);
+	//진행 중인 챌린지 가져오기
+	ChallengeVO getThisChallenge();
+	//모든 챌린지 가져오기
+	ArrayList<ChallengeVO> getPastChallengeList();
 
 }

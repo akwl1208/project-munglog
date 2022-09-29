@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Param;
 
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.ChallengeVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
@@ -67,4 +68,10 @@ public interface LogDAO {
 	void deleteFriend(FriendVO dbFriend);
 	//친구 리스트 가져오기
 	ArrayList<MemberVO> selectFriendList(FriendVO friend);
+	
+	/* 챌린지 ----------------------------------------------------------------------------------- */
+	//이번 년도와 이번 달 주고 진행 중인 챌린지 가져오기
+	ChallengeVO getThisChallenge(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
+	//진행한 챌린지 가져오기
+	ArrayList<ChallengeVO> selectPastChallengeList(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
 }

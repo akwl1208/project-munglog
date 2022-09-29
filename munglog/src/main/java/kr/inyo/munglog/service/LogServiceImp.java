@@ -1,6 +1,7 @@
 package kr.inyo.munglog.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import kr.inyo.munglog.dao.MemberDAO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
+import kr.inyo.munglog.vo.ChallengeVO;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
@@ -28,6 +30,10 @@ public class LogServiceImp implements LogService {
 	MemberDAO memberDao;
 	
 	String logUploadPath = "D:\\git\\munglog\\log";
+	//이번년도와 월 가져오기
+	Date today = new Date();
+	String thisYear = String.format("%tY", today);
+	String thisMonth = String.format("%tm", today);
 
 /* 함수********************************************************************************************************************* */
 	//-----------------------------------------------------------------------------
@@ -129,7 +135,7 @@ public class LogServiceImp implements LogService {
 	@Override
 	public ArrayList<LogVO> getLogList(Criteria cri) {
 		//값이 없으면
-		if(cri == null || cri.getMb_num() < 0)
+		if(cri == null)
 			return null;
 		//회원번호 주고 로그 가져오기
 		return logDao.selectLogList(cri);
@@ -139,7 +145,7 @@ public class LogServiceImp implements LogService {
 	@Override
 	public int getLogTotalCount(Criteria cri) {
 		//값이 없으면
-		if(cri == null || cri.getMb_num() < 1)
+		if(cri == null)
 			return 0;
 		return logDao.selectLogTotalCount(cri);
 	}
@@ -405,6 +411,19 @@ public class LogServiceImp implements LogService {
 			return null;
 		//친구 리스트 가져오기
 		return logDao.selectFriendList(friend);
+	}
+
+	/*getThisChallenge : 진행 중인 챌린지 가져오기 ---------------------------------------------------------------------------------*/
+	@Override
+	public ChallengeVO getThisChallenge() {
+		//챌린지 가져오기
+		return logDao.getThisChallenge(thisYear, thisMonth);
+	}
+
+	/*getPastChallengeList : 진행한 챌린지 가져오기 ---------------------------------------------------------------------------------*/
+	@Override
+	public ArrayList<ChallengeVO> getPastChallengeList() {
+		return logDao.selectPastChallengeList(thisYear, thisMonth);
 	}
 
 }

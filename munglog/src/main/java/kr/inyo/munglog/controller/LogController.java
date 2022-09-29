@@ -23,6 +23,7 @@ import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
+import kr.inyo.munglog.vo.ChallengeVO;
 import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
@@ -175,6 +176,23 @@ public class LogController {
 		return mv;
 	}
 	
+	/* 챌린지 --------------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/challenge", method = RequestMethod.GET)
+	public ModelAndView logChallengeGet(ModelAndView mv) {
+		//이번 달 챌린지 가져오기
+		ChallengeVO challenge = logService.getThisChallenge();
+		System.out.println(challenge);
+		//진행 한챌린지 리스트 가져오기
+		ArrayList<ChallengeVO> challengeList = logService.getPastChallengeList();
+		System.out.println(challengeList);
+		
+		mv.addObject("challengeList", challengeList);
+		mv.addObject("challenge", challenge);
+		mv.setViewName("/log/challenge");
+		return mv;
+	}
+	
+	
 	/* 멍멍친구 일지 상세보기 -------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/friendlogDetail/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView logfriendlogDetailGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
@@ -203,6 +221,7 @@ public class LogController {
 		mv.setViewName("/log/friendLogDetail");
 		return mv;
 	}	
+	
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)
