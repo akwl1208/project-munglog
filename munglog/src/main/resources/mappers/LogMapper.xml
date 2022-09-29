@@ -94,8 +94,8 @@
 	    where fr_mb_num = #{fr_friend};
 	</select>
 	
-	<!-- 이번 년도와 이번 달 주고 진행 중인 챌린지 가져오기 -->
-	<select id="getThisChallenge" resultType="kr.inyo.munglog.vo.ChallengeVO">
+	<!-- 년도와 달 주고 진행 중인 챌린지 가져오기 -->
+	<select id="getChallengeByDate" resultType="kr.inyo.munglog.vo.ChallengeVO">
 		select * from challenge where cl_year = #{cl_year} and cl_month = #{cl_month}
 	</select>
 	
@@ -111,6 +111,20 @@
 		select * from participate 
 		 	join log on participate.pt_lg_num = log.lg_num
  			where pt_cl_num = #{cl_num} and lg_mb_num = #{mb_num};
+	</select>
+	
+	<!-- 챌린지 번호로 챌린지 가져오기 -->
+	<select id="selectChallenge" resultType="kr.inyo.munglog.vo.ChallengeVO">
+		select * from challenge where cl_num = #{cl_num}
+	</select>
+	
+	<!-- 챌린지에 참여한 챌린지 가져오기 -->
+	<select id="getChallengeLogList" resultType="kr.inyo.munglog.vo.LogVO">
+		select * from log 
+			join participate on log.lg_num = participate.pt_lg_num
+      where lg_report = '0' and pt_cl_num = #{cl_num}
+      order by lg_reg_date
+      limit #{pageStart}, #{perPageNum};
 	</select>
 	
 	<!-- insert *********************************************************** -->

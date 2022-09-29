@@ -421,11 +421,15 @@ public class LogServiceImp implements LogService {
 		return logDao.selectFriendList(friend);
 	}
 
-	/*getThisChallenge : 진행 중인 챌린지 가져오기 ---------------------------------------------------------------------------------*/
+	/*getChallenge : 챌린지 가져오기 ---------------------------------------------------------------------------------*/
 	@Override
-	public ChallengeVO getThisChallenge() {
+	public ChallengeVO getChallenge(String year, String month) {
+		if(year == "" || month == "") {
+			year = thisYear;
+			month = thisMonth;
+		}
 		//챌린지 가져오기
-		return logDao.getThisChallenge(thisYear, thisMonth);
+		return logDao.getChallengeByDate(year, month);
 	}
 
 	/*getPastChallengeList : 진행한 챌린지 가져오기 -------------------------------------------------------------------------------*/
@@ -462,6 +466,19 @@ public class LogServiceImp implements LogService {
 		//챌린지 참여
 		logDao.insertParticipate(cl_num, dbLog.getLg_num());
 		return 2;
+	}
+	
+	/*getChallengeLogList : 챌린지에 참여한 일지 가져오기 -----------------------------------------------------------------------------------*/
+	@Override
+	public ArrayList<LogVO> getChallengeLogList(Criteria cri) {
+		//값이 없으면
+		if(cri == null || cri.getCl_num() < 1)
+			return null;
+		//등록된 챌린지인지 확인하기
+		ChallengeVO dbChallenge = logDao.selectChallenge(cri.getCl_num());
+		if(dbChallenge == null)
+			return null;
+		return logDao.getChallengeLogList(cri);
 	}
 
 }

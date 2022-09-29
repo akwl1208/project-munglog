@@ -50,7 +50,7 @@
 		width: 100%; height: 100%; display: block; background-position: center center; 
 		background-size: cover; border: 1px solid #dfe0df;
 	}
-	.main .box-content .log-list .log-item .log-link:hover{transform: scale(1.2);}
+	.main .box-content .log-list .log-item .log-link:hover{transform: scale(0.8);}
 </style>
 </head>
 <!-- html ********************************************************************************************************* -->
@@ -90,18 +90,23 @@
 	let page = 1;
 	let obj = {
 		page,
-		perPageNum : 12
+		perPageNum : 12,
+		cl_num
 	};
 	$(function(){
 /* 이벤트 *********************************************************************************************************** */		
+		$(document).ready(function(){
+			getChallengeLogList(obj);
+		})//
+		
 		//카메라 아이콘(btn-upload) 클릭 ------------------------------------------------------------------------------------
 		$('.main .box-nav .box-upload .btn-upload').click(function(){
 			//로그인한 회원만 참여 가능
 			if(user == ''){
 				if(confirm('챌린지를 참여하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
 					location.href = '<%=request.getContextPath()%>/account/login';
-					return;
 				}
+				return;
 			}
 			$('.main .box-drop .box-preview').hide();
 			//드롭박스를 열면 파일 선택하도록 함
@@ -116,7 +121,7 @@
 			$(this).toggleClass('select');
 			//드롭 박스
 			$('.main .box-nav .box-drop').toggle();
-		})
+		})//
 
 		//사진 선택했으면(input:file)------------------------------------------------------------------------------------------
 		$('.main .box-nav .box-drop [name=file]').on('change', function(event) {
@@ -179,17 +184,38 @@
 				else
 					alert('챌린지 참여에 실패했습니다. 다시 시도해주세요.')
 			});
-
 		})//
 	});
 	
 /* 함수 *********************************************************************************************************** */
-	// init : 화면 초기화 -----------------------------------------------------------------------------------------------------
+	// init : 화면 초기화 --------------------------------------------------------------------------------------------
 	function init(){
 		$('.main .box-drop .box-preview').hide();
 		$('.main .box-nav .box-drop').hide();
 		$('.main .box-nav .box-upload .btn-upload').removeClass('select');
+	}//
+	
+	// getChallengeList -----------------------------------------------------------------------------------------------------
+	function getChallengeLogList(obj){
+		ajaxPost(false, obj, '/get/challengeLogList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			let criUrl = makeCriUrl(obj);
+			for(log of data.logList){
+				html += '<li class="log-item">';
+				html +=		'<a href="'+contextPath+'/log/challengeDetail/'+criUrl+'" class="log-link"'; 
+				html +=			'style="background-image: url('+contextPath+log.lg_image_url+')"></a>';
+				html += '</li>';
+			}
+			$('.main .box-content .log-list').append(html);
+		});
+	}//
+	
+	// makeCriUrl -----------------------------------------------------------------------------------------------------
+	function makeCriUrl(obj){
+		let pageUrl = '?page=' + obj.page;
+		let clNumUrl = pageUrl + '&cl_num=' +  obj.cl_num;
+		return clNumUrl;
 	}
-
 </script> 
 </html>

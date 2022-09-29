@@ -1,6 +1,7 @@
 package kr.inyo.munglog.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.pagination.Criteria;
-import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
@@ -205,13 +205,18 @@ public class LogController {
 	
 	/* 챌린지 --------------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/challenge", method = RequestMethod.GET)
-	public ModelAndView logChallengeGet(ModelAndView mv) {
-		//이번 달 챌린지 가져오기
-		ChallengeVO challenge = logService.getThisChallenge();
-		System.out.println(challenge);
+	public ModelAndView logChallengeGet(ModelAndView mv, String year, String month) {
+		//값이 없으면
+		if(year == null || month == null) {
+			//기본으로 이번년도와 월로 설정
+			Date today = new Date();
+			year = String.format("%tY", today);
+			month = String.format("%tm", today);
+		}	
+		//챌린지 가져오기
+		ChallengeVO challenge = logService.getChallenge(year, month);
 		//진행 한챌린지 리스트 가져오기
 		ArrayList<ChallengeVO> challengeList = logService.getPastChallengeList();
-		System.out.println(challengeList);
 		
 		mv.addObject("challengeList", challengeList);
 		mv.addObject("challenge", challenge);
@@ -238,10 +243,7 @@ public class LogController {
 	public Map<Object, Object> getLogList(@RequestBody Criteria cri) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		ArrayList<LogVO> logList = logService.getLogList(cri);
-		int totalCount = logService.getLogTotalCount(cri);
-		PageMaker pm = new PageMaker(totalCount, 2, cri);
 		
-		map.put("pm",pm);
 		map.put("lList", logList);
 		return map;
 	}
@@ -396,6 +398,17 @@ public class LogController {
 		int res = logService.participageChallenge(file, cl_num, user);
 		
 		map.put("res", res);
+		return map;
+	}
+	
+	/* 챌린지에 참여한 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
+	@RequestMapping(value = "/get/challengeLogList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getChallengeLogList(@RequestBody Criteria cri) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		ArrayList<LogVO> logList = logService.getChallengeLogList(cri);
+
+		map.put("logList", logList);
 		return map;
 	}
 }

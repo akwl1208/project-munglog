@@ -49,11 +49,13 @@ public interface LogService {
 	FriendVO getFriend(FriendVO friend, MemberVO user);
 	//친구들 리스트 가져오기(프로필)
 	ArrayList<MemberVO> getFriendList(FriendVO friend);
-	//진행 중인 챌린지 가져오기
-	ChallengeVO getThisChallenge();
+	//챌린지 가져오기
+	ChallengeVO getChallenge(String year, String month);
 	//모든 챌린지 가져오기
 	ArrayList<ChallengeVO> getPastChallengeList();
 	//챌린지 참여하기
 	int participageChallenge(MultipartFile file, int cl_num, MemberVO user);
+	//criteria로 챌린지 일지 가져오기
+	ArrayList<LogVO> getChallengeLogList(Criteria cri);
 
 }

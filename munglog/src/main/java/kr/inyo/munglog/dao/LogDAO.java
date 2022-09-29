@@ -41,6 +41,8 @@ public interface LogDAO {
 	ArrayList<LogVO> selectTodayLogListByMbNum(int mb_num);
 	//일지 하트수 수정하기
 	void updateLogHeart(int lg_num);
+	//챌린지에 참여한 일지 정보 가져오기
+	ArrayList<LogVO> getChallengeLogList(Criteria cri);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
@@ -71,10 +73,12 @@ public interface LogDAO {
 	ArrayList<MemberVO> selectFriendList(FriendVO friend);
 	
 	/* 챌린지 ----------------------------------------------------------------------------------- */
-	//이번 년도와 이번 달 주고 진행 중인 챌린지 가져오기
-	ChallengeVO getThisChallenge(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
+	//년도와 달 주고 진행 중인 챌린지 가져오기
+	ChallengeVO getChallengeByDate(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
 	//진행한 챌린지 가져오기
 	ArrayList<ChallengeVO> selectPastChallengeList(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
+	//챌린지 번호로 챌린지 가져오기
+	ChallengeVO selectChallenge(int cl_num);
 	
 	/* 참여 ----------------------------------------------------------------------------------- */
 	//챌린지 참여 정보 가져오기
