@@ -41,8 +41,6 @@ public interface LogDAO {
 	ArrayList<LogVO> selectTodayLogListByMbNum(int mb_num);
 	//일지 하트수 수정하기
 	void updateLogHeart(int lg_num);
-	//챌린지에 참여한 일지 정보 가져오기
-	ArrayList<LogVO> getChallengeLogList(Criteria cri);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가

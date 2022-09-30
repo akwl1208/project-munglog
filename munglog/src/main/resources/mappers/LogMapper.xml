@@ -22,19 +22,22 @@
 			left join subject on log.lg_num = subject.sb_lg_num
 			left join participate on log.lg_num = participate.pt_lg_num
 			where 
-				<if test="mb_num != 0">
-					lg_mb_num = #{mb_num} and
-				</if>
-				<if test="mb_num == 0">
-					pt_num is null and
-				</if>
 				lg_del = '0' and lg_report = '0'
-			<if test="dg_num != 0">
-				and sb_dg_num = #{dg_num}
-			</if>
-			<if test="regYear != ''">
-				and year(lg_reg_date) = #{regYear}
-			</if>
+				<if test="mb_num != 0">
+					and lg_mb_num = #{mb_num}
+				</if>
+				<if test="mb_num == 0 and cl_num == 0">
+					and pt_num is null
+				</if>
+				<if test="dg_num != 0">
+					and sb_dg_num = #{dg_num}
+				</if>
+				<if test="regYear != ''">
+					and year(lg_reg_date) = #{regYear}
+				</if>
+				<if test="cl_num != 0">
+					and pt_cl_num = #{cl_num}
+				</if>
 			group by lg_num
 			order by 
 				<if test = "popularity == 1">
@@ -122,19 +125,11 @@
 		select * from challenge where cl_num = #{cl_num}
 	</select>
 	
-	<!-- 챌린지에 참여한 챌린지 가져오기 -->
-	<select id="getChallengeLogList" resultType="kr.inyo.munglog.vo.LogVO">
-		select * from log 
-			join participate on log.lg_num = participate.pt_lg_num
-      where lg_report = '0' and pt_cl_num = #{cl_num}
-      order by lg_reg_date desc
-      limit #{pageStart}, #{perPageNum};
-	</select>
-	
 	<!-- 일지 번호 주고 참여 정보 가져오기 -->
 	<select id="selectParticipateByLgNum" resultType="kr.inyo.munglog.vo.ParticipateVO">
 			select * from participate where pt_lg_num = #{lg_num};
 	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">

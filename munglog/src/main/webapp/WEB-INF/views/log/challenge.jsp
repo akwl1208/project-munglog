@@ -96,10 +96,10 @@
 	const now = new Date();
 	const thisYear = now.getFullYear();
 	const thisMonth = now.getMonth()+1;
-	$(function(){
 /* 이벤트 *********************************************************************************************************** */		
+	$(function(){
 		$(document).ready(function(){
-			getChallengeLogList(obj);
+			getLogList(obj);
 		})//
 		
 		//카메라 아이콘(btn-upload) 클릭 ------------------------------------------------------------------------------------
@@ -195,6 +195,18 @@
 					alert('챌린지 참여에 실패했습니다. 다시 시도해주세요.')
 			});
 		})//
+		
+		//스크롤이 브라우저 끝에 도달했을 때-----------------------------------------------------------------------------------------
+		$(window).scroll(function(){
+		  let scrollTop = $(window).scrollTop();
+		  let innerHeight = $(window).innerHeight();
+		  let scrollHeight = $('body').prop('scrollHeight');
+		  if (scrollTop + innerHeight >= scrollHeight) {
+				page++;
+				obj.page = page;
+				getLogList(obj);
+      }
+		})//
 	});
 	
 /* 함수 *********************************************************************************************************** */
@@ -205,13 +217,13 @@
 		$('.main .box-nav .box-upload .btn-upload').removeClass('select');
 	}//
 	
-	// getChallengeList -----------------------------------------------------------------------------------------------------
-	function getChallengeLogList(obj){
-		ajaxPost(false, obj, '/get/challengeLogList', function(data){
+	// getLogList -----------------------------------------------------------------------------------------------------
+	function getLogList(obj){
+		ajaxPost(false, obj, '/get/logList', function(data){
 			let html = '';
 			let contextPath = '<%=request.getContextPath()%>';
-			let criUrl = makeCriUrl(obj);
-			for(log of data.logList){
+			for(log of data.lList){
+				let criUrl = makeCriUrl(log.lg_num, obj);
 				html += '<li class="log-item">';
 				html +=		'<a href="'+contextPath+'/log/challengeDetail/'+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+log.lg_image_url+')"></a>';
@@ -222,8 +234,9 @@
 	}//
 	
 	// makeCriUrl -----------------------------------------------------------------------------------------------------
-	function makeCriUrl(obj){
-		let pageUrl = '?page=' + obj.page;
+	function makeCriUrl(lg_num, obj){
+		let lgNumUrl = '?lg_num=' + lg_num;
+		let pageUrl = lgNumUrl +'&page=' + obj.page;
 		let clNumUrl = pageUrl + '&cl_num=' +  obj.cl_num;
 		return clNumUrl;
 	}

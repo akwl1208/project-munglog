@@ -55,7 +55,5 @@ public interface LogService {
 	ArrayList<ChallengeVO> getPastChallengeList();
 	//챌린지 참여하기
 	int participageChallenge(MultipartFile file, int cl_num, MemberVO user);
-	//criteria로 챌린지 일지 가져오기
-	ArrayList<LogVO> getChallengeLogList(Criteria cri);
 
 }

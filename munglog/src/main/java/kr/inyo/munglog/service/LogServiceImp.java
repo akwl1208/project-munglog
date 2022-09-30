@@ -484,18 +484,5 @@ public class LogServiceImp implements LogService {
 		memberDao.insertPoint(user.getMb_num(),"적립",pointHistory,300);
 		return 2;
 	}
-	
-	/*getChallengeLogList : 챌린지에 참여한 일지 가져오기 -----------------------------------------------------------------------------------*/
-	@Override
-	public ArrayList<LogVO> getChallengeLogList(Criteria cri) {
-		//값이 없으면
-		if(cri == null || cri.getCl_num() < 1)
-			return null;
-		//등록된 챌린지인지 확인하기
-		ChallengeVO dbChallenge = logDao.selectChallenge(cri.getCl_num());
-		if(dbChallenge == null)
-			return null;
-		return logDao.getChallengeLogList(cri);
-	}
 
 }
