@@ -36,4 +36,6 @@ public interface MemberService {
 	ArrayList<MemberVO> getMemberList();
 	//회원 번호로 정보 가져오기
 	MemberVO getMemberByMbnum(int mb_num);
+	//포인트 적립
+	void earnPoint(MemberVO user);
 }

@@ -1,6 +1,8 @@
 package kr.inyo.munglog.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.mail.internet.MimeMessage;
 
@@ -11,7 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.inyo.munglog.dao.MemberDAO;
+import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.PointVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
 @Service
@@ -23,6 +27,12 @@ public class MemberServiceImp implements MemberService {
 	private JavaMailSender mailSender;
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
+	
+	//이번년도와 월 가져오기
+	Date now = new Date();
+	String thisYear = String.format("%tY", now);
+	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	String today = format.format(now);
 	
 /* 함수********************************************************************************************************************* */
 	//이메일 보내기-----------------------------------------------------------------------------------------------------------
@@ -368,5 +378,29 @@ public class MemberServiceImp implements MemberService {
 		if(mb_num < 1)
 			return null;
 		return memberDao.selectMemberByMbnum(mb_num);
+	}
+	
+	/* earnPoint : 포인트 적립 ---------------------------------------------------------------------------*/	
+	@Override
+	public void earnPoint(MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return;
+		//활동 정지당한 회원이 아니면
+		if(!user.getMb_activity().equals("0"))
+			return;
+		//강아지 생일에 포인트 지급
+		DogVO dbDog = memberDao.selectDogHasBirth(user.getMb_num());
+		if(dbDog == null)
+			return;
+		//포인트는 강아지 한마리에 대해서만 지급
+		//올해 포인트를 지급한 내역이 있는지 확인
+		String history = "강아지 생일 축하";
+		PointVO dbPoint = memberDao.selectPointDuringThisYear(user.getMb_num(), thisYear, history);
+		if(dbPoint != null)
+			return;			
+		//오늘이 강아지 생일이면 포인트 지급
+		if(today.equals(dbDog.getDg_birth_str()))
+			memberDao.insertPoint(user.getMb_num(),"적립",history,500);
 	}
 }

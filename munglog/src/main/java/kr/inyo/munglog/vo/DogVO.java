@@ -1,5 +1,6 @@
 package kr.inyo.munglog.vo;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,4 +15,9 @@ public class DogVO {
 	private String dg_reg_num;
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dg_birth;
+	
+	public String getDg_birth_str() {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		return format.format(dg_birth);
+	}
 }

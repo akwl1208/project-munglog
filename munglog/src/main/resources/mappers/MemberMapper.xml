@@ -32,9 +32,23 @@
  				where mb_activity = '0'
 				group by mb_num; 
 	</select>
+	
 	<!-- 회원번호로 회원 정보 가져오기 -->
 	<select id="selectMemberByMbnum" resultType="kr.inyo.munglog.vo.MemberVO">
 		select * from member where mb_num = #{mb_num}
+	</select>
+	
+	<!-- 회원번호 주고 생일이 있는 강아지 정보 가져오기 -->
+	<select id="selectDogHasBirth" resultType="kr.inyo.munglog.vo.DogVO">
+		select * from dog
+			where dg_mb_num = #{mb_num} and dg_birth is not null
+			group by dg_mb_num;
+	</select>
+	
+	<!-- 올해 지급된 특정 포인트 내역 가져오기 -->
+	<select id="selectPointDuringThisYear" resultType="kr.inyo.munglog.vo.PointVO">
+		select * from point 
+			where pi_mb_num = #{pi_mb_num} and year(pi_date) = #{thisYear} and pi_history = #{pi_history}
 	</select>
 	
 	<!-- insert *********************************************************** -->

@@ -73,8 +73,10 @@ public class HomeController {
 		mv.addObject("user", user);
 		if(user == null)
 			mv.setViewName("redirect:/account/login");
-		if(user != null)
+		if(user != null) {
+			memberService.earnPoint(user);
 			mv.setViewName("redirect:/");
+		}
 		return mv;
 	}
 	

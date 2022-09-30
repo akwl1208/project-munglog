@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Param;
 
+import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.PointVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
 public interface MemberDAO {
@@ -43,6 +45,13 @@ public interface MemberDAO {
 	//포인트 적립
 	void insertPoint(@Param("pi_mb_num")int mb_num, @Param("pi_process")String pi_process, 
 			@Param("pi_history")String pi_history, @Param("pi_amount")int pi_amount);
+	//올해 지급된 특정 포인트 내역 가져오기
+	PointVO selectPointDuringThisYear(@Param("pi_mb_num")int mb_num, @Param("thisYear")String thisYear,
+			@Param("pi_history")String history);
+	
+	/* 강아지 ----------------------------------------------------------------------------------- */
+	//회원 정보 주고 강아지 정보 가져오기
+	DogVO selectDogHasBirth(int mb_num);
 
 	
 	
