@@ -207,6 +207,20 @@
 				getLogList(obj);
       }
 		})//
+		
+		//사진 클릭했을 때 -----------------------------------------------------------------------------------------
+		$(document).on('click', '.main .box-content .log-list .log-link', function(e){
+			let lg_num = $(this).parent().data('lgnum');
+			let obj = {lg_num}
+			//조회수 증가
+			//볼 수 없는 일지를 선택한 경우 조회수 증가 안하고
+			if(!countViews(obj)){
+				alert('볼 수 없는 일지입니다.');
+				e.preventDefault();
+				location.href = '<%=request.getContextPath()%>/log/challenge';
+				return;
+			}
+		})//
 	});
 	
 /* 함수 *********************************************************************************************************** */
@@ -224,7 +238,7 @@
 			let contextPath = '<%=request.getContextPath()%>';
 			for(log of data.lList){
 				let criUrl = makeCriUrl(log.lg_num, obj);
-				html += '<li class="log-item">';
+				html += '<li class="log-item" data-lgNum="'+log.lg_num+'">';
 				html +=		'<a href="'+contextPath+'/log/challengeDetail/'+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+log.lg_image_url+')"></a>';
 				html += '</li>';
@@ -241,6 +255,15 @@
 		let yearUrl = clNumUrl + '&year=' +  ${challenge.cl_year};
 		let monthUrl = yearUrl + '&month=' +  ${challenge.cl_month};
 		return monthUrl;
-	}
+	}//
+	
+	// countViews -----------------------------------------------------------------------------------------------------
+	function countViews(obj){
+		let res = true;
+		ajaxPost(false, obj, '/count/views', function(data){
+			res = data.res;
+		});
+		return res;
+	}//
 </script> 
 </html>
