@@ -25,12 +25,15 @@
 	.main .box-content .swiper-slide .box-nav{position: relative;}
 	.main .box-content .swiper-slide .box-nav .list-nav{text-align: center;}
 	.main .box-content .swiper-slide .box-nav .item-nav{font-weight: bold;}
-	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart:hover{cursor:pointer;color: #fb9600;}
-	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart.select{color: #fb9600;}
+	{color: #fb9600;}
+	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart:hover,
 	.main .box-content .swiper-slide .item-nav .auto-start:hover,
-	.main .box-content .swiper-slide .item-nav .auto-stop:hover{color: #ffa31c; cursor:pointer;}
+	.main .box-content .swiper-slide .item-nav .auto-stop:hover,
+	.main .box-content .swiper-slide .box-nav .item-nav .box-set .fa-solid:hover{color: #ff9e54; cursor:pointer;}
+	.main .box-content .swiper-slide .box-nav .box-heart .btn-heart.select,
 	.main .box-content .swiper-slide .item-nav .auto-start.select,
 	.main .box-content .swiper-slide .item-nav .auto-stop.select{color: #fb9600;}
+	.main .box-content .swiper-slide .box-nav .item-nav .box-set .fa-solid{line-height : 24px;}
 	/* main box-img --------------------------------------------------------------------- */
 	.main .box-content .swiper .swiper-slide .box-img{
 		width:100%; height: 500px; margin-top: 30px; position: relative;
@@ -133,10 +136,9 @@
 			$(document).on('click', '.main .box-content .box-heart .btn-heart', function(){
 				//로그인 안했으면 로그인 화면으로
 				if(userMbNum == ''){
-					if(confirm('하트를 누르려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
+					if(confirm('하트를 누르려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
 						location.href = '<%=request.getContextPath()%>/account/login';
-						return;
-					}
+					return;
 				}
 				//일지를 쓴 회원이랑 하트를 누른 회원이 같으면
 				let lg_mb_num = $(this).parents('.list-nav').data('lgmbnum');
@@ -194,6 +196,10 @@
           slideChange : function() {
         	  $('.main .box-content .swiper .box-drop').hide();
         	  $('.main .box-content .box-nav .btn-modify').removeClass('select');
+						//조회수 증가
+						let lg_num = $('.main .swiper-slide-active .box-nav .list-nav').data('lgnum');
+						let obj = {lg_num}
+						countViews(obj)
           }
 	      }
 			});//
@@ -249,6 +255,15 @@
 			else
 				$(selector).next().text(data.log.lg_heart)
 		});
+	}//
+	
+	// countViews -----------------------------------------------------------------------------------------------------
+	function countViews(obj){
+		let res = true;
+		ajaxPost(false, obj, '/count/views', function(data){
+			res = data.res;
+		});
+		return res;
 	}//
 
 </script> 
