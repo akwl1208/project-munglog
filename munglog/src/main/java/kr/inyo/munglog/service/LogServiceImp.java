@@ -66,10 +66,10 @@ public class LogServiceImp implements LogService {
 		if(user.getMb_num() < 1)
 			return null;
 		//강아지 정보 가져오기
-		ArrayList<DogVO> dbDogs = logDao.selectDogs(user.getMb_num());
-		if(dbDogs.isEmpty())
+		ArrayList<DogVO> dbDogList = logDao.selectDogList(user.getMb_num());
+		if(dbDogList.isEmpty())
 			return null;
-		return dbDogs;
+		return dbDogList;
 	}
 	
 	/* insertDog : 회원의 강아지 정보 추가 ------------------------------------------------------------------------------------------*/
@@ -79,12 +79,12 @@ public class LogServiceImp implements LogService {
 		if(user == null || dlist == null || user.getMb_num() < 1)
 			return -1;
 		//강아지 정보 가져오기
-		ArrayList<DogVO> dbDogs = logDao.selectDogs(user.getMb_num());
+		ArrayList<DogVO> dbDogList = logDao.selectDogList(user.getMb_num());
 		//이미 강아지가 3마리 추가됬으면
-		if(dbDogs.size() == 3)
+		if(dbDogList.size() == 3)
 			return 0;
 		//최대 3마리 추가인데 이미 2마리 추가되어있는데 2마리를 추가한다고 하면?
-		if(dlist.getDlist().size() > (3 - dbDogs.size()))
+		if(dlist.getDlist().size() > (3 - dbDogList.size()))
 			return 0;
 		//3개 초과하면
 		if(dlist.getDlist().size() > 3)
