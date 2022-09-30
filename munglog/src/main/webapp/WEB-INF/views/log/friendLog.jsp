@@ -246,6 +246,20 @@
 			$('.main .box-drop .drop-sort .box-choose .sort').removeClass('select');
 			$(this).addClass('select');
 		})//
+		
+		//사진 클릭했을 때 -----------------------------------------------------------------------------------------
+		$(document).on('click', '.main .box-content .log-list .log-link', function(e){
+			let lg_num = $(this).parent().data('lgnum');
+			let obj = {lg_num}
+			//조회수 증가
+			//볼 수 없는 일지를 선택한 경우 조회수 증가 안하고
+			if(!countViews(obj)){
+				alert('볼 수 없는 일지입니다.');
+				e.preventDefault();
+				location.href = '<%=request.getContextPath()%>/log/friendLog/'+mb_num;
+				return;
+			}
+		})//
 	})//
 
 /* 함수 *********************************************************************************************************** */
@@ -256,7 +270,7 @@
 			let contextPath = '<%=request.getContextPath()%>';
 			for(log of data.lList){
 				let criUrl = makeCriUrl(log.lg_num, obj);
-				html += '<li class="log-item">';
+				html += '<li class="log-item" data-lgNum="'+log.lg_num+'">';
 				html +=		'<a href="'+contextPath+'/log/friendlogDetail/'+mb_num+criUrl+'" class="log-link"'; 
 				html +=			'style="background-image: url('+contextPath+'/log/img'+log.lg_image+')"></a>';
 				html += '</li>';
@@ -275,6 +289,15 @@
 		let orderUrl = regYearUrl + '&order=' +  obj.order;
 		let popularityUrl = orderUrl  + '&popularity=' +  obj.popularity;
 		return popularityUrl;
-	}
+	}//
+	
+	// countViews -----------------------------------------------------------------------------------------------------
+	function countViews(obj){
+		let res = true;
+		ajaxPost(false, obj, '/count/views', function(data){
+			res = data.res;
+		});
+		return res;
+	}//
 </script> 
 </html>
