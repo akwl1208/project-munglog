@@ -128,10 +128,9 @@
 		$(document).on('click', '.side-main .box-profile .box-follow', function(){
 			//로그인 안했으면 로그인 화면으로
 			if(userNum == ''){
-				if(confirm('친구를 맺으려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?')){
+				if(confirm('친구를 맺으려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
 					location.href = '<%=request.getContextPath()%>/account/login';
-					return;
-				}
+				return;
 			}
 			//본인에게 친구맺기 누르면
 			if(userNum == friendNum){
