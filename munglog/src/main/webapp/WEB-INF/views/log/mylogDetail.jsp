@@ -25,14 +25,14 @@
 	.main .box-content .swiper-slide .box-nav{position: relative;}
 	.main .box-content .swiper-slide .box-nav .list-nav{text-align: center;}
 	.main .box-content .swiper-slide .box-nav .item-nav{font-weight: bold;}
-	.main .box-content .swiper-slide .box-nav .item-nav .box-set .btn-modify{line-height : 24px;}
 	.main .box-content .swiper-slide .item-nav .auto-start:hover,
 	.main .box-content .swiper-slide .item-nav .auto-stop:hover,
 	.main .box-content .swiper-slide .item-nav .btn-modify:hover,
-	.main .box-content .swiper-slide .item-nav .btn-delete:hover{color: #ffa31c; cursor:pointer;}
+	.main .box-content .swiper-slide .item-nav .btn-delete:hover{color: #ff9e54; cursor:pointer;}
 	.main .box-content .swiper-slide .item-nav .btn-modify.select,
 	.main .box-content .swiper-slide .item-nav .auto-start.select,
 	.main .box-content .swiper-slide .item-nav .auto-stop.select{color: #fb9600;}
+	.main .box-content .swiper-slide .box-nav .item-nav .box-set .btn-modify{line-height : 24px;}
 	/* main box-nav box-drop --------------------------------------------------------------------- */
 	.main .box-nav .box-drop{
 		padding: 20px 40px; z-index: 10;
@@ -71,7 +71,7 @@
 <body>
 	<!-- 제목 -------------------------------------------------------- -->
 	<div class="box-title">
-		<i class="fa-solid fa-paw"></i><span>일지 상세보기</span>
+		<i class="fa-solid fa-paw"></i><span>나의 일지 상세보기</span>
 		<div class="box-message">사진의 상세 정보를 확인하고 관리하세요. 슬라이드쇼도 볼 수 있습니다.</div>
 	</div>
 	<!-- box-content ------------------------------------------------------------------------------------------------- -->
@@ -84,7 +84,7 @@
 						<div class="swiper-slide">
 							<!-- box-nav -------------------------------------------------------------------------------------------- -->
 							<div class="box-nav">
-								<ul class="list-nav list-group list-group-horizontal">
+								<ul class="list-nav list-group list-group-horizontal" data-value="${log.pt_cl_num}">
 									<!-- 등록일 ------------------------------------------------------------------------------------------- -->
 									<li class="item-nav list-group-item border-0 flex-fill">
 										<span class="lg_reg_date">${log.lg_reg_date_time}</span> 
@@ -108,7 +108,7 @@
 									<li class="item-nav list-group-item border-0 flex-fill">
 										<div class="box-set">
 											<i class="btn-modify fa-solid fa-camera-rotate mr-4" data-value="${log.lg_num}"></i>
-											<c:if test="${log.pt_num == 0}">
+											<c:if test="${log.pt_cl_num == 0}">
 												<i class="btn-delete fa-solid fa-trash-can" data-value="${log.lg_num}"></i>										
 											</c:if>
 										</div>
@@ -162,21 +162,35 @@
 /* 변수 *********************************************************************************************************** */
 	let slideIndex = '${index}';
 	let deleteDList = [];
+	let cl_num = '${challenge.cl_num}'; //현재 진행중인 챌린지
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
 		// 수정 버튼 클릭(btn-modify)---------------------------------------------------------------------------------------
 		$('.main .box-content .box-nav .btn-modify').click(function(){
-			$(this).toggleClass('select');
+			let pt_cl_num =$('.main .swiper-slide-active .list-nav').data('value');
+			//지난 챌린지면 수정 못함
+			if(pt_cl_num != 0 && pt_cl_num != cl_num){
+				alert('지난 챌린지에 참여한 사진은 수정하지 못합니다.')	;
+				return;
+			}
 			//체크박스 체크 해제
 			$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('checked', false);
 			//사진의 lg_num 가져옴
 			let lg_num = $(this).data('value');
 			//사진의 피사체에 체크
-			getSubjectList(lg_num);
+			//챌린지에 참여했으면 체크 못하게 막기
+			if(pt_cl_num == 0)
+				getSubjectList(lg_num);
+			else{
+				$('.main .swiper-slide-active .box-drop [name=dg_num]').prop('disabled', true);
+				$('.main .swiper-slide-active .box-drop .box-select .box-check .box-message').text('챌린지에 참여한 일지는 강아지를 선택할 수 없습니다.');	
+			}
 			//만약 수정 시 삭제할 피사체 담기
 			deleteDList = pushDgNum();
 			//사진 초기화
 			previewInit();
+			//화면 재구성
+			$(this).toggleClass('select');
 			$('.main .box-content .swiper-slide-active .box-drop').toggle();	
 		})//
 		
@@ -255,6 +269,11 @@
 							//사진의 피사체에 체크
 							getSubjectList(lg_num);
 							//화면 재구성
+							previewInit();
+						}
+						//지난 챌린지를 수정하려고 하는 경우
+						else if(data.res == 3){
+							alert('지난 챌린지에 참여한 일지는 수정할 수 없습니다.');
 							previewInit();
 						}
 					}
@@ -358,9 +377,8 @@
 					//강아지 번호 추출
 					let dg_num = $(this).val();
 					//sb_dg_num과 같으면 체크
-					if(dg_num == sb_dg_num){
+					if(dg_num == sb_dg_num)
 						$(this).prop('checked', true);
-					}
 				})
 			}
 		});

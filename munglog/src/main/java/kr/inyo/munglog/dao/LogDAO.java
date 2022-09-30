@@ -72,7 +72,7 @@ public interface LogDAO {
 	
 	/* 챌린지 ----------------------------------------------------------------------------------- */
 	//년도와 달 주고 진행 중인 챌린지 가져오기
-	ChallengeVO getChallengeByDate(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
+	ChallengeVO selectChallengeByDate(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
 	//진행한 챌린지 가져오기
 	ArrayList<ChallengeVO> selectPastChallengeList(@Param("cl_year")String cl_year, @Param("cl_month")String cl_month);
 	//챌린지 번호로 챌린지 가져오기

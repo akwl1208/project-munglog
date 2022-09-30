@@ -117,7 +117,7 @@
 	</select>
 	
 	<!-- 년도와 달 주고 진행 중인 챌린지 가져오기 -->
-	<select id="getChallengeByDate" resultType="kr.inyo.munglog.vo.ChallengeVO">
+	<select id="selectChallengeByDate" resultType="kr.inyo.munglog.vo.ChallengeVO">
 		select * from challenge where cl_year = #{cl_year} and cl_month = #{cl_month}
 	</select>
 	

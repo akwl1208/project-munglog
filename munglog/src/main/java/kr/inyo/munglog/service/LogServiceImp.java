@@ -208,6 +208,11 @@ public class LogServiceImp implements LogService {
 		//피사체도 수정안하고 파일도 수정 안한 경우
 		if(m_dg_nums.equals(d_dg_nums) && file == null)
 			return 2;
+		//지난 챌린지에 참여한 일지를 수정하려고 하면
+		ParticipateVO participate = logDao.selectParticipateByLgNum(dbLog.getLg_num());
+		ChallengeVO challenge = logDao.selectChallengeByDate(thisYear, thisMonth);
+		if(participate != null && participate.getPt_cl_num() != challenge.getCl_num())
+			return 3;
 		//피사체 수정	-----------------------------------------------------
 		if(!m_dg_nums.equals(d_dg_nums)) {
 			//기존 피사체 삭제
@@ -436,7 +441,7 @@ public class LogServiceImp implements LogService {
 			month = thisMonth;
 		}
 		//챌린지 가져오기
-		return logDao.getChallengeByDate(year, month);
+		return logDao.selectChallengeByDate(year, month);
 	}
 
 	/*getPastChallengeList : 진행한 챌린지 가져오기 -------------------------------------------------------------------------------*/

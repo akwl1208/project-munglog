@@ -118,7 +118,10 @@ public class LogController {
 		ArrayList<DogVO> dogList = logService.getDogs(user);
 		//인덱스 찾기
 		int index = logService.findIndex(logList, lg_num);
+		//챌린지 가져오기
+		ChallengeVO challenge = logService.getChallenge(thisYear, thisMonth);
 		
+		mv.addObject("challenge", challenge);
 		mv.addObject("member", member);
 		mv.addObject("index", index);
 		mv.addObject("dogList", dogList);
@@ -236,9 +239,8 @@ public class LogController {
 	public ModelAndView logChallengeDetailGet(ModelAndView mv, int lg_num, Criteria cri, String year, String month) {
 		//챌린지 가져오기
 		//값이 한자리 일때 0이 빠져서 와서 0을 붙여줌
-		if(month.length() == 1) {
+		if(month.length() == 1)
 			month = "0" + month;
-		}
 		ChallengeVO challenge = logService.getChallenge(year, month);
 		//진행 한챌린지 리스트 가져오기
 		ArrayList<ChallengeVO> challengeList = logService.getPastChallengeList();
