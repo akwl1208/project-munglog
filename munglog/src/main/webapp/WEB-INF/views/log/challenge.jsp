@@ -238,7 +238,9 @@
 		let lgNumUrl = '?lg_num=' + lg_num;
 		let pageUrl = lgNumUrl +'&page=' + obj.page;
 		let clNumUrl = pageUrl + '&cl_num=' +  obj.cl_num;
-		return clNumUrl;
+		let yearUrl = clNumUrl + '&year=' +  ${challenge.cl_year};
+		let monthUrl = yearUrl + '&month=' +  ${challenge.cl_month};
+		return monthUrl;
 	}
 </script> 
 </html>

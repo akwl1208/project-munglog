@@ -41,6 +41,11 @@ public class LogController {
 	MessageService messageService;
 	@Autowired
 	MemberService memberService;
+	
+	//기본으로 이번년도와 월로 설정
+	Date today = new Date();
+	String thisYear = String.format("%tY", today);
+	String thisMonth = String.format("%tm", today);
 
 /* ajax 아님 *************************************************************************************************************** */
 	/* 강아지 정보 등록 --------------------------------------------------------------------------------------------------------*/
@@ -212,10 +217,9 @@ public class LogController {
 		//값이 없으면
 		if(year == null || month == null) {
 			//기본으로 이번년도와 월로 설정
-			Date today = new Date();
-			year = String.format("%tY", today);
-			month = String.format("%tm", today);
-		}	
+			year = thisYear;
+			month = thisMonth;
+		}
 		//챌린지 가져오기
 		ChallengeVO challenge = logService.getChallenge(year, month);
 		//진행 한챌린지 리스트 가져오기
@@ -227,6 +231,35 @@ public class LogController {
 		return mv;
 	}
 	
+	/* 챌린지 상세보기 -------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/log/challengeDetail", method = RequestMethod.GET)
+	public ModelAndView logChallengeDetailGet(ModelAndView mv, int lg_num, Criteria cri, String year, String month) {
+		//챌린지 가져오기
+		//값이 한자리 일때 0이 빠져서 와서 0을 붙여줌
+		if(month.length() == 1) {
+			month = "0" + month;
+		}
+		ChallengeVO challenge = logService.getChallenge(year, month);
+		//진행 한챌린지 리스트 가져오기
+		ArrayList<ChallengeVO> challengeList = logService.getPastChallengeList();
+		//일지 전체 개수 가져오기
+		int totalCount = logService.getLogTotalCount(cri);
+		//criteria 재설정
+		cri.setPage(1);
+		cri.setPerPageNum(totalCount);
+		//일지들 가져오기
+		ArrayList<LogVO> logList = logService.getLogList(cri);
+		//인덱스 찾기
+		int index = logService.findIndex(logList, lg_num);
+		
+		mv.addObject("challengeList", challengeList);
+		mv.addObject("challenge", challenge);
+		mv.addObject("index", index);
+		mv.addObject("logList", logList);
+		mv.setViewName("/log/challengeDetail");
+		return mv;
+	}	
+	
 /* ajax ****************************************************************************************************************** */
 	/* 일지에 사진 업로드 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/upload/log", method = RequestMethod.POST)
@@ -236,6 +269,7 @@ public class LogController {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		int res = logService.uploadLog(dg_nums, file, user);
+		
 		map.put("res", res);
 		return map;
 	}
@@ -272,6 +306,7 @@ public class LogController {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		int res = logService.modifyLog(m_dg_nums, d_dg_nums, file, log, user);
+		
 		map.put("res", res);
 		return map;
 	}
@@ -401,17 +436,6 @@ public class LogController {
 		int res = logService.participageChallenge(file, cl_num, user);
 		
 		map.put("res", res);
-		return map;
-	}
-	
-	/* 챌린지에 참여한 일지 가져오기 --------------------------------------------------------------------------------------------------------- */
-	@RequestMapping(value = "/get/challengeLogList", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<Object, Object> getChallengeLogList(@RequestBody Criteria cri) {
-		HashMap<Object, Object> map = new HashMap<Object, Object>();
-		ArrayList<LogVO> logList = logService.getChallengeLogList(cri);
-
-		map.put("logList", logList);
 		return map;
 	}
 }
