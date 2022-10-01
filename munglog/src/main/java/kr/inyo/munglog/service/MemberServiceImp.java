@@ -35,6 +35,7 @@ public class MemberServiceImp implements MemberService {
 	Date now = new Date();
 	String thisYear = String.format("%tY", now);
 	String thisMonth = String.format("%tm", now);
+	String thisDay = String.format("%td", now);
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	String today = format.format(now);
 	
@@ -404,7 +405,9 @@ public class MemberServiceImp implements MemberService {
 		if(dbPoint != null)
 			return;			
 		//오늘이 강아지 생일이면 포인트 지급
-		if(today.equals(dbDog.getDg_birth_str()))
+		String birthMonth = String.format("%tm", dbDog.getDg_birth());
+		String birthDay = String.format("%td", dbDog.getDg_birth());
+		if(birthMonth.equals(birthMonth)&&birthDay.equals(birthDay))
 			memberDao.insertPoint(user.getMb_num(),"적립",history,500);
 	}
 	
