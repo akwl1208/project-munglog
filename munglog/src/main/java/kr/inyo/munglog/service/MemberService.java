@@ -36,6 +36,8 @@ public interface MemberService {
 	ArrayList<MemberVO> getMemberList();
 	//회원 번호로 정보 가져오기
 	MemberVO getMemberByMbnum(int mb_num);
-	//포인트 적립
-	void earnPoint(MemberVO user);
+	//강아지 생일에 포인트 적립
+	void dogBirthdayPoint(MemberVO user);
+	//일지를 한달동안 올렸으면 포인트 적립
+	void LogAMonthPoint(MemberVO user);
 }

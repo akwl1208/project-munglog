@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.inyo.munglog.dao.LogDAO;
 import kr.inyo.munglog.dao.MemberDAO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
@@ -24,6 +25,8 @@ public class MemberServiceImp implements MemberService {
 	@Autowired
 	MemberDAO memberDao;
 	@Autowired
+	LogDAO logDao;
+	@Autowired
 	private JavaMailSender mailSender;
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
@@ -31,6 +34,7 @@ public class MemberServiceImp implements MemberService {
 	//이번년도와 월 가져오기
 	Date now = new Date();
 	String thisYear = String.format("%tY", now);
+	String thisMonth = String.format("%tm", now);
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	String today = format.format(now);
 	
@@ -380,16 +384,16 @@ public class MemberServiceImp implements MemberService {
 		return memberDao.selectMemberByMbnum(mb_num);
 	}
 	
-	/* earnPoint : 포인트 적립 ---------------------------------------------------------------------------*/	
+	/* dogBirthdayPoint : 강아지 생일에 포인트 적립 ---------------------------------------------------------------------------*/	
 	@Override
-	public void earnPoint(MemberVO user) {
+	public void dogBirthdayPoint(MemberVO user) {
 		//값이 없으면
 		if(user == null || user.getMb_num() < 1)
 			return;
 		//활동 정지당한 회원이 아니면
 		if(!user.getMb_activity().equals("0"))
 			return;
-		//강아지 생일에 포인트 지급
+		//강아지 생일이 등록된 강아지 가져오기 
 		DogVO dbDog = memberDao.selectDogHasBirth(user.getMb_num());
 		if(dbDog == null)
 			return;
@@ -402,5 +406,41 @@ public class MemberServiceImp implements MemberService {
 		//오늘이 강아지 생일이면 포인트 지급
 		if(today.equals(dbDog.getDg_birth_str()))
 			memberDao.insertPoint(user.getMb_num(),"적립",history,500);
+	}
+	
+	/* LogAMonthPoint : 한달동안 일지 등록했으면 포인트 적립 ---------------------------------------------------------------------------*/	
+	@Override
+	public void LogAMonthPoint(MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return;
+		//활동 정지당한 회원이 아니면
+		if(!user.getMb_activity().equals("0"))
+			return;
+		//포인트 지급 내역 있는지 확인
+		//이번 달에 포인트를 지급한 내역이 있는지 확인
+		int month = Integer.parseInt(thisMonth) - 1;
+		//1월인 경우 1을 빼면 0이니까 1월의 이전 달은 12월
+		if(month == 0)
+			month = 12;
+		//이미 지급된 내용 있는지 확인
+		String history = month + "월 매일 일지 등록";
+		PointVO dbPoint = memberDao.selectPointDuringThisYear(user.getMb_num(), thisYear, history);
+		if(dbPoint != null)
+			return;
+		//한달동안 일지가 등록된 날짜 세기
+		int countLogForAMonth = logDao.selectCountLogForAMonth(user.getMb_num(), today);
+		//1월,3월,5월,7월,8월,10월,12월은 31일
+		if((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+				&& countLogForAMonth != 31)
+			return;
+		//4월,6월,9월,11월은 30일
+		if((month == 4 || month == 6 || month == 9 || month == 11) && countLogForAMonth != 30)
+			return;
+		//2월은 28 또는 29일
+		if(month == 2 && countLogForAMonth != 28 && countLogForAMonth != 29)
+			return;
+		//포인트 지급
+		memberDao.insertPoint(user.getMb_num(),"적립",history,500);
 	}
 }

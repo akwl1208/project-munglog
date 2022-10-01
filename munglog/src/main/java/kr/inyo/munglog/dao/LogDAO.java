@@ -41,6 +41,8 @@ public interface LogDAO {
 	ArrayList<LogVO> selectTodayLogListByMbNum(int mb_num);
 	//일지 하트수 수정하기
 	void updateLogHeart(int lg_num);
+	//한달동안 일지가 등록된 날짜 개수 가져오기
+	int selectCountLogForAMonth(@Param("lg_mb_num")int mb_num, @Param("today")String today);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
@@ -85,4 +87,5 @@ public interface LogDAO {
 	void insertParticipate(@Param("cl_num")int cl_num, @Param("lg_num")int lg_num);
 	//일지 번호 주고 챌린지 참여 정보 가져오기
 	ParticipateVO selectParticipateByLgNum(int lg_num);
+	
 }

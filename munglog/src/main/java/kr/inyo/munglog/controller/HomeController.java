@@ -74,7 +74,10 @@ public class HomeController {
 		if(user == null)
 			mv.setViewName("redirect:/account/login");
 		if(user != null) {
-			memberService.earnPoint(user);
+			//강아지 생일에 포인트 지급
+			memberService.dogBirthdayPoint(user);
+			//일지를 한달동안 올렸으면 포인트 지급
+			memberService.LogAMonthPoint(user);
 			mv.setViewName("redirect:/");
 		}
 		return mv;

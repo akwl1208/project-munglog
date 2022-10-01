@@ -142,7 +142,17 @@
 	
 	<!-- 일지 번호 주고 참여 정보 가져오기 -->
 	<select id="selectParticipateByLgNum" resultType="kr.inyo.munglog.vo.ParticipateVO">
-			select * from participate where pt_lg_num = #{lg_num};
+		select * from participate where pt_lg_num = #{lg_num};
+	</select>
+	
+	<!-- 한달동안 일지가 등록된 날짜 개수 가져오기 -->
+	<select id="selectCountLogForAMonth" resultType="int">
+		select count(*) from(
+			select * from log 
+		    where lg_mb_num = #{lg_mb_num}
+				and lg_reg_date between LAST_DAY(#{today} - interval 2 month) + interval 1 day and LAST_DAY(#{today} - interval 1 month)
+			group by date(lg_reg_date)
+		)logCountForAMonth;
 	</select>
 	
 	<!-- insert *********************************************************** -->
