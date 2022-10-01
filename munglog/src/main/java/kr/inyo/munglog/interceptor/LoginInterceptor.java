@@ -1,6 +1,5 @@
 package kr.inyo.munglog.interceptor;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.servlet.http.Cookie;
@@ -16,7 +15,6 @@ import org.springframework.web.util.WebUtils;
 
 import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
-import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter{
@@ -39,9 +37,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
     if(user != null) {
 	    HttpSession session = request.getSession();
 	    session.setAttribute("user", user);
-	    //강아지 정보 넘기기
-	    ArrayList<DogVO> dogs = logService.getDogs(user);
-	    session.setAttribute("dogs", dogs);
 	    //아이디 저장 선택 -----------------------------------------------------------
 	    if(user.isSaveId()) {
 	    	//쿠키 생성

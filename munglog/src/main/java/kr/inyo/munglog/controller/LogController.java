@@ -80,6 +80,12 @@ public class LogController {
 		//회원번호가 다르면 접근 할 수 없음
 		if(user.getMb_num() != mb_num)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
+		//강아지 정보가 없으면 강아지 정보 등록 페이지로
+    ArrayList<DogVO> dogList = logService.getDogs(user);
+    if(dogList == null) {
+			mv.setViewName("redirect:/log/register");
+			return mv;
+    }
 		//회원정보 가져옴
 		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
 		//강아지 정보 가져오기
@@ -105,6 +111,12 @@ public class LogController {
 		//회원번호가 다르면 접근 할 수 없음
 		if(user.getMb_num() != mb_num)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
+		//강아지 정보가 없으면 강아지 정보 등록 페이지로
+    ArrayList<DogVO> dogList = logService.getDogs(user);
+    if(dogList == null) {
+			mv.setViewName("redirect:/log/register");
+			return mv;
+    }
 		//일지 전체 개수 가져오기
 		int totalCount = logService.getLogTotalCount(cri);
 		//criteria 재설정
@@ -114,8 +126,6 @@ public class LogController {
 		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
 		//일지들 가져오기
 		ArrayList<LogVO> logList = logService.getLogList(cri);
-		//강아지 정보 가져오기
-		ArrayList<DogVO> dogList = logService.getDogs(user);
 		//인덱스 찾기
 		int index = logService.findIndex(logList, lg_num);
 		//챌린지 가져오기
