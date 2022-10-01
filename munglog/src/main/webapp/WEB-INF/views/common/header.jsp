@@ -18,15 +18,21 @@
 		}
 		.header .box-menu{display: flex; text-align: right; padding: 10px 0 20px;}
 		.header .box-account .account-list{
-			text-align: right; margin-top: 10px;
+			text-align: right; margin-top: 20px;
 		}
 		.header .box-account .account-list>li{
-			display: inline-block; font-size: 12px;
+			display: inline-block; font-size: 12px; height: 24px;
 		}
-		.header .box-account .account-list>li:nth-child(n+1):not(:last-of-type)::after{
+		.header .box-account .account-list li a{line-height: 24px;}
+		.header .box-account .account-list>li:nth-child(n+2):not(:last-of-type)::after{
 			display: inline-block; content: ''; margin: 0 6px 3px;
-			width: 1px; height: 12px; background-color: #b9ab9a;
-			vertical-align: middle;
+			width: 1px; height: 12px; background-color: #b9ab9a; 
+			vertical-align: middle; line-height: 24px;
+		}		
+		.header .box-account .account-list .nickname::after{
+			display: inline-block; content: ''; margin: 0 6px 6px;
+    	width: 3px; height: 3px; border-radius: 50%; background-color: #b9ab9a;
+    	vertical-align: middle; line-height: 24px;
 		}
 		.header .box-account .nickname{line-height: 24px;}
 		.header .box-account .nickname .fa-dog{color: #fb9600; margin-right: 6px;}

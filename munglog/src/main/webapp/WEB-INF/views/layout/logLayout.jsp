@@ -28,7 +28,7 @@
 </head>
 <body>
 	<tiles:insertAttribute name="header"/>
-	<div class="container clearfix" style="margin-top:125px; min-height:100vh;">
+	<div class="container clearfix" style="margin-top:136px; min-height:100vh;">
 		<div style="display:flex; min-width:1110px;">
 			<div class="main">
 			 	<tiles:insertAttribute name="body" />
