@@ -13,9 +13,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <!-- fontawesome -->
 <script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
-<!-- swiper -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
-<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<!-- summernote -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 <style type="text/css">
 *{padding:0; margin: 0;}
 .main{
@@ -52,6 +52,21 @@
 			}
 		});
 	}
+	
+	function ajaxPostData(data, url, func){
+		$.ajax({
+			async: false,
+			type:'POST',
+			data: data,
+			url: "<%=request.getContextPath()%>" + url,
+			processData : false,
+			contentType : false,
+			dataType: "json",
+			success : function(data){
+				func(data)
+			}
+		});		
+	}//
 </script>
 </body>
 </html>
