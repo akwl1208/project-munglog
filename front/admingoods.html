@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>관리자메뉴 - 굿즈 관리</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.main{
+			width:830px; padding: 50px 20px; display: block;
+		}
+		.side-main{
+			width:280px; padding: 50px 10px; display: block; 
+		}
+		/*aside ------------------------------------------------------------- */
+
+		/*main ------------------------------------------------------------- */
+		.main .box-title{
+			background-color: #ae8a68; border-radius: 5px;
+			padding: 20px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+			margin-bottom: 10px; font-size: 18px; font-weight: bold;
+		}
+		.main .box-title .fa-paw{margin-right: 6px;}
+		.main .box-title .box-message{
+			font-size: 12px; margin: 5px 0; padding-left: 24px;
+		}
+		.main .box-content{margin: 44px;}
+		.main .box-content .btn-register{
+			float: right; background-color: #a04c00;
+			border: none; color: #fff7ed; box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3);
+			border-radius: 3px; padding: 5px 10px;
+		}
+		.main .box-content .list-goods .box-classification{
+			font-weight: bold; font-size: 18px;
+		}
+		.main .box-content .list-goods .box-classification .btn-view:hover,
+		.main .box-content .box-option .btn-modify:hover{color:#fb9600; cursor: pointer;}
+		.main .box-content .box-option thead{background-color: #dfe0df;}
+		.main .box-content .box-option td, 
+		.main .box-content .box-option tr{text-align: center;}
+		.main .box-content .box-option{vertical-align: middle;}
+	</style>
+</head>
+<body>
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height: 100vh;">
+			<!-- main -------------------------------------------------------- -->
+			<div class="main">
+				<!-- 제목 -------------------------------------------------------- -->
+				<div class="box-title">
+					<i class="fa-solid fa-paw"></i><span>굿즈 관리</span>
+					<div class="box-message">굿즈를 등록하고 관리하세요.</div>
+				</div>			
+				<div class="box-content">
+					<div class="clearfix">
+						<a href="#" class="btn-register mb-4">굿즈 등록</a>
+					</div>
+					<div class="list-goods">
+						<div class="item-goods">
+							<div class="box-classification clearfix">
+								<div class="title float-left">
+									<span>카테고리</span><span> - </span><span>제품</span>
+								</div>
+								<div class="float-right">
+									<a href="#">
+										<i class="btn-view fa-regular fa-eye mr-2"></i>
+									</a>
+								</div>
+							</div>
+							<table class="table table-bordered box-option mt-2">
+								<thead>
+									<tr>
+										<th width="50%">옵션명</th>
+										<th width="20%">수량</th>
+										<th width="20%">가격</th>
+										<th width="10%"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="item-name">
+											<span>옵션명</span>
+										</td>
+										<td class="item-amount">100</td>
+										<td class="item-price">9000</td>
+										<td class="item-modify"><i class="btn-modify fa-solid fa-pen-to-square"></i></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<ul class="pagination justify-content-center mt-5">
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">Previous</a></li>
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">1</a></li>
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">2</a></li>
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">Next</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- aside -------------------------------------------------------- -->
+			<div class="side-main"></div>	
+  </div>
+	<script>
+		$(function(){
+		})
+	</script> 
+</body>
+</html>
