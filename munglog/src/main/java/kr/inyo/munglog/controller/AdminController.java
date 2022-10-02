@@ -55,6 +55,22 @@ public class AdminController {
 		return mv;
 	}
 	
+	/* 굿즈 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/admin/goods", method = RequestMethod.GET)
+	public ModelAndView adminGoodsGet(ModelAndView mv, HttpSession session,
+			HttpServletResponse response) {
+		mv.setViewName("/admin/goods");
+		return mv;
+	}
+	
+	/* 굿즈 등록 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/admin/registerGoods", method = RequestMethod.GET)
+	public ModelAndView adminRegisterGoodsGet(ModelAndView mv, HttpSession session,
+			HttpServletResponse response) {
+		mv.setViewName("/admin/registerGoods");
+		return mv;
+	}
+	
 /* ajax **************************************************************************************************************** */
 	/* 챌린지 등록 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/register/challenge", method = RequestMethod.POST)

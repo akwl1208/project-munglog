@@ -27,7 +27,7 @@
 		</div>
 		<div class="list-group">
 		  <a href="<c:url value="/admin/challenge"></c:url>" class="list-group-item list-group-item-action">챌린지 관리</a>
-		  <a href="#" class="list-group-item list-group-item-action">Second item</a>
+		  <a href="<c:url value="/admin/goods"></c:url>" class="list-group-item list-group-item-action">굿즈 관리</a>
 		  <a href="#" class="list-group-item list-group-item-action">Third item</a>
 		</div>
 	</div>
