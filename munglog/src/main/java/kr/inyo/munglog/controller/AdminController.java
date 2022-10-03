@@ -21,8 +21,11 @@ import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.AdminService;
 import kr.inyo.munglog.service.MessageService;
+import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.ChallengeVO;
+import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.OptionListVO;
 
 @Controller
 public class AdminController {
@@ -67,7 +70,30 @@ public class AdminController {
 	@RequestMapping(value = "/admin/registerGoods", method = RequestMethod.GET)
 	public ModelAndView adminRegisterGoodsGet(ModelAndView mv, HttpSession session,
 			HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//로그인 안했거나
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		//회원번호가 다르면 접근 할 수 없음
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
+		ArrayList<CategoryVO> categoryList = adminService.getCategoryList();
+		
+		mv.addObject("categoryList", categoryList);
 		mv.setViewName("/admin/registerGoods");
+		return mv;
+	}
+
+	@RequestMapping(value = "/admin/registerGoods", method = RequestMethod.POST)
+	public ModelAndView adminRegisterGoodsPost(ModelAndView mv, OptionListVO optionList,
+			GoodsVO goods, MultipartFile file, HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = adminService.registerGoods(goods, optionList, file, user);
+		
+		if(res)
+			messageService.message(response, "굿즈가 등록되었습니다.", "/munglog/admin/goods");
+		else
+			messageService.message(response, "굿즈 등록에 실패했습니다.", "/munglog/admin/registerGoods");
 		return mv;
 	}
 	
@@ -127,6 +153,17 @@ public class AdminController {
 		int res = adminService.deleteChallenge(challenge, user);
 		
 		map.put("res", res);
+		return map;
+	}
+	
+	/* 굿즈 상세 설명 이미지 업로드 ------------------------------------------------------------------------------------------- */
+	@RequestMapping(value="/upload/goodsImg", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> uploadGoodsImg(@RequestParam("file") MultipartFile file){
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		String url = adminService.uploadGoodsImage(file);
+		
+		map.put("url", url);
 		return map;
 	}
 }

@@ -27,11 +27,33 @@
 		select * from challenge where cl_num = #{cl_num}
 	</select>
 	
+	<!-- 카테고리 리스트 가져오기 -->
+	<select id="selectCategoryList" resultType="kr.inyo.munglog.vo.CategoryVO">
+		select * from category
+	</select>
+	
+	<!-- 카테고리랑 상품명으로 굿즈 정보 가져오기 -->
+	<select id="selectGoodsByName" resultType="kr.inyo.munglog.vo.GoodsVO">
+		select * from goods where gs_ct_name = #{gs_ct_name} and gs_name = #{gs_name}
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 챌린지 추가 -->
 	<insert id="insertChallenge">
 		insert into challenge(cl_year, cl_month, cl_theme, cl_thumb)
 			values(#{cl_year}, #{cl_month}, #{cl_theme}, #{cl_thumb})
+	</insert>
+	
+	<!-- 굿즈 추가 -->
+	<insert id="insertGoods">
+		insert into goods(gs_ct_name, gs_name, gs_thumb, gs_description, gs_guidance)
+			values(#{gs_ct_name}, #{gs_name}, #{gs_thumb}, #{gs_description}, #{gs_guidance})
+	</insert>
+	
+	<!-- 옵션 추가 -->
+	<insert id="insertOption">
+		insert into `option`(ot_gs_num, ot_name, ot_amount, ot_price)
+			values(#{ot_gs_num}, #{ot_name}, #{ot_amount}, #{ot_price})
 	</insert>
 	
 	<!-- update *********************************************************** -->

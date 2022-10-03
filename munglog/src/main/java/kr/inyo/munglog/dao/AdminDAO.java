@@ -3,7 +3,10 @@ package kr.inyo.munglog.dao;
 import java.util.ArrayList;
 
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.ChallengeVO;
+import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 public interface AdminDAO {
 	/* 챌린지 --------------------------------------------------------------------------------------*/
@@ -21,4 +24,18 @@ public interface AdminDAO {
 	void updateChallenge(ChallengeVO Challenge);
 	//챌린지 삭제하기
 	boolean deleteChallenge(ChallengeVO Challenge);
+	
+	/* 카테고리 --------------------------------------------------------------------------------------*/
+	//카테고리 가져오기
+	ArrayList<CategoryVO> selectCategoryList();
+	
+	/* 굿즈 --------------------------------------------------------------------------------------*/
+	//카테고리와 상품명으로 굿즈 정보 가져오기
+	GoodsVO selectGoodsByName(GoodsVO goods);
+	//굿즈 등록
+	void insertGoods(GoodsVO goods);
+	
+	/* 옵션 --------------------------------------------------------------------------------------*/
+	//옵션 등록
+	void insertOption(OptionVO option);
 }

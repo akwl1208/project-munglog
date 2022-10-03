@@ -11,8 +11,12 @@ import kr.inyo.munglog.dao.AdminDAO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
+import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.ChallengeVO;
+import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.OptionListVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 @Service
 public class AdminServiceImp implements AdminService {
@@ -21,6 +25,8 @@ public class AdminServiceImp implements AdminService {
 	AdminDAO adminDao;
 	
 	String challengeUploadPath = "D:\\git\\munglog\\challenge";
+	String goodsUploadPath = "D:\\git\\munglog\\goods";
+	
 	Date today = new Date();
 	String thisYear = String.format("%tY", today);
 	String thisMonth = String.format("%tm", today);
@@ -39,6 +45,15 @@ public class AdminServiceImp implements AdminService {
 		return true;
 	}
 	
+	// 이미지 파일인지 확인 ----------------------------------------------------------------------------
+	public boolean isImg(MultipartFile file) {
+		String originalName = file.getOriginalFilename();
+		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
+		if(MediaUtils.getMediaType(formatName) == null)
+			return false;
+		return true;
+	}
+	
 /* override ***************************************************************************************************************** */
 	/* registerChallenge : 챌린지 등록 ----------------------------------------------------------------------------------------- */
 	@Override
@@ -52,9 +67,7 @@ public class AdminServiceImp implements AdminService {
 		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
 			return false;
 		//이미지 파일인지 확인
-		String originalName = file.getOriginalFilename();
-		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
-		if(MediaUtils.getMediaType(formatName) == null)
+		if(!isImg(file))
 			return false;
 		//1~12월인지
 		if(!isMonth(challenge.getCl_month()))
@@ -122,9 +135,7 @@ public class AdminServiceImp implements AdminService {
 		//사진을 수정하면
 		if(file != null) {
 			//이미지 파일인지 확인
-			String originalName = file.getOriginalFilename();
-			String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
-			if(MediaUtils.getMediaType(formatName) == null)
+			if(!isImg(file))
 				return false;
 			//기존 파일 삭제
 			UploadFileUtils.deleteFile(challengeUploadPath, dbChallenge.getCl_thumb());
@@ -167,5 +178,80 @@ public class AdminServiceImp implements AdminService {
 		if(!notPast(dbChallenge.getCl_year(), dbChallenge.getCl_month()))
 			return 0;
 		return adminDao.deleteChallenge(dbChallenge) ? 1 : -1;
+	}
+
+	/* getCategoryList : 카테고리 리스트 가져오기 ------------------------------------------------------------------------ */
+	@Override
+	public ArrayList<CategoryVO> getCategoryList() {
+		return adminDao.selectCategoryList();
+	}
+
+	/* registerGoods : 굿즈 등록 ---------------------------------------------------------------------------------- */
+	@Override
+	public boolean registerGoods(GoodsVO goods, OptionListVO optionList, MultipartFile file, MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		//관리자가 아니면
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			return false;
+		if(optionList == null || goods == null)
+			return false;
+		//이미 등록된 상품명이 있으면
+	  GoodsVO dbGoods = adminDao.selectGoodsByName(goods);
+	  if(dbGoods != null)
+	  	return false;
+		//썸네일 파일이 있으면
+		if(file != null && file.getOriginalFilename() != "") {
+			//이미지 파일인지 확인
+			if(!isImg(file))
+				return false;
+			//파일업로드
+			try {
+				String prefix = goods.getGs_name();
+				String gs_thumb = UploadFileUtils.uploadFilePrefix(goodsUploadPath+"\\thumb", prefix, file.getOriginalFilename(), file.getBytes());
+				gs_thumb = "/thumb"+gs_thumb;
+				goods.setGs_thumb(gs_thumb);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		//굿즈 등록
+	  adminDao.insertGoods(goods);
+	  //옵션 등록
+	  //굿즈 번호 가져옴
+	  dbGoods = adminDao.selectGoodsByName(goods);
+	  if(dbGoods == null)
+	  	return false;
+		//옵션 추가
+		for(int i=0; i<optionList.getOptionList().size();i++) {
+			//옵션 객체에 저장
+			OptionVO option = optionList.getOptionList().get(i);
+			//값이 없으면
+			if(option == null)
+				continue;
+			//이름 없으면 
+			if(option.getOt_name() == null || option.getOt_name().length() == 0)
+				continue;
+			//옵션 추가
+			option.setOt_gs_num(dbGoods.getGs_num());
+			adminDao.insertOption(option);
+		}
+		return true;
+	}
+
+	@Override
+	public String uploadGoodsImage(MultipartFile file) {
+		if(file == null || file.getOriginalFilename().length() == 0)
+			return null;
+		String url = "";
+		String prefix ="";
+		try {
+			url = UploadFileUtils.uploadFilePrefix(goodsUploadPath+"\\detail", prefix, file.getOriginalFilename(), file.getBytes());
+			url = "/detail"+url;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;
 	}
 }
