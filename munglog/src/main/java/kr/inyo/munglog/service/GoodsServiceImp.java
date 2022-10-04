@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
 
 @Service
@@ -33,6 +34,12 @@ public class GoodsServiceImp implements GoodsService {
 		if(cri == null)
 			return 0;
 		return goodsDao.selectGoodsTotalCount(cri);
+	}
+	
+	//getCategoryList : 카테고리 리스트 가져오기 =============================================================================
+	@Override
+	public ArrayList<CategoryVO> getCategoryList() {
+		return goodsDao.selectCategoryList();
 	}
 
 }

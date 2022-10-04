@@ -16,6 +16,7 @@ import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
+import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
 
 @Controller
@@ -30,6 +31,10 @@ public class GoodsController {
 	/* 굿즈 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/goods", method = RequestMethod.GET)
 	public ModelAndView goodsGet(ModelAndView mv) {
+		//카테고리 리스트 가져오기
+		ArrayList<CategoryVO> categoryList = goodsService.getCategoryList();
+		
+		mv.addObject("categoryList", categoryList);
 		mv.setViewName("/goods/goodsList");
 		return mv;
 	}

@@ -86,12 +86,18 @@
 		<div class="box-search">
 			<div class="input-group mt-5">
 				<div class="input-group-prepend">
-					<select class="form-control">
-						<option>카테고리</option>
-						<option>상품명</option>
+					<select class="searchType form-control">
+						<option value="gs_name">상품명</option>
+						<option value="gs_ct_name">카테고리</option>
 					</select>
 				</div>
-				<input type="text" class="form-control" placeholder="검색어를 입력하세요.">
+				<input type="text" class="keyword gs_keyword form-control" placeholder="검색어를 입력하세요.">
+				<select class="keyword ct_keyword form-control" style="display: none;">
+					<option value="">카테고리 선택</option>
+					<c:forEach items="${categoryList}" var="category">
+						<option value="${category.ct_name}">${category.ct_name}</option>
+					</c:forEach>
+				</select>
 				<div class="input-group-append">
 					<button class="btn btn-search" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
 				</div>
@@ -107,21 +113,58 @@
 		page,
 		perPageNum : 20,
 		order : 'desc',
-		popularity : 0
+		popularity : 0,
+		searchType : '',
+		keyword : ''
 	};
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
 		$(document).ready(function(){
+			//굿즈 리스트 구현 ===========================================================================================
 			getGoodsList(cri);
 		})
+		
+		//페이지네이션(page-link) 클릭 ====================================================================================
+		$(document).on('click','.main .box-content .pagination .page-link',function(e){
+			e.preventDefault();
+			cri.page = $(this).data('page');
+			getGoodsList(cri);
+		})//
+		
+		// 검색타입 값 바뀜====================================================================================
+		$('.main .box-content .box-search .searchType').change(function(){
+			let searchType = $(this).val();
+			if(searchType == 'gs_name'){
+				$('.main .box-content .box-search input.keyword').show();
+				$('.main .box-content .box-search select.keyword').hide();
+			}
+			else if(searchType == 'gs_ct_name'){
+				$('.main .box-content .box-search input.keyword').hide();
+				$('.main .box-content .box-search select.keyword').show();
+			}
+		})//
+		
+		//검색 버튼(btn-search) 클릭 ====================================================================================
+		$('.main .box-content .box-search .btn-search').click(function(){
+			let searchType = $('.main .box-content .box-search .searchType').val();
+			let keyword = '';
+			//searchType에 따라 검색어 받는 곳이 다름
+			if(searchType == 'gs_name')
+				keyword = $('.main .box-content .box-search input.keyword').val();
+			else if(searchType == 'gs_ct_name')
+				keyword = $('.main .box-content .box-search select.keyword').val();
+			//키워드를 입력 안하면 전체 검색되도록
+			if(keyword == ''){
+				cri.searchType = '';
+				cri.keyword = '';
+			} 
+			else{
+				cri.searchType = searchType;
+				cri.keyword = keyword;			
+			}
+			getGoodsList(cri);
+		})//
 	});		
-	
-	//페이지네이션(page-link) 클릭-------------------------------------------------------------------------------------
-	$(document).on('click','.main .box-content .pagination .page-link',function(e){
-		e.preventDefault();
-		cri.page = $(this).data('page');
-		getGoodsList(cri);
-	})//
 	
 /* 함수 *********************************************************************************************************** */
 	// getGoodsList =============================================================================================
@@ -149,8 +192,7 @@
 				html += 	'</div>';
 				html += '</li>';
 			}
-			$('.main .box-content .goods-list').html(html);
-			
+			$('.main .box-content .goods-list').html(html);		
 			//페이지네이션 구현--------------------------------------------------------------------------
 			html = '';
 			let pm = data.pm;
