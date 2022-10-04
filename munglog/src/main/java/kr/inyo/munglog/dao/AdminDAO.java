@@ -34,8 +34,12 @@ public interface AdminDAO {
 	GoodsVO selectGoodsByName(GoodsVO goods);
 	//굿즈 등록
 	void insertGoods(GoodsVO goods);
+	//굿즈 리스트 가져오기
+	ArrayList<CategoryVO> selectGoodsList();
 	
 	/* 옵션 --------------------------------------------------------------------------------------*/
 	//옵션 등록
 	void insertOption(OptionVO option);
+	//옵션 리스트 가져오기
+	ArrayList<OptionVO> selectOptionList(OptionVO option);
 }

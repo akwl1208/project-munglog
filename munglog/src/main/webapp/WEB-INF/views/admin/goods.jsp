@@ -49,39 +49,34 @@
 	<!-- list-goods ----------------------------------------------------------------------------------------------------- -->
 	<div class="list-goods">
 		<!-- item-good ----------------------------------------------------------------------------------------------------- -->
-		<div class="item-goods">
-			<div class="box-classification clearfix">
-				<!-- 카테고리/제품명 ------------------------------------------------------------------------------------------------ -->
-				<div class="title float-left">
-					<span>카테고리</span><span> - </span><span>제품</span>
+		<c:forEach items="${goodsList}" var="goods">
+			<div class="item-goods mb-5" data-value="${goods.gs_num}">
+				<div class="box-classification clearfix">
+					<!-- 카테고리/제품명 ------------------------------------------------------------------------------------------------ -->
+					<div class="title float-left">
+						<span>${goods.gs_ct_name}</span><span> - </span><span>${goods.gs_name}</span>
+					</div>
+					<!-- 상세보기 버튼 -------------------------------------------------------------------------------------------------- -->
+					<div class="float-right">
+						<a href="#">
+							<i class="btn-view fa-regular fa-eye mr-2"></i>
+						</a>
+					</div>
 				</div>
-				<!-- 상세보기 버튼 -------------------------------------------------------------------------------------------------- -->
-				<div class="float-right">
-					<a href="#">
-						<i class="btn-view fa-regular fa-eye mr-2"></i>
-					</a>
-				</div>
+				<!-- box-option ----------------------------------------------------------------------------------------------------- -->
+				<table class="table table-bordered box-option mt-2">
+					<thead>
+						<tr>
+							<th width="50%">옵션명</th>
+							<th width="20%">수량</th>
+							<th width="20%">가격</th>
+							<th width="10%"></th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
 			</div>
-			<!-- box-option ----------------------------------------------------------------------------------------------------- -->
-			<table class="table table-bordered box-option mt-2">
-				<thead>
-					<tr>
-						<th width="50%">옵션명</th>
-						<th width="20%">수량</th>
-						<th width="20%">가격</th>
-						<th width="10%"></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="item-name"><span class="ot_name">옵션명</span></td>
-						<td class="item-amount"><span class="ot_amount">100</span></td>
-						<td class="item-price"><span class="ot_price">9000</span></td>
-						<td class="item-modify"><i class="btn-modify fa-solid fa-pen-to-square"></i></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		</c:forEach>
 	</div>
 	<!-- 페이지네이션 ----------------------------------------------------------------------------------------------------- -->
 	<ul class="pagination justify-content-center mt-5">
@@ -97,10 +92,34 @@
 
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
-	
+		$(document).ready(function(){
+			let list = $('.main .box-content .list-goods .item-goods');
+			let size = list.length;
+			for(let i = 0; i < size; i++){
+				//옵션 화면 구성 --------------------------------------------------------------------------------------------------
+				let ot_gs_num = list.eq(i).data('value');
+				let obj = {ot_gs_num};
+				getOptionList(obj, i);
+			}
+		})
 	})	
 	
 /* 함수 *********************************************************************************************************** */
-
+	// getOptionList : 옵션 리스트 가져오기 =============================================================================
+	function getOptionList(obj, i){
+		ajaxPost(false, obj, '/get/optionList', function(data){
+			let html = '';
+			//리스트 구현-----------------------------------------------------------------------------------
+			for(option of data.optionList){
+				html += '<tr data-value="'+option.ot_num+'">';
+				html += 	'<td class="item-name"><span class="ot_name">'+option.ot_name+'</span></td>';
+				html += 	'<td class="item-amount"><span class="ot_amount">'+option.ot_amount+'</span></td>';
+				html += 	'<td class="item-price"><span class="ot_price">'+option.ot_amount+'</span></td>';
+				html += 	'<td class="item-modify"><i class="btn-modify fa-solid fa-pen-to-square"></i></td>';
+				html += '</tr>';
+			}
+			$('.main .box-content .list-goods .item-goods').eq(i).find('tbody').html(html);	
+		})
+	}//
 </script>
 </html>

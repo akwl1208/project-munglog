@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.inyo.munglog.dao.AdminDAO">
 	
-	<!-- select *********************************************************** -->
+	<!-- select ************************************************************************************************ -->
 	<!-- 년도와 월로 챌린지 가져오기 -->
 	<select id="selectChallengeBydate" resultType="kr.inyo.munglog.vo.ChallengeVO">
 		select * from challenge where cl_year = #{cl_year} and cl_month = #{cl_month}
@@ -37,7 +37,17 @@
 		select * from goods where gs_ct_name = #{gs_ct_name} and gs_name = #{gs_name}
 	</select>
 	
-	<!-- insert *********************************************************** -->
+	<!-- 굿즈 리스트 가져오기 -->
+	<select id="selectGoodsList" resultType="kr.inyo.munglog.vo.GoodsVO">
+		select * from goods
+	</select>
+	
+	<!-- 옵션 리스트 가져오기 -->
+	<select id="selectOptionList" resultType="kr.inyo.munglog.vo.OptionVO">
+		select * from `option` where ot_gs_num = #{ot_gs_num}
+	</select>
+	
+	<!-- insert *********************************************************************************************** -->
 	<!-- 챌린지 추가 -->
 	<insert id="insertChallenge">
 		insert into challenge(cl_year, cl_month, cl_theme, cl_thumb)
@@ -56,7 +66,7 @@
 			values(#{ot_gs_num}, #{ot_name}, #{ot_amount}, #{ot_price})
 	</insert>
 	
-	<!-- update *********************************************************** -->
+	<!-- update ************************************************************************************************* -->
 	<!-- 챌린지 수정 -->
 	<update id="updateChallenge">
 		update challenge 
@@ -67,7 +77,7 @@
 			where cl_num = #{cl_num}
 	</update>
 	
-	<!-- delete *********************************************************** -->
+	<!-- delete ************************************************************************************************* -->
 	<!-- 챌린지 삭제 -->
 	<delete id="deleteChallenge">
 		delete from challenge where cl_num = #{cl_num}

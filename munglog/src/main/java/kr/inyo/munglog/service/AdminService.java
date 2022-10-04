@@ -10,6 +10,7 @@ import kr.inyo.munglog.vo.ChallengeVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionListVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 public interface AdminService {
 	//챌린지 등록
@@ -28,5 +29,9 @@ public interface AdminService {
 	boolean registerGoods(GoodsVO goods, OptionListVO optionList, MultipartFile file, MemberVO user);
 	//굿즈 상세 설명 이미지 업로드
 	String uploadGoodsImage(MultipartFile file);
+	//굿즈 리스트 가져오기
+	ArrayList<CategoryVO> getGoodsList();
+	//옵션 리스트 가져오기
+	ArrayList<OptionVO> getOptionList(OptionVO option);
 
 }

@@ -26,6 +26,7 @@ import kr.inyo.munglog.vo.ChallengeVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionListVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 @Controller
 public class AdminController {
@@ -62,6 +63,10 @@ public class AdminController {
 	@RequestMapping(value = "/admin/goods", method = RequestMethod.GET)
 	public ModelAndView adminGoodsGet(ModelAndView mv, HttpSession session,
 			HttpServletResponse response) {
+		//굿즈 리스트 가져오기
+		ArrayList<CategoryVO> goodsList = adminService.getGoodsList();
+		
+		mv.addObject("goodsList", goodsList);
 		mv.setViewName("/admin/goods");
 		return mv;
 	}
@@ -164,6 +169,17 @@ public class AdminController {
 		String url = adminService.uploadGoodsImage(file);
 		
 		map.put("url", url);
+		return map;
+	}
+	
+	/* 옵션 리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/get/optionList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getOptionList(@RequestBody OptionVO option) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		ArrayList<OptionVO> optionList = adminService.getOptionList(option);
+
+		map.put("optionList", optionList);
 		return map;
 	}
 }

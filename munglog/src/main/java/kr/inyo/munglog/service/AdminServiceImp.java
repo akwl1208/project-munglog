@@ -240,6 +240,7 @@ public class AdminServiceImp implements AdminService {
 		return true;
 	}
 
+	/* uploadGoodsImage : 굿즈 이미지 업로드 ---------------------------------------------------------------------------------- */
 	@Override
 	public String uploadGoodsImage(MultipartFile file) {
 		if(file == null || file.getOriginalFilename().length() == 0)
@@ -253,5 +254,20 @@ public class AdminServiceImp implements AdminService {
 			e.printStackTrace();
 		}
 		return url;
+	}
+
+	/* getGoodsList : 굿즈 리스트 가져오기 ---------------------------------------------------------------------------------- */
+	@Override
+	public ArrayList<CategoryVO> getGoodsList() {
+		return adminDao.selectGoodsList();
+	}
+
+	/* getOptionList : 옵션 리스트 가져오기 ---------------------------------------------------------------------------------- */
+	@Override
+	public ArrayList<OptionVO> getOptionList(OptionVO option) {
+		//값 없으면
+		if(option == null || option.getOt_gs_num() < 1)
+			return null;
+		return adminDao.selectOptionList(option);
 	}
 }
