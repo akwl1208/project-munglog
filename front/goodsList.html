@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>굿즈 목록</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.main{
+			width:100%; padding: 50px; display: block;
+		}
+		/*main ------------------------------------------------------------- */
+		.main .box-title{
+			background-color: #ae8a68; border-radius: 5px;
+			padding: 20px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+			margin-bottom: 10px; font-size: 18px; font-weight: bold;
+		}
+		.main .box-title .fa-paw{margin-right: 6px;}
+		.main .box-title .box-message{
+			font-size: 12px; margin: 5px 0; padding-left: 24px;
+		}
+		.main .box-sort{margin: 20px 0; padding-right: 20px;}
+		.main .box-sort .sort:hover{color:#fb9600; cursor: pointer;}
+		.main .box-sort .sort.select{color:#fb9600; font-weight: bold;}
+		.main .box-sort .sort-latest::after{
+			display: inline-block; content: ''; margin: 0 10px;
+			width: 1px; height: 12px; background-color: #b9ab9a;
+			line-height: 24px;
+		}
+		.main .box-content{ margin: 20px 44px;}
+		.main .box-content .log-list{
+			display: table; width: 100%; min-width: 100%;
+		}
+		.main .box-content .goods-list .goods-item{
+			display: inline-block; width: calc(25% - 4px);
+			overflow: hidden; margin: 10px 0;
+		}
+		.main .box-content .goods-list .goods-item .box-thumb{
+			border: 1px solid #dfe0df; margin: 10px; text-align: center;
+		}
+		.main .box-content .goods-list .goods-item .box-thumb .gs_thumb{
+			width: 100%; max-width: 100%;
+		}
+		.main .box-content .goods-list .goods-item .box-thumb .gs_thumb:hover{transform: scale(1.1);}
+		.main .box-content .goods-list .goods-item .box-description{margin: 10px;}
+		.main .box-content .goods-list .goods-item .box-description .gs_name{
+			display: inline-block; width: 100%; 
+			overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+		}
+		.main .box-content .goods-list .goods-item .box-description .gs_name:hover{color:#fb9600;}
+		.main .box-content .box-search{
+			width: 50%; margin: 0 auto;
+		}
+		.main .box-content .box-search .btn-search{
+			padding: 0 10px; background-color: #a04c00;
+			border: none; border-radius: 3px;
+		}
+		.main .box-content .box-search .btn-search .fa-solid{color: #fff7ed;}
+	</style>
+</head>
+<body>
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height: 100vh;">
+			<!-- main -------------------------------------------------------- -->
+			<div class="main">
+				<!-- 제목 -------------------------------------------------------- -->
+				<div class="box-title">
+					<i class="fa-solid fa-paw"></i><span>굿즈</span>
+					<div class="box-message">다양한 굿즈들을 구경하세요.</div>
+				</div>
+				<!-- box-sort -------------------------------------------------------- -->
+				<div class="box-sort d-flex justify-content-end">
+					<span class="sort sort-latest select">신상품순</span>
+					<span class="sort sort-popularity">판매순</span>
+				</div>
+				<!-- box-contente --------------------------------------------------------------------------------------- -->
+				<div class="box-content">
+					<!-- goods-list --------------------------------------------------------------------------------------- -->
+					<ul class="goods-list">		
+						<li class="goods-item">
+							<div class="box-thumb">
+								<a href="#" class="goods-link">
+									<img class="gs_thumb" src="/akwl.jpg">
+								</a>
+							</div>
+							<div class="box-description">
+								<div class="name">
+									<a class="goods-link" href="#"><strong class="gs_name">인형인형인형인형인형인형인형</strong></a>
+								</div>
+								<div class="price">
+									<span>판매가 : </span><span class="ot_price">1000원</span>
+								</div>
+							</div>
+						</li>		
+					</ul>
+					<!-- 페이지네이션 --------------------------------------------------------------------------------------- -->
+					<ul class="pagination justify-content-center mt-5">
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">이전</a></li>
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">1</a></li>
+						<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">다음</a></li>
+					</ul>
+					<!-- box-search --------------------------------------------------------------------------------------- -->
+					<div class="box-search">
+						<div class="input-group mt-5">
+							<div class="input-group-prepend">
+								<select class="form-control">
+									<option>카테고리</option>
+									<option>상품명</option>
+								</select>
+							</div>
+							<input type="text" class="form-control" placeholder="검색어를 입력하세요.">
+							<div class="input-group-append">
+								<button class="btn btn-search" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+  </div>
+	<script>
+		$(function(){
+		})
+	</script> 
+</body>
+</html>
