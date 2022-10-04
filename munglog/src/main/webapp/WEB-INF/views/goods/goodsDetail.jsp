@@ -33,7 +33,7 @@
 	.main .box-content .box-select table td{text-align: center;}
 	.main .box-content .box-select .title{font-size: 12px;}
 	.main .box-content .box-select .title .gs_name{
-		display: inline-block; width: 100%; 
+		display: inline-block; width: 100%; margin-bottom: 5px;
 		overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 	}
 	.main .box-content .box-select .title .ot_name{
@@ -44,7 +44,7 @@
 		width: 65px; display: inline-block; position: relative;
 	}
 	.main .box-content .box-select .quantity input{
-		width: 30px; border: 1px solid #dfe0df;
+		width: 30px; border: 1px solid #dfe0df; text-align: center;
 	}
 	.main .box-content .box-select .quantity .up{
 		position: absolute; top: 0; left: 50px; height: 16px;
@@ -56,7 +56,7 @@
 	.main .box-content .box-select .quantity .up:hover .fa-solid,
 	.main .box-content .box-select .quantity .down:hover .fa-solid,
 	.main .box-content .box-select .btn-delete:hover .fa-solid{color:#fb9600; cursor: pointer;}
-	.main .box-content .box-totalPrice{font-size: 18px; padding: 5px 20px;}
+	.main .box-content .box-total{font-size: 18px; padding: 5px 20px;}
 	.main .box-content .box-btn button{
 		display: inline-block; border: 1px solid #dfe0df; padding: 10px 20px;
 		font-weight: bold;
@@ -116,49 +116,28 @@
 					<select class="form-control mb-2">
 						<option value="0">[필수] 옵션을 선택해주세요.</option>
 						<c:forEach items="${optionList}" var="option">
-							<option value="${option.ot_num}" data-amount="${option.ot_amount}" data-price="${option.ot_price}">
+							<option value="${option.ot_num}" data-name="${option.ot_name}" data-amount="${option.ot_amount}" data-price="${option.ot_price}">
 								${option.ot_name}
 								<c:if test="${option.ot_price != goods.gs_price}"> (+ ${option.ot_price - goods.gs_price}원)</c:if>
+								<c:if test="${option.ot_amount == 0}">/품절</c:if>
 							</option>					
 						</c:forEach>
 					</select>
 					<small class="ml-2">(최소 1개 이상 선택해주세요.)</small>	
 				</div>
 			</div>
-			<!-- box-select() ------------------------------------------------------------------------------------------------- -->
+			<!-- box-select ------------------------------------------------------------------------------------------------- -->
 			<div class="box-select">
 				<small class="ml-2" style="color: #b86000;">
 					<i class="fa-solid fa-paw"></i> 위 선택 박스에서 옵션을 선택하면 아래에 상품이 추가됩니다.
 				</small>
-				<table class="table mt-2" style="display: none;">
-					<tbody>
-						<tr class="row-select">
-							<th class="item-title" width="50%">
-								<p class="title m-0">
-									<strong class="gs_name"></strong><br>
-									<span class="ot_name ml-2"></span>
-								</p>
-							</th>
-							<td class="item-quantity" width="20%">
-								<div class="quantity">
-									<input type="text" class="bs_amount">
-									<a href="#" class="up"><i class="fa-solid fa-caret-up"></i></a>
-									<a href="#" class="down"><i class="fa-solid fa-caret-down"></i></a>
-								</div>
-							</td>
-							<td width="25%">
-								<span class="price"></span>
-							</td>
-							<td width="5%">
-								<div class="btn-delete"><i class="fa-solid fa-xmark"></i></div>
-							</td>
-						</tr>
-					</tbody>
+				<table class="table mt-2">
+					<tbody></tbody>
 				</table>
 			</div>
 			<hr>
 			<!-- box-totalPrice ---------------------------------------------------------------------------------- -->
-			<div class="box-totalPrice">
+			<div class="box-total">
 				<strong>총 금액 : </strong>
 				<strong class="total-price">0원</strong>
 				<span class="total-quantity">(0개)</span>
@@ -200,12 +179,80 @@
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
-
+	let gsName = '${goods.gs_name}';
 /* 이벤트 *********************************************************************************************************** */
-	$(function(){
+	$(function(){	
+		// 옵션 선택 ============================================================================================
+		$('.main .box-content .box-option select').change(function(){
+			//값 가져오기
+			let otNum = $(this).val();
+			let otName = $(this).children("option:selected").data('name');
+			let otAmount = $(this).children("option:selected").data('amount');
+			let otPrice = $(this).children("option:selected").data('price');
+			let otPriceStr = NumberToCurrency(otPrice);
+			//품절이면 선택 못함
+			if(otAmount == 0)
+				return;
+			//이미 선택했던 상품이면
+			let isSelected = true;
+			$('.main .box-content .box-select table tbody tr').each(function(){
+				let selectOtNum = $(this).data('value');
+				if(selectOtNum == otNum){
+					isSelected = false;
+					return false;
+				}
+			})
+			if(!isSelected){
+				alert('이미 선택한 상품입니다.')
+				return;
+			}
+			//화면 구성
+			let html = '';
+			html += '<tr class="row-select" data-value="'+otNum+'">';
+			html += 	'<th class="item-title" width="50%">';
+			html += 		'<p class="title m-0">';
+			html += 			'<strong class="gs_name">'+gsName+'</strong><br>';
+			html += 			'<span class="ot_name ml-2">- '+otName+'</span>';
+			html += 		'</p>';
+			html += 	'</th>';
+			html += 	'<td class="item-quantity" width="20%">';
+			html += 		'<div class="quantity">';
+			html += 			'<input type="text" class="bs_amount" value="1">';
+			html += 			'<a href="#" class="up"><i class="fa-solid fa-caret-up"></i></a>';
+			html += 			'<a href="#" class="down"><i class="fa-solid fa-caret-down"></i></a>';
+			html += 		'</div>';
+			html += 	'</td>';
+			html += 	'<td width="25%">';
+			html += 		'<span class="price" data-value="'+otPrice+'">'+otPriceStr+'</span>';
+			html += 	'</td>';
+			html += 	'<td width="5%">';
+			html += 		'<div class="btn-delete"><i class="fa-solid fa-xmark"></i></div>';
+			html += 	'</td>';
+			html += '</tr>';
+			$('.main .box-content .box-select table tbody').append(html);
+			//총 금액 수정
+			editTotal();
+		})
 	});	
 
 /* 함수 *********************************************************************************************************** */
-
+	//NumberToCurrency : 숫자를 통화로 ============================================================================
+	function NumberTocurrency(price){
+		return new Intl.NumberFormat('en-KR').format(price) +'원'
+	}
+	
+	//editTotal : 총금액 수정 =====================================================================================
+	function editTotal(){
+		let totalCount = 0;
+		let totalPrice = 0;
+		$('.main .box-content .box-select table tbody tr').each(function(){
+			let count = $(this).find('.bs_amount').val();
+			let price = $(this).find('.price').data('value');
+			totalCount += Number(count);
+			totalPrice += price;
+		})
+		$('.main .box-content .box-total .total-price').text(NumberToCurrency(totalPrice));
+		$('.main .box-content .box-total .total-quantity').text('('+totalCount+'개)');
+	}
 </script>
 </html>
