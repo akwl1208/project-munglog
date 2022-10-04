@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,7 @@ import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 @Controller
 public class GoodsController {
@@ -36,6 +38,19 @@ public class GoodsController {
 		
 		mv.addObject("categoryList", categoryList);
 		mv.setViewName("/goods/goodsList");
+		return mv;
+	}
+	
+	/* 굿즈 상세보기---------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/goodsDetail/{gs_num}", method = RequestMethod.GET)
+	public ModelAndView goodsDetailGet(ModelAndView mv, @PathVariable("gs_num")int gs_num) {
+		//굿즈 정보 가져오기
+		GoodsVO goods = goodsService.getGoods(gs_num);
+		ArrayList<OptionVO> optionList = goodsService.getOtionList(gs_num);
+		
+		mv.addObject("goods", goods);
+		mv.addObject("optionList", optionList);
+		mv.setViewName("/goods/goodsDetail");
 		return mv;
 	}
 	

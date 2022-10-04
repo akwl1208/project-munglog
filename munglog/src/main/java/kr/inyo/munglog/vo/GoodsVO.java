@@ -1,5 +1,6 @@
 package kr.inyo.munglog.vo;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import lombok.Data;
@@ -18,5 +19,11 @@ public class GoodsVO {
 	
 	public String getGs_thumb_url() {
 		return "/goods/img" + gs_thumb;
+	}
+	
+	public String getGs_price_str() {
+		DecimalFormat format = new DecimalFormat("#,###");
+		String str = format.format(gs_price) + "원";
+		return str;
 	}
 }

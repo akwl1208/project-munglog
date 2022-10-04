@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 public interface GoodsService {
 	//굿즈리스트 가져오기
@@ -13,5 +14,9 @@ public interface GoodsService {
 	int getGoodsTotalCount(Criteria cri);
 	//카테고리 리스트 가져오기
 	ArrayList<CategoryVO> getCategoryList();
+	//굿즈 번호로 굿즈 가져오기
+	GoodsVO getGoods(int gs_num);
+	//옵션 리스트 가져오기
+	ArrayList<OptionVO> getOtionList(int gs_num);
 
 }

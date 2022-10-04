@@ -29,6 +29,20 @@
 	<select id="selectCategoryList" resultType="kr.inyo.munglog.vo.CategoryVO">
 		select * from category
 	</select>
+	
+	<!-- 굿즈번호로 굿즈 가져오기 -->
+	<select id="selectGoods" resultType="kr.inyo.munglog.vo.GoodsVO">
+		select goods.*, min(ot_price) as gs_price from goods
+			join `option` on goods.gs_num = `option`.ot_gs_num
+			where gs_num = #{gs_num}
+		  group by gs_num
+	</select>
+	
+	<!-- 굿즈 번호로 옵션 리스트 가져오기 -->
+	<select id="selectOptionList" resultType="kr.inyo.munglog.vo.OptionVO">
+		select * from `option` where ot_gs_num = #{gs_num} order by ot_price
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	
 	<!-- update ************************************************************************************************* -->

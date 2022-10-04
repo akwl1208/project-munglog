@@ -176,13 +176,13 @@
 			for(goods of data.goodsList){
 				html += '<li class="goods-item">';
 				html += 	'<div class="box-thumb">';
-				html += 		'<a href="'+contextPath+'/goodsDatail/'+goods.gs_num+'" class="goods-link">';
+				html += 		'<a href="'+contextPath+'/goods/goodsDetail/'+goods.gs_num+'" class="goods-link">';
 				html += 			'<img class="gs_thumb" src="'+contextPath+goods.gs_thumb_url+'">';
 				html += 		'</a>';
 				html += 	'</div>';
 				html += 	'<div class="box-description">';
 				html += 		'<div class="name">';
-				html += 			'<a class="goods-link" href="'+contextPath+'/goodsDatail/'+goods.gs_num+'">';
+				html += 			'<a class="goods-link" href="'+contextPath+'/goods/goodsDetail/'+goods.gs_num+'">';
 				html += 				'<strong class="gs_name">'+goods.gs_name+'</strong>';
 				html += 			'</a>';
 				html += 		'</div>';

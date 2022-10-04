@@ -9,6 +9,7 @@ import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.OptionVO;
 
 @Service
 public class GoodsServiceImp implements GoodsService {
@@ -40,6 +41,22 @@ public class GoodsServiceImp implements GoodsService {
 	@Override
 	public ArrayList<CategoryVO> getCategoryList() {
 		return goodsDao.selectCategoryList();
+	}
+
+	//getGoods : 굿즈 가져오기 ============================================================================================
+	@Override
+	public GoodsVO getGoods(int gs_num) {
+		if(gs_num < 1)
+			return null;
+		return goodsDao.selectGoods(gs_num);
+	}
+
+	//getOtionList : 옵션 리스트 가져오기 =============================================================================================
+	@Override
+	public ArrayList<OptionVO> getOtionList(int gs_num) {
+		if(gs_num < 1)
+			return null;
+		return goodsDao.selectOptionList(gs_num);
 	}
 
 }
