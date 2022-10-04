@@ -24,7 +24,8 @@
 			display: inline-block; font-size: 12px; height: 24px;
 		}
 		.header .box-account .account-list li a{line-height: 24px;}
-		.header .box-account .account-list>li:nth-child(n+2):not(:last-of-type)::after{
+		.header .box-account .account-list>li:nth-child(n+2):not(:last-of-type)::after,
+		.header .box-account .account-list .signup::after{
 			display: inline-block; content: ''; margin: 0 6px 3px;
 			width: 1px; height: 12px; background-color: #b9ab9a; 
 			vertical-align: middle; line-height: 24px;
@@ -68,7 +69,7 @@
 					<!-- 비회원일 때 ------------------------------------------------------------------------------------------ -->
 					<c:if test="${user == null}">
 						<li class="account-item">
-							<a href="<c:url value="/account/signup"></c:url>" class="account-link">회원가입</a>
+							<a href="<c:url value="/account/signup"></c:url>" class="account-link signup">회원가입</a>
 						</li>
 						<li class="account-item">
 							<a href="<c:url value="/account/login"></c:url>" class="account-link">로그인</a>
@@ -105,7 +106,7 @@
 						<a href="<c:url value="/log/feed"></c:url>" class="menu-link">일지</a>
 					</li>
 					<li class="menu-item">
-						<a href="#" class="menu-link">굿즈</a>
+						<a href="<c:url value="/goods"></c:url>" class="menu-link">굿즈</a>
 					</li>
 					<li class="menu-item">
 						<a href="#" class="menu-link">후원</a>
@@ -123,7 +124,7 @@
 						</a>
 						<a class="dropdown-item" href="<c:url value="/log/challenge"></c:url>">챌린지</a>
 						<h5 class="dropdown-header">굿즈</h5>
-						<a class="dropdown-item" href="#">굿즈 보기</a>
+						<a class="dropdown-item" href="<c:url value="/goods"></c:url>">굿즈 보기</a>
 						<a class="dropdown-item" href="#">장바구니</a>
 						<a class="dropdown-item" href="#">리뷰</a>
 						<a class="dropdown-item" href="#">Q&A</a>
