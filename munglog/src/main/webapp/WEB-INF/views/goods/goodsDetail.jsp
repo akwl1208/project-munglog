@@ -182,6 +182,14 @@
 	let gsName = '${goods.gs_name}';
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){	
+		//옵션 삭제(btn-delete) 클릭 =============================================================================
+		$(document).on('click','.main .box-content .box-select .btn-delete', function(){
+			if(!confirm('옵션을 삭제하겠습니까?'))
+				return;
+			$(this).parents('tr').remove();
+			editTotal();
+		})//
+		
 		// 옵션 선택 ============================================================================================
 		$('.main .box-content .box-option select').change(function(){
 			//값 가져오기
@@ -189,7 +197,7 @@
 			let otName = $(this).children("option:selected").data('name');
 			let otAmount = $(this).children("option:selected").data('amount');
 			let otPrice = $(this).children("option:selected").data('price');
-			let otPriceStr = NumberToCurrency(otPrice);
+			let otPriceStr = numberToCurrency(otPrice);
 			//품절이면 선택 못함
 			if(otAmount == 0)
 				return;
@@ -232,14 +240,14 @@
 			$('.main .box-content .box-select table tbody').append(html);
 			//총 금액 수정
 			editTotal();
-		})
+		})//
 	});	
 
 /* 함수 *********************************************************************************************************** */
-	//NumberToCurrency : 숫자를 통화로 ============================================================================
-	function NumberTocurrency(price){
-		return new Intl.NumberFormat('en-KR').format(price) +'원'
-	}
+	//numberToCurrency : 숫자를 통화로 ============================================================================
+	function numberToCurrency(price){
+		return new Intl.NumberFormat('en-KR').format(price) +'원';
+	}//
 	
 	//editTotal : 총금액 수정 =====================================================================================
 	function editTotal(){
@@ -251,8 +259,8 @@
 			totalCount += Number(count);
 			totalPrice += price;
 		})
-		$('.main .box-content .box-total .total-price').text(NumberToCurrency(totalPrice));
+		$('.main .box-content .box-total .total-price').text(numberToCurrency(totalPrice));
 		$('.main .box-content .box-total .total-quantity').text('('+totalCount+'개)');
-	}
+	}//
 </script>
 </html>
