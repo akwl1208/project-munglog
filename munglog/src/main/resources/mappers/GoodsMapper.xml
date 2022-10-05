@@ -46,7 +46,7 @@
 	<!-- 회원번호와 옵션 번호로 장바구니 정보 가져오기 -->
 	<select id="selectBasketByOtNum" resultType="kr.inyo.munglog.vo.BasketVO">
 		select * from basket
-			where bs_mb_num=#{bs_mb_num} and bs_ot_num=#{bs_ot_num} and bs_expir_date > now()
+			where bs_mb_num = #{bs_mb_num} and bs_ot_num = #{bs_ot_num} and bs_expir_date > now()
 	</select>
 	
 	<!-- 회원 번호로 장바구니 리스트 가져오기 -->
@@ -55,6 +55,12 @@
 			join `option` on basket.bs_ot_num = `option`.ot_num
     	join goods on `option`.ot_gs_num = goods.gs_num
     	where bs_mb_num = #{mb_num} and bs_expir_date > now();
+	</select>
+	
+	<!-- 장바구니 번호로 장바구니 가져오기 -->
+	<select id="selectBasket" resultType="kr.inyo.munglog.vo.BasketVO">
+		select * from basket
+		where bs_num = #{bs_num} and bs_mb_num = #{bs_mb_num}
 	</select>
 	
 	<!-- insert *********************************************************************************************** -->
@@ -66,5 +72,9 @@
 	<!-- update ************************************************************************************************* -->
 	
 	<!-- delete ************************************************************************************************* -->
-
+	<!-- 장바구니 삭제 -->
+	<delete id="deleteBasket">
+		delete from basket
+			where bs_num = #{bs_num} and bs_mb_num = #{bs_mb_num}
+	</delete>
 </mapper>

@@ -96,4 +96,16 @@ public class GoodsController {
 		map.put("res", res);
 		return map;
 	}
+	
+	/* 장바구니 삭제 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/delete/basket", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> deleteBasket(@RequestBody BasketVO basket, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = goodsService.deleteBasket(basket, user);
+		
+		map.put("res", res);
+		return map;
+	}
 }

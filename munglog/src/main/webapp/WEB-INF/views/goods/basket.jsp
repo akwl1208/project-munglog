@@ -96,8 +96,8 @@
 			<!-- tbody ---------------------------------------------------------------------------------------------------- -->
 			<tbody>
 				<c:forEach items="${basketList}" var="basket">
-					<tr>
-						<td class="item-check" data-value="${basket.bs_num}">
+					<tr data-bsnum="${basket.bs_num}" data-mbnum="${basket.bs_mb_num}">
+						<td class="item-check">
 							<input type="checkbox" class="check">
 						</td>
 						<td class="item-thumb">
@@ -201,6 +201,24 @@ $(function(){
 		// 체크가 해제된 상태이면 
 		else
 			$('.main .box-content .box-basket table thead .checkAll').prop('checked', false);				
+	})//
+	
+	//삭제 아이콘 클릭하면(btn-delete) ============================================================================
+	$('.main .box-content .box-basket table tbody .item-btn .btn-delete').click(function () {
+		//삭제할건지 묻기
+		if(!confirm('해당 상품을 장바구니에서 삭제하겠습니까?'))
+			return;
+		//값 가져오기
+		let bs_num = $(this).parents('tr').data('bsnum');
+		let bs_mb_num = $(this).parents('tr').data('mbnum');
+		//장바구니 삭제
+		let obj = {
+			bs_num,
+			bs_mb_num	
+		};
+		deleteBasket(obj, this);
+		//총 금액 수정
+		editSummary();
 	})
 });	
 	
@@ -221,7 +239,8 @@ $(function(){
 		});
 		//배송비
 		let deliveryFee = 3000;
-		if(goodsPrice >= 50000)
+		let trLength = $('.main .box-content .box-basket table tbody tr').length;
+		if(goodsPrice >= 50000 || trLength == 0)
 			deliveryFee = 0;
 		//결제 예정 금액
 		let totalPrice = goodsPrice + deliveryFee;
@@ -229,6 +248,16 @@ $(function(){
 		$('.main .box-content .box-summary .deliveryFee').text(numberToCurrency(deliveryFee));
 		$('.main .box-content .box-basket .deliveryFee').text(numberToCurrency(deliveryFee));
 		$('.main .box-content .box-summary .totalPrice').text(numberToCurrency(totalPrice));
+	}//
+	
+	//deleteBasket : 장바구니 삭제 =====================================================================================
+	function deleteBasket(obj, selector){
+		ajaxPost(false, obj, '/delete/basket', function(data){
+			if(data.res){
+				alert('해당 상품을 장바구니에서 삭제했습니다.')
+				$(selector).parents('tr').remove();
+			}
+		});
 	}//
 </script>
 </html>

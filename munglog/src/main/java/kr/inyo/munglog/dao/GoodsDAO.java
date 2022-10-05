@@ -33,6 +33,10 @@ public interface GoodsDAO {
 	void insertBasket(BasketVO basket);
 	//회원 번호로 장바구니 리스트 가져오기
 	ArrayList<BasketVO> selectBasketList(int mb_num);
+	//장바구니번호로 장바구니 가져오기
+	BasketVO selectBasket(BasketVO basket);
+	//장바구니 삭제
+	boolean deleteBasket(BasketVO basket);
 	
 
 }

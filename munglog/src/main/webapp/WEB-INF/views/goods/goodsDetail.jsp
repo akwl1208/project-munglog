@@ -183,7 +183,7 @@
 		<div id="qna" class="container tab-pane fade">
 		</div>
 	</div>
-	<a class="btn-scrollTop" href="#" onclick="scrollTop()"><i class="fa-regular fa-circle-up"></i></a>
+	<a class="btn-scrollTop" href="javascipt:0;" onclick="scrollTop()"><i class="fa-regular fa-circle-up"></i></a>
 </div>
 </body>
 <!-- script *********************************************************************************************************** -->
@@ -304,8 +304,8 @@
 			html += 	'<td class="item-quantity" width="20%">';
 			html += 		'<div class="quantity" data-value="'+otAmount+'">';
 			html += 			'<input type="text" class="bs_amount" min="1" max="10" value="1">';
-			html += 			'<a href="#" class="up"><i class="fa-solid fa-caret-up"></i></a>';
-			html += 			'<a href="#" class="down"><i class="fa-solid fa-caret-down"></i></a>';
+			html += 			'<a href="javascipt:0;" class="up"><i class="fa-solid fa-caret-up"></i></a>';
+			html += 			'<a href="javascipt:0;" class="down"><i class="fa-solid fa-caret-down"></i></a>';
 			html += 		'</div>';
 			html += 	'</td>';
 			html += 	'<td width="25%">';
@@ -391,11 +391,11 @@
 		ajaxPost(false, obj, '/put/basket', function(data){
 			if(data.res == 1){
 				if(confirm('장바구니에 담았습니다. 장바구니를 확인하겠습니까?'))
-					location.href = '<%=request.getContextPath()%>/goods';
+					location.href = '<%=request.getContextPath()%>/goods/basket';
 			}
 			else if(data.res == 0){
 				if(confirm('이미 장바구니에 담긴 상품이 있습니다. 장바구니를 확인하겠습니까?'))
-					location.href = '<%=request.getContextPath()%>/goods';
+					location.href = '<%=request.getContextPath()%>/goods/basket';
 			}		
 			else
 				alert('장바구니 담기에 실패했습니다. 다시 시도해주세요.')

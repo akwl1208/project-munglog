@@ -24,4 +24,6 @@ public interface GoodsService {
 	int putBasket(BasketVO basket, MemberVO user);
 	//장바구니 리스트 가져오기
 	ArrayList<BasketVO> getBasketList(MemberVO user);
+	//장바구니 삭제
+	boolean deleteBasket(BasketVO basket, MemberVO user);
 }

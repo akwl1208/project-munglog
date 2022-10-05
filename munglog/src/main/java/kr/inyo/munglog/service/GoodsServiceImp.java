@@ -108,4 +108,20 @@ public class GoodsServiceImp implements GoodsService {
 			return null;
 		return goodsDao.selectBasketList(user.getMb_num());
 	}
+
+	//deleteBasket : 장바구니 삭제 =============================================================================
+	@Override
+	public boolean deleteBasket(BasketVO basket, MemberVO user) {
+		//값이 없으면
+		if(basket == null || user == null || user.getMb_num() < 1)
+			return false;
+		//회원 번호가 다르면
+		if(basket.getBs_mb_num() != user.getMb_num())
+			return false;
+		//장바구니에 담긴 상품인지 확인
+		BasketVO dbBasket = goodsDao.selectBasket(basket);
+		if(dbBasket == null)
+			return false;
+		return goodsDao.deleteBasket(basket);
+	}
 }
