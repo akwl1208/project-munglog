@@ -45,7 +45,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 굿즈 상세보기---------------------------------------------------------------*/
+	/* 굿즈 상세보기--------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/goodsDetail/{gs_num}", method = RequestMethod.GET)
 	public ModelAndView goodsDetailGet(ModelAndView mv, @PathVariable("gs_num")int gs_num) {
 		//굿즈 정보 가져오기
@@ -55,6 +55,14 @@ public class GoodsController {
 		mv.addObject("goods", goods);
 		mv.addObject("optionList", optionList);
 		mv.setViewName("/goods/goodsDetail");
+		return mv;
+	}//
+	
+	/* 장바구니 -------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/basket/{mb_num}", method = RequestMethod.GET)
+	public ModelAndView goodsBasketGet(ModelAndView mv, @PathVariable("mb_num")int mb_num, HttpSession session) {
+		
+		mv.setViewName("/goods/basket");
 		return mv;
 	}//
 	
