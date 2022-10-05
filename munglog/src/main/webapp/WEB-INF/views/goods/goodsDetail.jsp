@@ -123,7 +123,7 @@
 							</option>					
 						</c:forEach>
 					</select>
-					<small class="ml-2">(최소 1개 이상 선택해주세요.)</small>	
+					<small class="ml-2">(옵션 하나당 최소 1개 이상 최대 10개 이하로 선택해주세요.)</small>	
 				</div>
 			</div>
 			<!-- box-select ------------------------------------------------------------------------------------------------- -->
@@ -190,6 +190,56 @@
 			editTotal();
 		})//
 		
+		// input 글자 제한 이벤트 ----------------------------------------------------------------------------------
+    $(document).on('input', '.main .box-content .box-select .quantity input', function() {
+      //숫자 이외의 값 입력 못하게 막음
+      $(this).val($(this).val().replace(/[^0-9]/g, ''));
+      let value = $(this).val();
+      let maxAmount = $(this).parents('.quantity').data('value');
+      //재고량 초과하여 주문할 수 없다.
+      if(value > maxAmount){
+    	  alert('현재 주문 가능한 수량은'+maxAmount+'개 입니다.');
+    	  $(this).val(maxAmount);
+      }
+      //최소 1개 이상 최대 10 이하로 입력
+      if(value.length != 0 && (value > 10 || value < 1)){
+    	  alert('최소 1개 이상 최대 10개 이하로 입력할 수 있습니다.');
+    	  $(this).val(1);
+      }
+      editTotal();
+    })//
+    
+		// up 클릭 이벤트 ----------------------------------------------------------------------------------
+    $(document).on('click', '.main .box-content .box-select .quantity .up', function() {
+    	let value = $(this).siblings('input').val();
+      let maxAmount = $(this).parents('.quantity').data('value');
+      //재고량 초과하여 주문할 수 없다.
+      if(value >= maxAmount){
+    	  alert('현재 주문 가능한 수량은'+maxAmount+'개 입니다.');
+    	  $(this).val(maxAmount);
+    	  return;
+      }
+    	//최대 10개까지 입력 가능
+    	if(value == 10){
+      	alert('최소 1개 이상 최대 10개 이하로 입력할 수 있습니다.');
+      	return;
+    	}
+			$(this).siblings('input').val(Number(value) + 1);
+			editTotal();
+    })//
+    
+		// down 클릭 이벤트 ----------------------------------------------------------------------------------
+    $(document).on('click', '.main .box-content .box-select .quantity .down', function() {
+    	let value = $(this).siblings('input').val();
+    	//최소 1개까지 입력 가능
+    	if(value == 1){
+      	alert('최소 1개 이상 최대 10개 이하로 입력할 수 있습니다.');
+      	return;
+    	}
+			$(this).siblings('input').val(Number(value) - 1);	
+			editTotal();
+    })//
+		
 		// 옵션 선택 ============================================================================================
 		$('.main .box-content .box-option select').change(function(){
 			//값 가져오기
@@ -224,8 +274,8 @@
 			html += 		'</p>';
 			html += 	'</th>';
 			html += 	'<td class="item-quantity" width="20%">';
-			html += 		'<div class="quantity">';
-			html += 			'<input type="text" class="bs_amount" value="1">';
+			html += 		'<div class="quantity" data-value="'+otAmount+'">';
+			html += 			'<input type="text" class="bs_amount" min="1" max="10" value="1">';
 			html += 			'<a href="#" class="up"><i class="fa-solid fa-caret-up"></i></a>';
 			html += 			'<a href="#" class="down"><i class="fa-solid fa-caret-down"></i></a>';
 			html += 		'</div>';
@@ -255,7 +305,7 @@
 		let totalPrice = 0;
 		$('.main .box-content .box-select table tbody tr').each(function(){
 			let count = $(this).find('.bs_amount').val();
-			let price = $(this).find('.price').data('value');
+			let price = $(this).find('.price').data('value') * count;
 			totalCount += Number(count);
 			totalPrice += price;
 		})
