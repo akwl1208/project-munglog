@@ -3,8 +3,10 @@ package kr.inyo.munglog.service;
 import java.util.ArrayList;
 
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionVO;
 
 public interface GoodsService {
@@ -18,5 +20,7 @@ public interface GoodsService {
 	GoodsVO getGoods(int gs_num);
 	//옵션 리스트 가져오기
 	ArrayList<OptionVO> getOtionList(int gs_num);
+	//장바구니에 담기
+	int putBasket(BasketVO basket, MemberVO user);
 
 }

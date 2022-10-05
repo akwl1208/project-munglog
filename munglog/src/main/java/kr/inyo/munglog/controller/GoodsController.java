@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +19,10 @@ import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
+import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionVO;
 
 @Controller
@@ -39,7 +43,7 @@ public class GoodsController {
 		mv.addObject("categoryList", categoryList);
 		mv.setViewName("/goods/goodsList");
 		return mv;
-	}
+	}//
 	
 	/* 굿즈 상세보기---------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/goodsDetail/{gs_num}", method = RequestMethod.GET)
@@ -52,7 +56,7 @@ public class GoodsController {
 		mv.addObject("optionList", optionList);
 		mv.setViewName("/goods/goodsDetail");
 		return mv;
-	}
+	}//
 	
 /* ajax **************************************************************************************************************** */
 	/* 굿즈 리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
@@ -65,8 +69,20 @@ public class GoodsController {
 		int totalCount = goodsService.getGoodsTotalCount(cri);
 		PageMaker pm = new PageMaker(totalCount, 5, cri);
 		
-		map.put("pm",pm);
+		map.put("pm", pm);
 		map.put("goodsList", goodsList);
+		return map;
+	}//
+	
+	/* 장바구니에 담기 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/put/basket", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> putBasket(@RequestBody BasketVO basket, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		int res = goodsService.putBasket(basket, user);
+		
+		map.put("res", res);
 		return map;
 	}
 }

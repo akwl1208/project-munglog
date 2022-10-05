@@ -17,6 +17,7 @@
 		font-size: 12px; margin: 5px 0; padding-left: 24px;
 	}
 	.main .box-content{margin: 44px;}
+	.main .box-content .goToGoods:hover .fa-list{color:#fb9600;}
 	.main .box-content .box-thumb{
 		border: 1px solid #dfe0df;
 		width: 430px; height: 430px;
@@ -74,6 +75,11 @@
 		padding: 30px 60px; text-align: center;
 	}
 	.main .box-content .tab-content .tab-pane table{margin: 0 auto;}
+	.main .btn-scrollTop{
+    font-weight: bold; color: #444; font-size:24px;
+    position:fixed; bottom:50px; right:400px; display:none;
+	}
+	.main .btn-scrollTop:hover{color: #fb9600;}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
@@ -84,7 +90,10 @@
 	<div class="box-message">굿즈의 상세보기를 보고, 장바구니에 담아보세요.</div>
 </div>
 <!-- box-content ------------------------------------------------------------------------------------------------- -->		
-<div class="box-content">		
+<div class="box-content">
+	<a class="goToGoods float-right" href="<c:url value="/goods"></c:url>" data-toggle="tooltip" data-placement="right" title="굿즈 목록으로">
+		<i class="fa-solid fa-list"></i>
+	</a>	
 	<div class="clearfix">
 		<!-- box-thumb(썸네일) ----------------------------------------------------------------------------------------- -->		
 		<div class="box-thumb float-left">				
@@ -174,14 +183,33 @@
 		<div id="qna" class="container tab-pane fade">
 		</div>
 	</div>
+	<a class="btn-scrollTop" href="#" onclick="scrollTop()"><i class="fa-regular fa-circle-up"></i></a>
 </div>
 </body>
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
 	let gsName = '${goods.gs_name}';
+	let user = '${user.mb_num}';
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){	
+		$(document).ready(function(){
+			//목록 호버하면 tooltip
+		  $('[data-toggle="tooltip"]').tooltip();
+			//스크롤 내리면 상단으로 버튼 나옴
+	    $(window).scroll(function(){
+	      if ($(this).scrollTop() > 100)
+     			$('.btn-scrollTop').fadeIn();
+	      else
+	      	$('.btn-scrollTop').fadeOut();
+	    });
+	    //상단으로 클릭하면 상단으로
+	    $('.btn-scrollTop').click(function(){
+	    	$('body').scrollTop(0);
+	      return false;
+	    });
+		})//
+		
 		//옵션 삭제(btn-delete) 클릭 =============================================================================
 		$(document).on('click','.main .box-content .box-select .btn-delete', function(){
 			if(!confirm('옵션을 삭제하겠습니까?'))
@@ -259,7 +287,7 @@
 					isSelected = false;
 					return false;
 				}
-			})
+			});
 			if(!isSelected){
 				alert('이미 선택한 상품입니다.')
 				return;
@@ -291,6 +319,51 @@
 			//총 금액 수정
 			editTotal();
 		})//
+		
+		// 장바구니 클릭 ============================================================================================
+		$('.main .box-content .box-btn .btn-basket').click(function(){
+			//로그인 안했으면 로그인화면으로
+			if(user == ''){
+				if(confirm('장바구니에 담으려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/account/login';
+				return;
+			}
+			/*
+			if(!confirm('해당 상품을 장바구니에 담겠습니까?'))
+				return;*/
+			//옵션을 선택 안했으면
+			let trLength = $('.main .box-content .box-select table tbody tr').length;
+			if(trLength == 0){
+				alert('옵션을 선택해주세요.');
+				$('.main .box-content .box-option select').focus();
+			}
+			//수량이 입력 안했으면
+			$('.main .box-content .box-select input').each(function(){
+				let value = $(this).val();
+				if(value == ''){
+					alert('수량을 입력해주세요.')
+					$(this).focus();
+					return false;
+				}
+			});
+			//장바구니에 담기
+			let optionList = [];
+			$('.main .box-content .box-select table tbody tr').each(function(){
+				//값 설정
+				let option = {};
+				let bs_ot_num = $(this).data('value');
+				let bs_amount = $(this).find('.bs_amount').val();
+				option.ot_num = bs_ot_num;
+				option.ot_amount = bs_amount;
+				optionList.push(option);
+			});
+			let obj = {
+				bs_mb_num : user,
+				optionList
+			}
+			//장바구니에 담기
+			putBasket(obj);
+		})//
 	});	
 
 /* 함수 *********************************************************************************************************** */
@@ -308,9 +381,25 @@
 			let price = $(this).find('.price').data('value') * count;
 			totalCount += Number(count);
 			totalPrice += price;
-		})
+		});
 		$('.main .box-content .box-total .total-price').text(numberToCurrency(totalPrice));
 		$('.main .box-content .box-total .total-quantity').text('('+totalCount+'개)');
+	}//
+	
+	//putBasket : 장바구니에 담기 =====================================================================================
+	function putBasket(obj){
+		ajaxPost(false, obj, '/put/basket', function(data){
+			if(data.res == 1){
+				if(confirm('장바구니에 담았습니다. 장바구니를 확인하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/goods';
+			}
+			else if(data.res == 0){
+				if(confirm('이미 장바구니에 담긴 상품이 있습니다. 장바구니를 확인하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/goods';
+			}		
+			else
+				alert('장바구니 담기에 실패했습니다. 다시 시도해주세요.')
+		});
 	}//
 </script>
 </html>
