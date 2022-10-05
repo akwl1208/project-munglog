@@ -49,6 +49,14 @@
 			where bs_mb_num=#{bs_mb_num} and bs_ot_num=#{bs_ot_num} and bs_expir_date > now()
 	</select>
 	
+	<!-- 회원 번호로 장바구니 리스트 가져오기 -->
+	<select id="selectBasketList" resultType="kr.inyo.munglog.vo.BasketVO">
+		select * from basket
+			join `option` on basket.bs_ot_num = `option`.ot_num
+    	join goods on `option`.ot_gs_num = goods.gs_num
+    	where bs_mb_num = #{mb_num} and bs_expir_date > now();
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 장바구니 추가 -->
 	 <insert id="insertBasket">

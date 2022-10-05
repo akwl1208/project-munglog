@@ -99,4 +99,13 @@ public class GoodsServiceImp implements GoodsService {
 		}
   	return 1;
 	}//
+	
+	//getBasketList : 장바구니 리스트 가져오기 =============================================================================
+	@Override
+	public ArrayList<BasketVO> getBasketList(MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return null;
+		return goodsDao.selectBasketList(user.getMb_num());
+	}
 }

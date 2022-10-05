@@ -125,7 +125,7 @@
 						<a class="dropdown-item" href="<c:url value="/log/challenge"></c:url>">챌린지</a>
 						<h5 class="dropdown-header">굿즈</h5>
 						<a class="dropdown-item" href="<c:url value="/goods"></c:url>">굿즈 보기</a>
-						<a class="dropdown-item" href="<c:url value="/goods/basket/${user.mb_num}"></c:url>">장바구니</a>
+						<a class="dropdown-item" href="<c:url value="/goods/basket"></c:url>">장바구니</a>
 						<a class="dropdown-item" href="#">리뷰</a>
 						<a class="dropdown-item" href="#">Q&A</a>
 						<h5 class="dropdown-header">후원</h5>

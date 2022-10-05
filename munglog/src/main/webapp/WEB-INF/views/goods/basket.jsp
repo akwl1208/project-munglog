@@ -38,7 +38,9 @@
 		border: none; color: #fff7ed; border-radius: 3px;
 		display: inline-block; margin-top: 5px;
 	}
-	.main .box-content .box-basket table tbody .item-amount input{border: 1px solid #dfe0df;}
+	.main .box-content .box-basket table tbody .item-amount input{
+		border: 1px solid #dfe0df; text-align: center; width: 50px;
+	}
 	.main .box-content .box-basket table tbody .item-btn .btn{
 		padding: 5px; display: inline-block;
 	}
@@ -80,7 +82,7 @@
 			<thead>
 				<tr>
 					<th width="27px">
-						<input type="checkbox">
+						<input type="checkbox" class="checkAll">
 					</th>
 					<th width="92px">이미지</th>
 					<th>상품정보</th>
@@ -93,34 +95,42 @@
 			</thead>
 			<!-- tbody ---------------------------------------------------------------------------------------------------- -->
 			<tbody>
-				<tr>
-					<td class="item-check">
-						<input type="checkbox">
-					</td>
-					<td class="item-thumb">
-						<a class="link-goods" href="#">
-							<img class="gs_thumb" src="/akwl.jpg">
-						</a>
-					</td>
-					<td class="item-name text-left pl-4">
-						<strong class="gs_name">상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명</strong>
-						<div class="box-option mt-2">
-							<span class="ot_name">옵션명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명상품명</span><br>
-							<a class="btn-change-option" href="#">옵션 변경</a>
-						</div>
-					</td>
-					<td class="item-price"><span class="ot_price">95000원</span></td>
-					<td class="item-amount">
-						<input type="number" class="bs_amount" min="1" max="10" value="">
-						<button type="button" class="btn-chage-amount">변경</button>
-					</td>
-					<td class="item-delivery"><span class="deliveryFee">3000원</span></td>
-					<td class="item-total"><span class="totalPrice">1000000원</span></td>
-					<td class="item-btn">
-						<span class="btn btn-buy"><i class="icon fa-regular fa-credit-card"></i></span><br>
-						<span class="btn btn-delete"><i class="icon fa-solid fa-trash"></i></span>
-					</td>
-				</tr>
+				<c:forEach items="${basketList}" var="basket">
+					<tr>
+						<td class="item-check" data-value="${basket.bs_num}">
+							<input type="checkbox" class="check">
+						</td>
+						<td class="item-thumb">
+							<a class="link-goods" href="<c:url value="/goods/goodsDetail/${basket.gs_num}"></c:url>">
+								<img class="gs_thumb" src="<c:url value="${basket.gs_thumb_url}"></c:url>">
+							</a>
+						</td>
+						<td class="item-name text-left pl-4">
+							<a class="link-goods" href="<c:url value="/goods/goodsDetail/${basket.gs_num}"></c:url>">
+								<strong class="gs_name">${basket.gs_name}</strong>
+							</a>			
+							<div class="box-option mt-2">
+								<span class="ot_name">- ${basket.ot_name}</span><br>
+								<a class="btn-change-option" href="#">옵션 변경</a>
+							</div>
+						</td>
+						<td class="item-price">
+							<span class="ot_price" data-value="${basket.ot_price}">${basket.ot_price_str}</span>
+						</td>
+						<td class="item-amount">
+							<input type="number" class="bs_amount" min="1" 
+								max="<c:if test="${basket.ot_amount < 10}">${basket.ot_amount}</c:if><c:if test="${basket.ot_amount >= 10}">10</c:if>" 
+								value="${basket.bs_amount}" data-amount="${basket.bs_amount}">
+							<button type="button" class="btn-chage-amount">변경</button>
+						</td>
+						<td class="item-delivery"><span class="deliveryFee"></span></td>
+						<td class="item-total"><span class="totalPrice">${basket.ot_price_total}</span></td>
+						<td class="item-btn">
+							<span class="btn btn-buy"><i class="icon fa-regular fa-credit-card"></i></span><br>
+							<span class="btn btn-delete"><i class="icon fa-solid fa-trash"></i></span>
+						</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 		<!-- box-set ---------------------------------------------------------------------------------------------------- -->
@@ -164,11 +174,61 @@
 /* 변수 *********************************************************************************************************** */
 
 /* 이벤트 *********************************************************************************************************** */
-	$(function(){
-
-	});		
+$(function(){
+	$(document).ready(function(){
+		editSummary();
+	})//
+	
+	//체크박스 클릭하면(checkAll) ==================================================================================
+	$('.main .box-content .box-basket table thead .checkAll').click(function () {
+		//클릭된 체크박스의 체크 여부 확인
+		let isChecked = $(this).prop('checked');
+		//모든 체크박스에 적용
+		$('input:checkbox').prop('checked', isChecked);
+	})//
+	
+	//체크박스 클릭하면(check) ==================================================================================
+	$('.main .box-content .box-basket table tbody .check').click(function () {
+		// 클릭된 체크박스가 체크된 상태이면
+		if($(this).is(':checked')){
+			// 전체가 체크된 상태인지 확인
+			let count = $('.main .box-content .box-basket table tbody .check').filter(':checked').length;
+			let totalcount = $('.main .box-content .box-basket table tbody .check').length;
+			// 전체가 체크됬으면 
+			if(totalcount == count)
+				$('.main .box-content .box-basket table thead .checkAll').prop('checked', true);
+		}
+		// 체크가 해제된 상태이면 
+		else
+			$('.main .box-content .box-basket table thead .checkAll').prop('checked', false);				
+	})
+});	
 	
 /* 함수 *********************************************************************************************************** */
-
+	//numberToCurrency : 숫자를 통화로 ============================================================================
+	function numberToCurrency(price){
+		return new Intl.NumberFormat('en-KR').format(price) +'원';
+	}//
+	
+	//editTotal : 총금액 수정 =====================================================================================
+	function editSummary(){
+		//상품 총 금액
+		let goodsPrice = 0;
+		$('.main .box-content .box-basket table tbody tr').each(function(){
+			let count = $(this).find('.bs_amount').val();
+			let price = $(this).find('.ot_price').data('value') * count;
+			goodsPrice += price;
+		});
+		//배송비
+		let deliveryFee = 3000;
+		if(goodsPrice >= 50000)
+			deliveryFee = 0;
+		//결제 예정 금액
+		let totalPrice = goodsPrice + deliveryFee;
+		$('.main .box-content .box-summary .goodsPrice').text(numberToCurrency(goodsPrice));
+		$('.main .box-content .box-summary .deliveryFee').text(numberToCurrency(deliveryFee));
+		$('.main .box-content .box-basket .deliveryFee').text(numberToCurrency(deliveryFee));
+		$('.main .box-content .box-summary .totalPrice').text(numberToCurrency(totalPrice));
+	}//
 </script>
 </html>

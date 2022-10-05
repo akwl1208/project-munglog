@@ -22,5 +22,6 @@ public interface GoodsService {
 	ArrayList<OptionVO> getOtionList(int gs_num);
 	//장바구니에 담기
 	int putBasket(BasketVO basket, MemberVO user);
-
+	//장바구니 리스트 가져오기
+	ArrayList<BasketVO> getBasketList(MemberVO user);
 }

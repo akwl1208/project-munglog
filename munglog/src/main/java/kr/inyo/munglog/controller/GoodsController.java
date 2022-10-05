@@ -59,9 +59,12 @@ public class GoodsController {
 	}//
 	
 	/* 장바구니 -------------------------------------------------------------------------------------*/
-	@RequestMapping(value = "/goods/basket/{mb_num}", method = RequestMethod.GET)
-	public ModelAndView goodsBasketGet(ModelAndView mv, @PathVariable("mb_num")int mb_num, HttpSession session) {
+	@RequestMapping(value = "/goods/basket", method = RequestMethod.GET)
+	public ModelAndView goodsBasketGet(ModelAndView mv, HttpSession session) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		ArrayList<BasketVO> basketList = goodsService.getBasketList(user);
 		
+		mv.addObject("basketList", basketList);
 		mv.setViewName("/goods/basket");
 		return mv;
 	}//

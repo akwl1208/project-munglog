@@ -31,6 +31,8 @@ public interface GoodsDAO {
 	BasketVO selectBasketByOtNum(@Param("bs_ot_num")int bs_ot_num, @Param("bs_mb_num")int mb_num);
 	//장바구니 추가
 	void insertBasket(BasketVO basket);
+	//회원 번호로 장바구니 리스트 가져오기
+	ArrayList<BasketVO> selectBasketList(int mb_num);
 	
 
 }
