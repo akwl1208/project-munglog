@@ -208,18 +208,37 @@ $(function(){
 		//삭제할건지 묻기
 		if(!confirm('해당 상품을 장바구니에서 삭제하겠습니까?'))
 			return;
-		//값 가져오기
-		let bs_num = $(this).parents('tr').data('bsnum');
-		let bs_mb_num = $(this).parents('tr').data('mbnum');
 		//장바구니 삭제
-		let obj = {
-			bs_num,
-			bs_mb_num	
-		};
-		deleteBasket(obj, this);
+		deleteBasket(this);
 		//총 금액 수정
 		editSummary();
-	})
+	})//
+	
+	//선택삭제 클릭하면(btn-delete) ============================================================================
+	$('.main .box-content .box-basket .box-set .btn-select-delete').click(function () {
+		//삭제할건지 묻기
+		if(!confirm('선택한 상품들을 장바구니에서 삭제하겠습니까?'))
+			return;
+		//장바구니 삭제
+		$('.main .box-content .box-basket table tbody tr .check:checked').each(function(){
+			deleteBasket(this);
+		});
+		//총 금액 수정
+		editSummary();
+	})//
+	
+	//장바구니 비우기 클릭하면(btn-delete) ============================================================================
+	$('.main .box-content .box-basket .box-set .btn-clearAll').click(function () {
+		//삭제할건지 묻기
+		if(!confirm('장바구니를 비우겠습니까?'))
+			return;
+		//장바구니 삭제
+		$('.main .box-content .box-basket table tbody tr .check').each(function(){
+			deleteBasket(this);
+		});
+		//총 금액 수정
+		editSummary();
+	})//
 });	
 	
 /* 함수 *********************************************************************************************************** */
@@ -239,8 +258,8 @@ $(function(){
 		});
 		//배송비
 		let deliveryFee = 3000;
-		let trLength = $('.main .box-content .box-basket table tbody tr').length;
-		if(goodsPrice >= 50000 || trLength == 0)
+		let basketLength = $('.main .box-content .box-basket table tbody tr').length;
+		if(goodsPrice >= 50000 || basketLength == 0)
 			deliveryFee = 0;
 		//결제 예정 금액
 		let totalPrice = goodsPrice + deliveryFee;
@@ -251,12 +270,17 @@ $(function(){
 	}//
 	
 	//deleteBasket : 장바구니 삭제 =====================================================================================
-	function deleteBasket(obj, selector){
+	function deleteBasket(selector){
+		let bs_num = $(selector).parents('tr').data('bsnum');
+		let bs_mb_num = $(selector).parents('tr').data('mbnum');
+		//장바구니 삭제
+		let obj = {
+			bs_num,
+			bs_mb_num	
+		};
 		ajaxPost(false, obj, '/delete/basket', function(data){
-			if(data.res){
-				alert('해당 상품을 장바구니에서 삭제했습니다.')
+			if(data.res)
 				$(selector).parents('tr').remove();
-			}
 		});
 	}//
 </script>
