@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.dto.BasketDTO;
+import kr.inyo.munglog.dto.OrderDTO;
+import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.GoodsService;
@@ -67,6 +69,18 @@ public class GoodsController {
 		
 		mv.addObject("basketList", basketList);
 		mv.setViewName("/goods/basket");
+		return mv;
+	}//
+	
+	/* 주문하기 -------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/order/{mb_num}", method = RequestMethod.GET)
+	public ModelAndView goodsOrderGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
+			OrderListDTO orderList, HttpSession session) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		ArrayList<OrderDTO> oList = goodsService.getOrderList(mb_num, orderList, user);
+		
+		mv.addObject("oList", oList);
+		mv.setViewName("/goods/order");
 		return mv;
 	}//
 	

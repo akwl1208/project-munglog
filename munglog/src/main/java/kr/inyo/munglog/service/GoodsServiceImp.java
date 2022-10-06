@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.dto.BasketDTO;
+import kr.inyo.munglog.dto.OrderDTO;
+import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
@@ -124,5 +126,32 @@ public class GoodsServiceImp implements GoodsService {
 		if(dbBasket == null)
 			return false;
 		return goodsDao.deleteBasket(basket);
+	}
+
+	//getOrderList : 주문할 상품들 가져오기 =========================================================================
+	@Override
+	public ArrayList<OrderDTO> getOrderList(int mb_num, OrderListDTO orderList, MemberVO user) {
+		//값 없으면
+		if(user == null || user.getMb_num() < 1 || mb_num < 1)
+			return null;
+		if(orderList == null)
+			return null;
+		//해당 회원이 아니면
+		if(user.getMb_num() != mb_num)
+			return null;
+		//값 가져오기
+		ArrayList<OrderDTO> oList = new ArrayList<OrderDTO>();
+		for(OrderDTO tmpOrder : orderList.getOrderList()) {
+			//옵션번호가 0이면 넘기기
+			if(tmpOrder.getOtNum() == 0 || tmpOrder.getOrAmount() == 0)
+				continue;
+			//정보 가져오기
+			OrderDTO order = goodsDao.selectOrderByOtNum(tmpOrder.getOtNum());
+			//리스트에 값 넣기
+			order.setOtNum(tmpOrder.getOtNum());
+			order.setOrAmount(tmpOrder.getOrAmount());
+			oList.add(order);
+		}
+		return oList;
 	}
 }

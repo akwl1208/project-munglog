@@ -74,7 +74,7 @@
 	<div class="box-message">장바구니에 담은 굿즈를 확인하고, 구매하세요.</div>
 </div>
 <!-- box-content ------------------------------------------------------------------------------------------------- -->			
-<div class="box-content">
+<form class="box-content" action="<%=request.getContextPath()%>/goods/order/${user.mb_num}" method="get">
 	<!-- box-basket ------------------------------------------------------------------------------------------------ -->
 	<div class="box-basket">
 		<table class="table list-basket">
@@ -95,10 +95,10 @@
 			</thead>
 			<!-- tbody ---------------------------------------------------------------------------------------------------- -->
 			<tbody>
-				<c:forEach items="${basketList}" var="basket">
+				<c:forEach items="${basketList}" var="basket" varStatus="vs">
 					<tr data-bsnum="${basket.bs_num}" data-mbnum="${basket.bs_mb_num}">
 						<td class="item-check">
-							<input type="checkbox" class="check">
+							<input type="checkbox" class="check" value="${basket.bs_ot_num}" name="orderList[${vs.index}].otNum">
 						</td>
 						<td class="item-thumb">
 							<a class="link-goods" href="<c:url value="/goods/goodsDetail/${basket.gs_num}"></c:url>">
@@ -120,7 +120,7 @@
 						<td class="item-amount">
 							<input type="number" class="bs_amount" min="1" 
 								max="<c:if test="${basket.ot_amount < 10}">${basket.ot_amount}</c:if><c:if test="${basket.ot_amount >= 10}">10</c:if>" 
-								value="${basket.bs_amount}" data-amount="${basket.bs_amount}">
+								value="${basket.bs_amount}" data-amount="${basket.bs_amount}" name="orderList[${vs.index}].orAmount">
 							<button type="button" class="btn-chage-amount">변경</button>
 						</td>
 						<td class="item-delivery"><span class="deliveryFee"></span></td>
@@ -164,10 +164,10 @@
 	</div>
 	<!-- box-btn ------------------------------------------------------------------------------------------------------- -->
 	<div class="box-btn">
-		<button type="button" class="btn-order-all">전체상품주문</button>
-		<button type="button" class="btn-order-select">선택상품주문</button>
+		<button type="submit" class="btn-order-all">전체상품주문</button>
+		<button type="submit" class="btn-order-select">선택상품주문</button>
 	</div>	
-</div>
+</form>
 </body>
 <!-- script *********************************************************************************************************** -->
 <script>
@@ -227,7 +227,7 @@ $(function(){
 		editSummary();
 	})//
 	
-	//장바구니 비우기 클릭하면(btn-delete) ============================================================================
+	//장바구니 비우기 클릭하면(btn-clearAll) ============================================================================
 	$('.main .box-content .box-basket .box-set .btn-clearAll').click(function () {
 		//삭제할건지 묻기
 		if(!confirm('장바구니를 비우겠습니까?'))
@@ -239,6 +239,31 @@ $(function(){
 		//총 금액 수정
 		editSummary();
 	})//
+	
+	//전체 주문 클릭(btn-order-all) ============================================================================
+	$('.main .box-content .box-btn .btn-order-all').click(function () {
+		let basketCount = $('.main .box-content .box-basket table tbody tr').length;
+		if(basketCount == 0)
+			return;
+		$('.main .box-content .box-basket table thead .checkAll').click();
+	})//
+	
+	//form 보내기 전에 ============================================================================
+	$('form').submit(function(){
+		//장바구니에 담긴게 없으면
+		let basketCount = $('.main .box-content .box-basket table tbody tr').length;
+		if(basketCount == 0){
+			alert('상품을 장바구니에 담아주세요.')
+			return false;
+		}
+		//선택 안했으면
+		let checkCount = $('.main .box-content .box-basket table tbody .check:checked').length;
+		console.log(checkCount)
+		if(checkCount == 0){
+			alert('주문할 상품을 선택해주세요.')
+			return false;
+		}
+	})//
 });	
 	
 /* 함수 *********************************************************************************************************** */
@@ -247,7 +272,7 @@ $(function(){
 		return new Intl.NumberFormat('en-KR').format(price) +'원';
 	}//
 	
-	//editTotal : 총금액 수정 =====================================================================================
+	//editSummary : 총금액 수정 =====================================================================================
 	function editSummary(){
 		//상품 총 금액
 		let goodsPrice = 0;

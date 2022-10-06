@@ -63,6 +63,13 @@
 		where bs_num = #{bs_num} and bs_mb_num = #{bs_mb_num}
 	</select>
 	
+	<!-- 옵션 번호로 주문할 상품들 정보 가져오기 -->
+	<select id="selectOrderByOtNum" resultType="kr.inyo.munglog.dto.OrderDTO">
+		select * from `option`
+   		join goods on `option`.ot_gs_num = goods.gs_num
+   		where ot_num = #{otNum} 
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 장바구니 추가 -->
 	 <insert id="insertBasket">

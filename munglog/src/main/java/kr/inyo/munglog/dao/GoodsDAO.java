@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Param;
 
 import kr.inyo.munglog.dto.BasketDTO;
+import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
@@ -38,6 +39,9 @@ public interface GoodsDAO {
 	BasketVO selectBasket(BasketVO basket);
 	//장바구니 삭제
 	boolean deleteBasket(BasketVO basket);
+	
+	/* 주문 ======================================================================================= */
+	OrderDTO selectOrderByOtNum(int otNum);
 	
 
 }
