@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
@@ -50,4 +51,6 @@ public interface GoodsDAO {
 	/* 배송지 ======================================================================================= */
 	//배송지 추가
 	void insertAddress(@Param("member")MemberVO dbMember, @Param("ad_name")String ad_name, @Param("ad_main")String ad_main);
+	//회원 번호로 배송지 가져오기
+	AddressVO selectMainAddress(int mb_num);
 }

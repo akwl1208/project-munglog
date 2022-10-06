@@ -6,6 +6,7 @@ import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
@@ -33,4 +34,6 @@ public interface GoodsService {
 	ArrayList<OrderDTO> getOrderList(int mb_num, OrderListDTO orderList, MemberVO user);
 	//보관기간이 지난 장바구니 삭제
 	void deleteExpiredBasket(MemberVO user);
+	//기본배송지 정보 가져오기
+	AddressVO getMainAddress(MemberVO user);
 }

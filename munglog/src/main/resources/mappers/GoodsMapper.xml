@@ -70,6 +70,11 @@
    		where ot_num = #{otNum} 
 	</select>
 	
+	<!-- 회원번호로 배송지 가져오기 -->
+	<select id="selectMainAddress" resultType="kr.inyo.munglog.vo.AddressVO">
+		select * from address where ad_mb_num = #{mb_num} and ad_main = "1"
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 장바구니 추가 -->
 	 <insert id="insertBasket">

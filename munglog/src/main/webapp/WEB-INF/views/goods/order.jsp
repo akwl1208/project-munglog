@@ -124,12 +124,12 @@
 					<td class="text-left">
 						<div class="form-check-inline">
 							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="address" id="basicAddr" checked>회원 정보와 동일
+								<input type="radio" class="form-check-input" name="address" value="mainAddr" checked>회원 정보와 동일
 							</label>
 						</div>
 						<div class="form-check-inline">
 							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="address" id="newAddr">새로운 배송지
+								<input type="radio" class="form-check-input" name="address" value="newAddr">새로운 배송지
 							</label>
 						</div>
 						<a href="#">주소록 보기</a>
@@ -140,7 +140,7 @@
 					<th>받는 사람(필수)</th>
 					<td>
 						<div class="form-group m-0" style="width: 300px;">
-							<input type="text" class="form-control" id="ad_recipient">
+							<input type="text" class="form-control" id="ad_recipient" value="${address.ad_recipient}">
 						</div>
 					</td>
 				</tr>
@@ -150,14 +150,14 @@
 					<td>
 						<div class="form-group m-0">
 							<div class="input-group mb-3">
-								<input type="text" class="form-control" id="ad_post_code" placeholder="우편번호">
+								<input type="text" class="form-control" id="ad_post_code" placeholder="우편번호" value="${address.ad_post_code}">
 								<input type="button" onclick="execDaumPostcode()" value="우편번호 찾기">
 							</div>
 							<div class="input-group mb-3">
-								<input type="text" class="form-control" id="ad_address" placeholder="주소"><br>
+								<input type="text" class="form-control" id="ad_address" placeholder="주소" value="${address.ad_address}"><br>
 							</div>
 							<div class="input-group">
-								<input type="text" class="form-control" id="ad_detail" placeholder="상세주소">
+								<input type="text" class="form-control" id="ad_detail" placeholder="상세주소" value="${address.ad_detail}">
 							</div>
 						</div>
 					</td>
@@ -168,15 +168,15 @@
 					<td>
 						<div class="row">
 							<div class="col">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" id="ad_phone_first" value="${address.ad_phone_first}">
 							</div>
 							<span>-</span>
 							<div class="col">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" id="ad_phone_middle" value="${address.ad_phone_middle}">
 							</div>
 							<span>-</span>
 							<div class="col" >
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" id="ad_phone_last" value="${address.ad_phone_last}">
 							</div>
 						</div>
 					</td>
@@ -187,11 +187,11 @@
 					<td>
 						<div class="row">
 							<div class="col">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" id="mb_email_id" value="${user.mb_email_id}">
 							</div>
 							<span>@</span>
 							<div class="col">
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" id="mb_email_domain" value="${user.mb_email_domain}">
 							</div>
 						</div>
 					</td>
@@ -201,7 +201,9 @@
 					<th>배송메시지</th>
 					<td>
 						<div class="form-group m-0">
-							<textarea class="form-control" id="ad_request" rows="3" style="resize: none;"></textarea>
+							<textarea class="form-control" id="ad_request" rows="3" style="resize: none;">
+								${address.ad_request}
+							</textarea>
 						</div>
 					</td>
 				</tr>
@@ -267,6 +269,30 @@
 $(function(){
 	$(document).ready(function(){
 		editTotal();
+	})//
+	
+	//배송지 라디오 값이 바뀌면 ======================================================================================
+	$('.main .box-content .box-delivery input[name=address]:radio').change(function(){
+		let value = $(this).val();
+		//새로운 배송지 선택하면
+		if(value == 'newAddr'){
+			//값 비우기
+			$('.main .box-content .box-delivery input:text').val('');
+			$('.main .box-content .box-delivery textarea#ad_request').val('');
+		}
+		//회원 정보와 동일 선택(기본배송지)
+		if(value == 'mainAddr'){
+			$('.main .box-content .box-delivery #ad_recipient').val('${address.ad_recipient}');
+			$('.main .box-content .box-delivery #ad_post_code').val('${address.ad_post_code}');
+			$('.main .box-content .box-delivery #ad_address').val('${address.ad_address}');
+			$('.main .box-content .box-delivery #ad_detail').val('${address.ad_detail}');
+			$('.main .box-content .box-delivery #ad_phone_first').val('${address.ad_phone_first}');
+			$('.main .box-content .box-delivery #ad_phone_middle').val('${address.ad_phone_middle}');
+			$('.main .box-content .box-delivery #ad_phone_last').val('${address.ad_phone_last}');
+			$('.main .box-content .box-delivery #mb_email_id').val('${user.mb_email_id}');
+			$('.main .box-content .box-delivery #mb_email_domain').val('${user.mb_email_domain}');
+			$('.main .box-content .box-delivery #ad_request').val('${address.ad_request}');
+		}
 	})
 });	
 	

@@ -16,7 +16,7 @@
 <style type="text/css">
 *{padding:0; margin: 0;}
 .main{
-	width:100%; padding: 50px; display: block;
+	width:100%; padding: 50px; display: block; min-width: 1100px;
 }
 </style>
 </head>

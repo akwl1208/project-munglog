@@ -11,6 +11,7 @@ import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
@@ -167,5 +168,14 @@ public class GoodsServiceImp implements GoodsService {
 			return;
 		//보관기간이 지난 장바구니 삭제
 		goodsDao.deleteExpiredBasket(user.getMb_num());
+	}
+
+	//getMainAddress : 기본배송지 가져오기 ====================================================================================
+	@Override
+	public AddressVO getMainAddress(MemberVO user) {
+		//값 없으면
+		if(user == null || user.getMb_num() < 1)
+			return null;
+		return goodsDao.selectMainAddress(user.getMb_num());
 	}
 }

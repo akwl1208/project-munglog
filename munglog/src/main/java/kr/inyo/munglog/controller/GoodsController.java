@@ -22,6 +22,7 @@ import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
+import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
@@ -77,8 +78,12 @@ public class GoodsController {
 	public ModelAndView goodsOrderGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
 			OrderListDTO orderList, HttpSession session) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
+		//주문내역 가져오기
 		ArrayList<OrderDTO> oList = goodsService.getOrderList(mb_num, orderList, user);
+		//기본 배송지 가져오기
+		AddressVO address = goodsService.getMainAddress(user);
 		
+		mv.addObject("address", address);
 		mv.addObject("oList", oList);
 		mv.setViewName("/goods/order");
 		return mv;

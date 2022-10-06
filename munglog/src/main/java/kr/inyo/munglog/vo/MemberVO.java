@@ -23,4 +23,16 @@ public class MemberVO {
 	public String getMb_profile_url() {
 		return "/profile/img" + mb_profile;
 	}
+	
+	//이메일 아이디
+	public String getMb_email_id() {
+		int index = mb_email.indexOf("@");
+		return mb_email.substring(0,index);
+	}
+	
+	//이메일 도메인
+	public String getMb_email_domain() {
+		int index = mb_email.indexOf("@");
+		return mb_email.substring(index+1);
+	}
 }
