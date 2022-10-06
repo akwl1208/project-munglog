@@ -10,6 +10,7 @@ import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionVO;
 
 public interface GoodsDAO {
@@ -41,7 +42,12 @@ public interface GoodsDAO {
 	boolean deleteBasket(BasketVO basket);
 	
 	/* 주문 ======================================================================================= */
+	//옵션번호로 주문 내역 가져오기
 	OrderDTO selectOrderByOtNum(int otNum);
+
+	/* 배송지 ======================================================================================= */
+	//배송지 추가
+	void insertAddress(@Param("member")MemberVO dbMember, @Param("ad_name")String ad_name, @Param("ad_main")String ad_main);
 	
 
 }

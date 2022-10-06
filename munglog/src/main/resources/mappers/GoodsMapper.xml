@@ -76,6 +76,12 @@
 	 	insert into basket(bs_mb_num, bs_ot_num, bs_amount, bs_expir_date)
 	 		values(#{bs_mb_num},#{bs_ot_num},#{bs_amount},#{bs_expir_date})
 	 </insert>
+	 
+	<!-- 배송지 추가 -->
+	<insert id="insertAddress">
+		insert into address(ad_mb_num, ad_name, ad_recipient, ad_phone, ad_main)
+			values(#{member.mb_num},#{ad_name},#{member.mb_name},#{member.mb_phone},#{ad_main})
+	</insert> 
 	<!-- update ************************************************************************************************* -->
 	
 	<!-- delete ************************************************************************************************* -->

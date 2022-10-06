@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.dao.LogDAO;
 import kr.inyo.munglog.dao.MemberDAO;
 import kr.inyo.munglog.vo.DogVO;
@@ -26,6 +27,8 @@ public class MemberServiceImp implements MemberService {
 	MemberDAO memberDao;
 	@Autowired
 	LogDAO logDao;
+	@Autowired
+	GoodsDAO goodsDao;
 	@Autowired
 	private JavaMailSender mailSender;
 	@Autowired
@@ -243,6 +246,8 @@ public class MemberServiceImp implements MemberService {
 		memberDao.deleteVerification(dbMember.getMb_email());
 		//포인트 지급
 		memberDao.insertPoint(dbMember.getMb_num(),"적립","회원가입",300);
+		//기본배송지 추가
+		goodsDao.insertAddress(dbMember, "기본", "1");
 		return 1;
 	}
 	
