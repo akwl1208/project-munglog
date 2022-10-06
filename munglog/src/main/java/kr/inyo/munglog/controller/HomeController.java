@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.MemberVO;
@@ -25,6 +26,8 @@ public class HomeController {
 	
 	@Autowired
 	MemberService memberService;
+	@Autowired
+	GoodsService goodsService;
 	@Autowired
 	MessageService messageService;
 	
@@ -78,6 +81,8 @@ public class HomeController {
 			memberService.dogBirthdayPoint(user);
 			//일지를 한달동안 올렸으면 포인트 지급
 			memberService.LogAMonthPoint(user);
+			//지난 장바구니 삭제
+			goodsService.deleteExpiredBasket(user);
 			mv.setViewName("redirect:/");
 		}
 		return mv;

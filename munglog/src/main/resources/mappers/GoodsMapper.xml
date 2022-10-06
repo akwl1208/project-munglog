@@ -90,4 +90,10 @@
 		delete from basket
 			where bs_num = #{bs_num} and bs_mb_num = #{bs_mb_num}
 	</delete>
+	
+	<!-- 보관기간이 지난 장바구니 삭제 -->
+	<delete id="deleteExpiredBasket">
+		delete from basket
+			where bs_mb_num = #{mb_num} and <![CDATA[bs_expir_date <= now()]]>	
+	</delete>
 </mapper>

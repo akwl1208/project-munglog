@@ -40,6 +40,8 @@ public interface GoodsDAO {
 	BasketVO selectBasket(BasketVO basket);
 	//장바구니 삭제
 	boolean deleteBasket(BasketVO basket);
+	//보관기간이 지난 장바구니 삭제
+	void deleteExpiredBasket(int mb_num);
 	
 	/* 주문 ======================================================================================= */
 	//옵션번호로 주문 내역 가져오기
@@ -48,6 +50,4 @@ public interface GoodsDAO {
 	/* 배송지 ======================================================================================= */
 	//배송지 추가
 	void insertAddress(@Param("member")MemberVO dbMember, @Param("ad_name")String ad_name, @Param("ad_main")String ad_main);
-	
-
 }

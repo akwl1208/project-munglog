@@ -31,4 +31,6 @@ public interface GoodsService {
 	boolean deleteBasket(BasketVO basket, MemberVO user);
 	//주문할 상품들 가져오기
 	ArrayList<OrderDTO> getOrderList(int mb_num, OrderListDTO orderList, MemberVO user);
+	//보관기간이 지난 장바구니 삭제
+	void deleteExpiredBasket(MemberVO user);
 }

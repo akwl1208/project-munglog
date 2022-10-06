@@ -154,4 +154,18 @@ public class GoodsServiceImp implements GoodsService {
 		}
 		return oList;
 	}
+	
+	//deleteExpiredBasket : 보관기간 지난 장바구니 삭제 =================================================================
+	@Override
+	public void deleteExpiredBasket(MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return;
+		//장바구니에 담긴게 없으면
+		ArrayList<BasketDTO> dbBasketList = goodsDao.selectBasketList(user.getMb_num());
+		if(dbBasketList == null)
+			return;
+		//보관기간이 지난 장바구니 삭제
+		goodsDao.deleteExpiredBasket(user.getMb_num());
+	}
 }
