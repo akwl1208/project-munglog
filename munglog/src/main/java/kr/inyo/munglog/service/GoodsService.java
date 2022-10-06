@@ -2,6 +2,7 @@ package kr.inyo.munglog.service;
 
 import java.util.ArrayList;
 
+import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
@@ -23,7 +24,7 @@ public interface GoodsService {
 	//장바구니에 담기
 	int putBasket(BasketVO basket, MemberVO user);
 	//장바구니 리스트 가져오기
-	ArrayList<BasketVO> getBasketList(MemberVO user);
+	ArrayList<BasketDTO> getBasketList(MemberVO user);
 	//장바구니 삭제
 	boolean deleteBasket(BasketVO basket, MemberVO user);
 }

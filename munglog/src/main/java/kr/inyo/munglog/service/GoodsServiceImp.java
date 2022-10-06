@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.inyo.munglog.dao.GoodsDAO;
+import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.CategoryVO;
@@ -102,7 +103,7 @@ public class GoodsServiceImp implements GoodsService {
 	
 	//getBasketList : 장바구니 리스트 가져오기 =============================================================================
 	@Override
-	public ArrayList<BasketVO> getBasketList(MemberVO user) {
+	public ArrayList<BasketDTO> getBasketList(MemberVO user) {
 		//값이 없으면
 		if(user == null || user.getMb_num() < 1)
 			return null;

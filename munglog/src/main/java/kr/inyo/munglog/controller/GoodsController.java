@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.GoodsService;
@@ -62,7 +63,7 @@ public class GoodsController {
 	@RequestMapping(value = "/goods/basket", method = RequestMethod.GET)
 	public ModelAndView goodsBasketGet(ModelAndView mv, HttpSession session) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		ArrayList<BasketVO> basketList = goodsService.getBasketList(user);
+		ArrayList<BasketDTO> basketList = goodsService.getBasketList(user);
 		
 		mv.addObject("basketList", basketList);
 		mv.setViewName("/goods/basket");
