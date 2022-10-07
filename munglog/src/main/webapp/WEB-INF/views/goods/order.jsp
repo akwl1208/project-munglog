@@ -40,6 +40,15 @@
 		border-right: 1px solid #d7d5d5; background-color: #d7d5d5;
 		text-align: left;
 	}
+	.main .box-content .box-delivery .btn-postcode,
+	.main .box-content .box-point .btn-useAll{
+		padding: 0 5px; background-color: #a04c00;
+		border: none; color: #fff7ed; border-radius: 3px;
+		display: inline-block;
+	}
+	.main .box-content .box-delivery .btn-postcode:hover,
+	.main .box-content .box-point .btn-useAll:hover{box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);}
+	.main .box-content .box-point .availablePoint{color: #fb9600; font-weight: bold;}
 	.main .box-content .box-delivery table tbody td .row span{line-height: 38px;}
 	.main .box-content .btn-pay{ 
 		padding: 10px 20px; font-weight: bold; 
@@ -113,7 +122,7 @@
 		</div>
 	</div>
 	<br><hr><br>
-	<!-- box-deliver --------------------------------------------------------------------------------------------- -->
+	<!-- box-delivery --------------------------------------------------------------------------------------------- -->
 	<div class="box-delivery">
 		<label class="font-weight-bold">배송 정보</label>
 		<table class="table">
@@ -151,7 +160,7 @@
 						<div class="form-group m-0">
 							<div class="input-group mb-3">
 								<input type="text" class="form-control" id="ad_post_code" placeholder="우편번호" value="${address.ad_post_code}">
-								<input type="button" onclick="execDaumPostcode()" value="우편번호 찾기">
+								<input type="button" class="btn-postcode" onclick="execDaumPostcode()" value="우편번호 찾기">
 							</div>
 							<div class="input-group mb-3">
 								<input type="text" class="form-control" id="ad_address" placeholder="주소" value="${address.ad_address}"><br>
@@ -225,15 +234,23 @@
 					<td>
 						<div class="form-group m-0" style="width: 300px;">
 							<div class="input-group">
-								<input type="text" class="form-control">
-								<input type="button" value="포인트 모두 사용">
-								<div class="text-left">(사용가능한 포인트 : <span class="pi_pos_amount">2000</span>P)</div>
+								<input type="text" class="form-control usePoint" value="0">
+								<div class="input-group-append">
+							    <button class="btn-useAll" type="button">포인트 모두 사용</button>
+							  </div>
+								<div class="text-left">(사용가능한 포인트 : <span class="availablePoint mr-1">${user.availablePoint}</span>P)</div>
 							</div>
 						</div>
 						<div class="message mt-3 text-left">
-							<small>- 적립금은 최소 1000P 이상일 때 사용 가능합니다.&nbsp;</small><br>
-							<small>-  최대 사용금액은 제한이 없습니다.&nbsp;</small><br>
-							<small>-  적립금으로만 결제할 경우, 결제금액이 0으로 보여지는 것은 정상이며 [결제하기] 버튼을 누르면 주문이 완료됩니다.</small>
+							<small>
+								<i class="fa-solid fa-paw mr-2"></i>포인트은 최소 1000P 이상일 때 사용 가능합니다.
+							</small><br>
+							<small>
+								<i class="fa-solid fa-paw mr-2"></i>최대 사용포인트는 제한이 없습니다.
+							</small><br>
+							<small>
+								<i class="fa-solid fa-paw mr-2"></i>포인트으로만 결제할 경우, 결제금액이 0으로 보여지는 것은 정상이며 [결제하기] 버튼을 누르면 주문이 완료됩니다.
+							</small>
 						</div>
 					</td>
 				</tr>
@@ -254,9 +271,9 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="totalPrice">95000</td>
-					<td class="pointAmount">0원</td>
-					<td class="paymentPrice">95000원</td>				
+					<td class="totalPrice"></td>
+					<td class="usePoint"></td>
+					<td class="paymentPrice"></td>				
 				</tr>
 			</tbody>
 		</table>
@@ -275,6 +292,7 @@
 $(function(){
 	$(document).ready(function(){
 		editTotal();
+		editPayment()
 	})//
 	
 	//배송지 라디오 값이 바뀌면 ======================================================================================
@@ -315,20 +333,56 @@ $(function(){
 	   	wordLimit(this, 5);
 	   //주소 100글자
 	   if(thisId == 'ad_address' || thisId == 'ad_detail')
-		   	wordLimit(this, 100);
-		   	wordLimit(this, 100);
+		 	wordLimit(this, 100);
    })//
 
    // textarea 글자 제한 이벤트 ----------------------------------------------------------------------------------
    $('.main .box-content .box-delivery #ad_request').keyup(function() {
-		wordLimit(this, 255);
+	   wordLimit(this, 255);
    })//
    
-	// input:text 글자 제한 이벤트 ----------------------------------------------------------------------------------
+	 // input:text 값 바뀌면 이벤트 ----------------------------------------------------------------------------------
    $('.main .box-content .box-delivery input:text').change(function() {
 	   $('.main .box-content .box-delivery .error').text('').hide();
 	   validatedelivery();
-   })
+   })//
+   
+   //포인트 모두 사용 클릭
+   $('.main .box-content .box-point .btn-useAll').click(function() {
+	   let point = '${user.availablePoint}';
+	   if(point < 1000){
+		   alert('포인트는 최소 1000P 이상일 때 사용가능합니다.')
+		   return;
+	   }
+	   //결제금액보다 보유 포인트가 많은 경우
+	   let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
+	   if(point > totalPrice){
+		   $('.main .box-content .box-point .usePoint').val(totalPrice);
+		   return;
+	   }
+	   else
+	   	$('.main .box-content .box-point .usePoint').val(point);
+	   editPayment();
+   })//
+   
+   //포인트 입력 제한
+   $('.main .box-content .box-point .usePoint').keyup(function() {
+		 //숫자 이외의 값 입력 못하게 막음
+		 $(this).val($(this).val().replace(/[^0-9]/g, ''));
+   })//
+   
+   //포인트 입력이 바뀌면
+   $('.main .box-content .box-point .usePoint').change(function() {
+		 //0이 아니고 1000이상만
+		 let value = $(this).val();
+		 if(value == 0)
+			 $(this).val('0');
+		 if((value != 0 && value < 1000)){
+		   alert('포인트는 최소 1000P 이상일 때 사용가능합니다.')
+		   $(this).val('0');
+	   }
+		 editPayment();
+   })//
 });	
 	
 /* 함수 *********************************************************************************************************** */
@@ -351,8 +405,8 @@ $(function(){
 	}//
 	
 	//numberToCurrency : 숫자를 통화로 ============================================================================
-	function numberToCurrency(price){
-		return new Intl.NumberFormat('en-KR').format(price) +'원';
+	function numberToCurrency(price, str){
+		return new Intl.NumberFormat('en-KR').format(price) + str;
 	}//
 	
 	//editTotal : 총금액 수정 =====================================================================================
@@ -369,10 +423,22 @@ $(function(){
 			deliveryFee = 0;
 		//결제 예정 금액
 		let totalPrice = goodsPrice + deliveryFee;
-		$('.main .box-content .box-orderList tfoot .goodsPrice').text(numberToCurrency(goodsPrice));
-		$('.main .box-content .box-orderList tfoot .deliveryFee').text(numberToCurrency(deliveryFee));
-		$('.main .box-content .box-orderList .item-delivery .deliveryFee').text(numberToCurrency(deliveryFee));
-		$('.main .box-content .box-orderList tfoot .totalPrice').text(numberToCurrency(totalPrice));
+		$('.main .box-content .box-orderList tfoot .goodsPrice').text(numberToCurrency(goodsPrice,'원'));
+		$('.main .box-content .box-orderList tfoot .deliveryFee').text(numberToCurrency(deliveryFee,'원'));
+		$('.main .box-content .box-orderList .item-delivery .deliveryFee').text(numberToCurrency(deliveryFee,'원'));
+		$('.main .box-content .box-orderList tfoot .totalPrice').text(numberToCurrency(totalPrice,'원'));
+		$('.main .box-content .box-orderList tfoot .totalPrice').attr('data-value',totalPrice);
+	}//
+	
+	//editPayment : 결제 금액 수정 =====================================================================================
+	function editPayment(){
+		let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
+		let usePoint = $('.main .box-content .box-point .usePoint').val();
+		let paymentPrice = totalPrice - usePoint;
+		$('.main .box-content .box-summary table .totalPrice').text(numberToCurrency(totalPrice,'원'));
+		$('.main .box-content .box-summary table .usePoint').text(numberToCurrency(usePoint,'P'));
+		$('.main .box-content .box-summary table .paymentPrice').text(numberToCurrency(paymentPrice,'원'));
+		$('.main .box-content .box-summary table .paymentPrice').attr('data-value',paymentPrice);
 	}//
 	
 	//wordLimit : 글자수 제한 =====================================================================================

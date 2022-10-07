@@ -51,6 +51,12 @@
 			where pi_mb_num = #{pi_mb_num} and year(pi_date) = #{thisYear} and pi_history = #{pi_history}
 	</select>
 	
+	<!-- 적립/사용 포인트 합계 가져오기 -->
+	<select id="selectPointSum" resultType="int">
+		select ifnull(sum(pi_amount),0) from point
+			where pi_mb_num = #{pi_mb_num} and pi_process = #{pi_process}
+	</select>
+	
 	<!-- insert *********************************************************** -->
 	<!-- 본인인증 테이블에 회원메일, 본인인증코드 저장 -->
 	<insert id="insertVeriCode">

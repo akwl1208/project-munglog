@@ -48,6 +48,8 @@ public interface MemberDAO {
 	//올해 지급된 특정 포인트 내역 가져오기
 	PointVO selectPointDuringThisYear(@Param("pi_mb_num")int mb_num, @Param("thisYear")String thisYear,
 			@Param("pi_history")String history);
+	//적립/사용 포인트 합계 가져오기
+	int selectPointSum(@Param("pi_mb_num")int mb_num, @Param("pi_process")String pi_process);
 	
 	/* 강아지 ----------------------------------------------------------------------------------- */
 	//회원 정보 주고 강아지 정보 가져오기

@@ -40,4 +40,6 @@ public interface MemberService {
 	void dogBirthdayPoint(MemberVO user);
 	//일지를 한달동안 올렸으면 포인트 적립
 	void LogAMonthPoint(MemberVO user);
+	//포인트 합계 가져오기
+	int getPointSum(MemberVO user, String pi_process);
 }

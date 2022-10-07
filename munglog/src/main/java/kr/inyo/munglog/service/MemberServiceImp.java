@@ -416,7 +416,7 @@ public class MemberServiceImp implements MemberService {
 			memberDao.insertPoint(user.getMb_num(),"적립",history,500);
 	}
 	
-	/* LogAMonthPoint : 한달동안 일지 등록했으면 포인트 적립 ---------------------------------------------------------------------------*/	
+	/* LogAMonthPoint : 한달동안 일지 등록했으면 포인트 적립 -----------------------------------------------------------------------*/	
 	@Override
 	public void LogAMonthPoint(MemberVO user) {
 		//값이 없으면
@@ -450,5 +450,20 @@ public class MemberServiceImp implements MemberService {
 			return;
 		//포인트 지급
 		memberDao.insertPoint(user.getMb_num(),"적립",history,500);
+	}
+	
+	/* getPointSum : 포인트 합계 가져오기 -----------------------------------------------------------------------*/	
+	@Override
+	public int getPointSum(MemberVO user, String pi_process) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return 0;
+		//활동 정지당한 회원이 아니면
+		if(!user.getMb_activity().equals("0"))
+			return 0;
+		//적립/사용이 아니면
+		if(!pi_process.equals("적립") && !pi_process.equals("사용"))
+			return 0;
+		return memberDao.selectPointSum(user.getMb_num(), pi_process);
 	}
 }
