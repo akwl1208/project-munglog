@@ -194,6 +194,9 @@
 								<input type="text" class="form-control" id="mb_email_domain" value="${user.mb_email_domain}">
 							</div>
 						</div>
+						<div class="text-left mt-2">
+							<small><i class="fa-solid fa-paw mr-2"></i>메일로 배송 현황을 알려드립니다. 메일 수신이 가능한 메일을 작성해주세요.</small>
+						</div>
 					</td>
 				</tr>
 				<!-- 배송메시지 ---------------------------------------------------------------------------------------------- -->
@@ -209,6 +212,7 @@
 				</tr>
 			</tbody>
 		</table>
+		<div><small class="error"></small></div>
 	</div>
 	<br><hr><br>
 	<!-- box-point --------------------------------------------------------------------------------------------------- -->
@@ -264,7 +268,9 @@
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
-
+	let recipientRegex = /^([가-힣]{1,10})|([a-zA-Z]{1,10})$/;
+	let phoneRegex = /^(\d{3,4})$/;
+	let postcodeRegex = /^(\d{5})$/;
 /* 이벤트 *********************************************************************************************************** */
 $(function(){
 	$(document).ready(function(){
@@ -293,7 +299,36 @@ $(function(){
 			$('.main .box-content .box-delivery #mb_email_domain').val('${user.mb_email_domain}');
 			$('.main .box-content .box-delivery #ad_request').val('${address.ad_request}');
 		}
-	})
+	})//
+	
+	// input:text 글자 제한 이벤트 ----------------------------------------------------------------------------------
+   $('.main .box-content .box-delivery input:text').keyup(function() {
+	   let thisId = $(this).attr('id');
+	   //수령인은 10글자
+	   if(thisId == 'ad_recipient')
+	   	wordLimit(this, 10);
+	   //핸드폰 번호 4글자
+	   if(thisId == 'ad_phone_middle' || thisId == 'ad_phone_last')
+	   	wordLimit(this, 4);
+	   //우편번호 5글자
+	   if(thisId == 'ad_post_code')
+	   	wordLimit(this, 5);
+	   //주소 100글자
+	   if(thisId == 'ad_address' || thisId == 'ad_detail')
+		   	wordLimit(this, 100);
+		   	wordLimit(this, 100);
+   })//
+
+   // textarea 글자 제한 이벤트 ----------------------------------------------------------------------------------
+   $('.main .box-content .box-delivery #ad_request').keyup(function() {
+		wordLimit(this, 255);
+   })//
+   
+	// input:text 글자 제한 이벤트 ----------------------------------------------------------------------------------
+   $('.main .box-content .box-delivery input:text').change(function() {
+	   $('.main .box-content .box-delivery .error').text('').hide();
+	   validatedelivery();
+   })
 });	
 	
 /* 함수 *********************************************************************************************************** */
@@ -339,5 +374,89 @@ $(function(){
 		$('.main .box-content .box-orderList .item-delivery .deliveryFee').text(numberToCurrency(deliveryFee));
 		$('.main .box-content .box-orderList tfoot .totalPrice').text(numberToCurrency(totalPrice));
 	}//
+	
+	//wordLimit : 글자수 제한 =====================================================================================
+	function wordLimit(selector, limit){
+	  if($(selector).val().length > limit)
+	  	$(selector).val($(selector).val().substring(0, limit));
+	}//
+	
+	//validatedelivery : 배송지 입력값 검사 =====================================================================================
+	function validatedelivery(){
+		//수령인 ---------------------------------------------------------------------------------
+		let recipient = $('.main .box-content .box-delivery #ad_recipient').val();
+		if(recipient == ''){
+			$('.main .box-content .box-delivery .error').text('받는 사람을 입력해주세요.').show();
+			$('.main .box-content .box-delivery #ad_recipient').focus();
+			return false;
+		}
+		if(!recipientRegex.test(recipient)){
+			$('.main .box-content .box-delivery .error').text('한글이나 영어로 최대 10글자 입력해주세요.').show();		
+			$('.main .box-content .box-delivery #ad_recipient').focus();
+			return false;
+		}
+		//우편번호 ---------------------------------------------------------------------------------
+		let postcode = $('.main .box-content .box-delivery #ad_post_code').val();
+		if(postcode == ''){
+			$('.main .box-content .box-delivery .error').text('우편번호를 입력해주세요.').show();
+			$('.main .box-content .box-delivery #ad_post_code').focus();
+			return false;
+		}
+		if(!postcodeRegex.test(postcode)){
+			$('.main .box-content .box-delivery .error').text('숫자만 5자 입력해주세요.').show();			
+			$('.main .box-content .box-delivery #ad_post_code').focus();
+			return false;
+		}
+		//주소 ---------------------------------------------------------------------------------------
+		let address = $('.main .box-content .box-delivery #ad_address').val();
+		if(address == ''){
+			$('.main .box-content .box-delivery .error').text('주소를 입력해주세요.').show();
+			$('.main .box-content .box-delivery #ad_address').focus();
+			return false;
+		}
+		if(address.length > 100){
+			$('.main .box-content .box-delivery .error').text('주소는 최대 100글자입니다.').show();			
+			$('.main .box-content .box-delivery #ad_address').focus();
+			return false;
+		}
+		//주소 상세 ---------------------------------------------------------------------------------------
+		let detail = $('.main .box-content .box-delivery #ad_detail').val();
+		if(detail.length > 100){
+			$('.main .box-content .box-delivery .error').text('주소상세는 최대 100글자입니다.').show();
+			$('.main .box-content .box-delivery #ad_detail').focus();
+			return false;
+		}
+		//핸드폰 번호 --------------------------------------------------------------------------------------
+		let phoneFirst = $('.main .box-content .box-delivery #ad_phone_first').val();
+		let phoneMiddle = $('.main .box-content .box-delivery #ad_phone_middle').val();
+		let phoneLast = $('.main .box-content .box-delivery #ad_phone_last').val();
+		if(phoneFirst == '' || phoneMiddle == '' || phoneLast == ''){
+			$('.main .box-content .box-delivery .error').text('핸드폰 번호를 입력해주세요.').show();
+			$('.main .box-content .box-delivery #phoneFirst').focus();
+			return false;
+		}
+		if(!phoneRegex.test(phoneFirst) || !phoneRegex.test(phoneMiddle) || !phoneRegex.test(phoneLast)){
+			$('.main .box-content .box-delivery .error').text('숫자만 3-4자 입력해주세요.').show();			
+			$('.main .box-content .box-delivery #phoneFirst').focus();
+			return false;
+		}
+		//이메일 ------------------------------------------------------------------------------------------
+		let emailId = $('.main .box-content .box-delivery #mb_email_id').val();
+		let emailDomain = $('.main .box-content .box-delivery #mb_email_domain').val();
+		if(emailId == '' || emailDomain == ''){
+			$('.main .box-content .box-delivery .error').text('이메일을 입력해주세요.').show();
+			$('.main .box-content .box-delivery #mb_email_id').focus();
+			return false;
+		}
+		//요청사항
+		let request = $('.main .box-content .box-delivery #ad_request').val();
+		if(request.length > 255){
+			$('.main .box-content .box-delivery .error').text('상세 주소는 최대 255글자입니다.').show();			
+			$('.main .box-content .box-delivery #ad_address').focus();
+			return false;
+		}
+		return true;
+	}//
+	
 </script>
 </html>

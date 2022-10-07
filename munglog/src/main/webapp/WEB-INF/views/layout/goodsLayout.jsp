@@ -13,6 +13,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <!-- fontawesome -->
 <script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+<!-- 우편번호 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style type="text/css">
 *{padding:0; margin: 0;}
 .main{
