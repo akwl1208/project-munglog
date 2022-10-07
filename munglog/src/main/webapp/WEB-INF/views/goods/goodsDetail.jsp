@@ -218,7 +218,7 @@
 			editTotal();
 		})//
 		
-		// input 글자 제한 이벤트 ----------------------------------------------------------------------------------
+		// input 입력 이벤트 ----------------------------------------------------------------------------------
     $(document).on('input', '.main .box-content .box-select .quantity input', function() {
       //숫자 이외의 값 입력 못하게 막음
       $(this).val($(this).val().replace(/[^0-9]/g, ''));
@@ -234,6 +234,7 @@
     	  alert('최소 1개 이상 최대 10개 이하로 입력할 수 있습니다.');
     	  $(this).val(1);
       }
+      editOptionPrice(this);
       editTotal();
     })//
     
@@ -253,6 +254,7 @@
       	return;
     	}
 			$(this).siblings('input').val(Number(value) + 1);
+			editOptionPrice(this);
 			editTotal();
     })//
     
@@ -265,6 +267,7 @@
       	return;
     	}
 			$(this).siblings('input').val(Number(value) - 1);	
+			editOptionPrice(this);
 			editTotal();
     })//
 		
@@ -370,6 +373,14 @@
 	//numberToCurrency : 숫자를 통화로 ============================================================================
 	function numberToCurrency(price){
 		return new Intl.NumberFormat('en-KR').format(price) +'원';
+	}//
+	
+	//editOptionPrice : 옵션총금액 수정 =====================================================================================
+	function editOptionPrice(selector){
+		let bsAmount = $(selector).parents('tr').find('.bs_amount').val();
+		let otPrice = $(selector).parents('tr').find('.price').data('value');
+		let totalPrice = otPrice * bsAmount;
+		$(selector).parents('tr').find('.price').text(numberToCurrency(totalPrice));
 	}//
 	
 	//editTotal : 총금액 수정 =====================================================================================
