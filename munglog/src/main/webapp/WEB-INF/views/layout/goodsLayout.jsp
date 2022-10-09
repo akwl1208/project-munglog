@@ -15,6 +15,9 @@
 <script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
 <!-- 우편번호 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- 아임포트 -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 <style type="text/css">
 *{padding:0; margin: 0;}
 .main{

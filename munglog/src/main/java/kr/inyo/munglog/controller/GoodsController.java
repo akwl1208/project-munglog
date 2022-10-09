@@ -1,5 +1,6 @@
 package kr.inyo.munglog.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.siot.IamportRestClient.exception.IamportResponseException;
+
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
+import kr.inyo.munglog.dto.PaymentDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.GoodsService;
@@ -128,4 +132,30 @@ public class GoodsController {
 		map.put("res", res);
 		return map;
 	}
+	
+	/* 결제 검증 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/verify/payment", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> verifyPayment(@RequestBody String rsp)
+			throws IamportResponseException, IOException {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();		
+		boolean res = goodsService.verifyPayment(rsp);
+		
+		map.put("res", res);
+		return map;
+	}//
+	
+	/* 결제 성공 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/complete/payment", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> completePayment(@RequestBody PaymentDTO payment, 
+			HttpSession session){
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		
+		System.out.println(user);
+		System.out.println(payment);
+		return map;
+	}//
+
 }

@@ -83,7 +83,7 @@
 			<!-- tbody ------------------------------------------------------------------------------------------------- -->
 			<tbody>
 				<c:forEach items="${oList}" var="order">
-					<tr>
+					<tr data-value="${order.otNum}">
 						<td class="item-thumb">
 							<a class="link-goods" href="/goods/goodsDetail/${order.gs_num}">
 								<img class="gs_thumb" src="<c:url value="${order.gs_thumb_url}"></c:url>">	
@@ -94,11 +94,11 @@
 								<strong class="gs_name">${order.gs_name}</strong>							
 							</a>	
 							<div class="box-option mt-2">
-								<span class="ot_name">- ${order.ot_name}</span>
+								<span class="mr-2">-</span><span class="ot_name">${order.ot_name}</span>
 							</div>
 						</td>
 						<td class="item-price"><span class="ot_price">${order.ot_price_str}</span></td>
-						<td class="item-amount"><span class="or_amount">${order.orAmount}</span></td>
+						<td class="item-amount"><span class="or_amount" data-value="${order.orAmount}">${order.orAmount}</span></td>
 						<td class="item-delivery"><span class="deliveryFee"></span></td>
 						<td class="item-total"><span class="totalPrice" data-value="${order.totalPrice}">${order.totalPrice_str}</span></td>
 					</tr>
@@ -133,12 +133,12 @@
 					<td class="text-left">
 						<div class="form-check-inline">
 							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="address" value="mainAddr" checked>회원 정보와 동일
+								<input type="radio" class="form-check-input" name="address" value="${address.ad_num}" checked>회원 정보와 동일
 							</label>
 						</div>
 						<div class="form-check-inline">
 							<label class="form-check-label">
-								<input type="radio" class="form-check-input" name="address" value="newAddr">새로운 배송지
+								<input type="radio" class="form-check-input" name="address" value="0">새로운 배송지
 							</label>
 						</div>
 						<a href="#">주소록 보기</a>
@@ -238,8 +238,8 @@
 								<div class="input-group-append">
 							    <button class="btn-useAll" type="button">포인트 모두 사용</button>
 							  </div>
-								<div class="text-left">(사용가능한 포인트 : <span class="availablePoint mr-1">${user.availablePoint}</span>P)</div>
 							</div>
+							<div class="text-left">(사용가능한 포인트 : <span class="availablePoint mr-1">${user.availablePoint}</span>P)</div>
 						</div>
 						<div class="message mt-3 text-left">
 							<small>
@@ -299,13 +299,13 @@ $(function(){
 	$('.main .box-content .box-delivery input[name=address]:radio').change(function(){
 		let value = $(this).val();
 		//새로운 배송지 선택하면
-		if(value == 'newAddr'){
+		if(value == 0){
 			//값 비우기
 			$('.main .box-content .box-delivery input:text').val('');
 			$('.main .box-content .box-delivery textarea#ad_request').val('');
 		}
 		//회원 정보와 동일 선택(기본배송지)
-		if(value == 'mainAddr'){
+		else{
 			$('.main .box-content .box-delivery #ad_recipient').val('${address.ad_recipient}');
 			$('.main .box-content .box-delivery #ad_post_code').val('${address.ad_post_code}');
 			$('.main .box-content .box-delivery #ad_address').val('${address.ad_address}');
@@ -319,7 +319,7 @@ $(function(){
 		}
 	})//
 	
-	// input:text 글자 제한 이벤트 ----------------------------------------------------------------------------------
+	// input:text 글자 제한 이벤트 =================================================================================
    $('.main .box-content .box-delivery input:text').keyup(function() {
 	   let thisId = $(this).attr('id');
 	   //수령인은 10글자
@@ -336,42 +336,42 @@ $(function(){
 		 	wordLimit(this, 100);
    })//
 
-   // textarea 글자 제한 이벤트 ----------------------------------------------------------------------------------
+   // textarea 글자 제한 이벤트 =================================================================================
    $('.main .box-content .box-delivery #ad_request').keyup(function() {
 	   wordLimit(this, 255);
    })//
    
-	 // input:text 값 바뀌면 이벤트 ----------------------------------------------------------------------------------
+	 // input:text 값 바뀌면 이벤트 =================================================================================
    $('.main .box-content .box-delivery input:text').change(function() {
 	   $('.main .box-content .box-delivery .error').text('').hide();
-	   validatedelivery();
+	   if(!validatedelivery())
+		   return;
    })//
    
-   //포인트 모두 사용 클릭
+   //포인트 모두 사용 클릭 =================================================================================
    $('.main .box-content .box-point .btn-useAll').click(function() {
 	   let point = '${user.availablePoint}';
+	   let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
 	   if(point < 1000){
 		   alert('포인트는 최소 1000P 이상일 때 사용가능합니다.')
 		   return;
 	   }
 	   //결제금액보다 보유 포인트가 많은 경우
-	   let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
 	   if(point > totalPrice){
 		   $('.main .box-content .box-point .usePoint').val(totalPrice);
-		   return;
 	   }
 	   else
 	   	$('.main .box-content .box-point .usePoint').val(point);
 	   editPayment();
    })//
    
-   //포인트 입력 제한
+   //포인트 입력 제한 =================================================================================
    $('.main .box-content .box-point .usePoint').keyup(function() {
 		 //숫자 이외의 값 입력 못하게 막음
 		 $(this).val($(this).val().replace(/[^0-9]/g, ''));
    })//
    
-   //포인트 입력이 바뀌면
+   //포인트 입력이 바뀌면 ================================================================================
    $('.main .box-content .box-point .usePoint').change(function() {
 		 //0이 아니고 1000이상만
 		 let value = $(this).val();
@@ -383,6 +383,12 @@ $(function(){
 	   }
 		 editPayment();
    })//
+   
+   $('.main .box-content .btn-pay').click(function(){
+	   //if(!validatedelivery())
+		   //return;
+	   payment();
+   })
 });	
 	
 /* 함수 *********************************************************************************************************** */
@@ -417,7 +423,7 @@ $(function(){
 			goodsPrice += $(this).find('.totalPrice').data('value');
 		});
 		//배송비
-		let deliveryFee = 3000;
+		let deliveryFee = 0;
 		let basketLength = $('.main .box-content .box-orderList table tbody tr').length;
 		if(goodsPrice >= 50000 || basketLength == 0)
 			deliveryFee = 0;
@@ -524,5 +530,138 @@ $(function(){
 		return true;
 	}//
 	
+	//payment : 결제하기 =======================================================================================
+	function payment(){
+		//값 가져오기 -------------------------------------------------------------------------------------------
+		//주문명
+		let gsName = $('.main .box-content .box-orderList tbody tr').eq(0).find('.gs_name').text()
+		let otName = $('.main .box-content .box-orderList tbody tr').eq(0).find('.ot_name').text();
+		let orCount = $('.main .box-content .box-orderList tbody tr').length - 1;
+		let name = gsName + '(' + otName + ')';
+		if(orCount > 0)
+			name += ' 외 ' + orCount + '개'
+		//결제 금액
+		let amount = $('.main .box-content .box-summary table .paymentPrice').attr('data-value');
+		//이메일
+		let emailId = $('.main .box-content .box-delivery #mb_email_id').val();
+		let emailDomain = $('.main .box-content .box-delivery #mb_email_domain').val();
+		let buyer_email = emailId + '@' + emailDomain;
+		//구매자 이름
+		let buyer_name = '${user.mb_name}';
+		//핸드폰 번호
+		let buyer_tel = '${user.mb_phone}';
+		//주소
+		let address = $('.main .box-content .box-delivery #ad_address').val();
+		let detail = $('.main .box-content .box-delivery #ad_detail').val();
+		let buyer_addr = address + ' ' +detail;
+		//우편번호
+		let buyer_postcode = $('.main .box-content .box-delivery #ad_post_code').val();
+		//주문하기 -------------------------------------------------------------------------------------------
+		IMP.init('');
+
+		IMP.request_pay({
+	    pg : 'html5_inicis.INIpayTest',
+	    pay_method : 'card',
+	    merchant_uid : makeOrderCode(),
+	    name : name,
+	    amount : amount,
+	    buyer_email : buyer_email,
+	    buyer_name : buyer_name,
+	    buyer_tel : buyer_tel,
+	    buyer_addr : buyer_addr,
+	    buyer_postcode : buyer_postcode
+		}, 
+		function(rsp) {
+	    if (rsp.success) { // 결제 성공 시
+	    	console.log(rsp)
+	    	console.log('----------------------')
+	      jQuery.ajax({
+	        url: '<%=request.getContextPath()%>/verify/payment',
+	        method: 'POST',
+	        headers: { "Content-Type": "application/json" }, 
+	        data: {
+	          imp_uid: rsp.imp_uid,
+	          paid_amount: rsp.paid_amount
+	        },
+	        success: function(data){
+	        	if(data.res){
+	        		let payAmount = rsp.paid_amount;
+	        		let imp_uid = rsp.imp_uid;
+	        		let merchant_uid =rsp.merchant_uid;
+	        		completePayment(buyer_postcode, address, detail, payAmount, imp_uid, merchant_uid);
+	        	} else
+	        		alert('결제에 실패했습니다.');
+	        }
+	      });
+	    } else{
+	    	alert('결제에 실패했습니다.' +  rsp.error_msg);
+	    }
+		});
+	}//
+	
+	//completePayment : 결제 완료 =====================================================================================
+	function completePayment(postcode, address, detail, payAmount, imp_uid, merchant_uid){
+		//값 가져오기 ----------------------------------------------------------------------------------
+		//배송 번호
+		let adNum = $('.main .box-content .box-delivery input[name=address]:radio').val();
+		let mbNum = '${user.mb_num}'
+		//수령인
+		let recipient = $('.main .box-content .box-delivery #ad_recipient').val();
+		//전화번호
+		let phoneFirst = $('.main .box-content .box-delivery #ad_phone_first').val();
+		let phoneMiddle = $('.main .box-content .box-delivery #ad_phone_middle').val();
+		let phoneLast = $('.main .box-content .box-delivery #ad_phone_last').val();
+		let phone = phoneFirst + '-' + phoneMiddle + '-' + phoneLast;
+		//배송요구사항
+		let request = $('.main .box-content .box-delivery #ad_request').val();
+		//포인트
+		let pointAmount = $('.main .box-content .box-point .usePoint').val();
+		//주문 상품
+		let orderList = [];
+		$('.main .box-content .box-orderList table tbody tr').each(function(){
+			//값 설정
+			let order = {};
+			let otNum = $(this).data('value');
+			let orAmount = $(this).find('.or_amount').data('value');
+			let totalAmount = $(this).find('.totalPrice').data('value');
+			order.otNum = otNum;
+			order.orAmount = orAmount;
+			order.totalPrice = totalPrice;
+			orderList.push(order);
+		});
+		let obj = {
+			mbNum,
+			adNum,
+			recipient,
+			postcode,
+			address,
+			detail,
+			phone,
+			request,
+			pointAmount,
+			payAmount,
+			orderList,
+			imp_uid,
+			orCode : merchant_uid
+		}
+		ajaxPost(false, obj, '/complete/payment', function(data){
+			if(data.res){
+				alert('결제에 성공했습니다.');
+				location.href = '<%=request.getContextPath()%>';
+			}else
+				alert('결제에 실패했습니다.(db)')
+		});
+	}//
+	
+	//
+	function makeOrderCode(){
+		let today = new Date();   
+		let year = today.getFullYear(); // 년도
+		let month = today.getMonth() + 1;  // 월
+		let date = today.getDate();  // 날짜
+		let mbNum = '${user.mb_num}';
+		let time = today.getTime();
+		return year + ''+ month + '' + date + mbNum + time;
+	}
 </script>
 </html>

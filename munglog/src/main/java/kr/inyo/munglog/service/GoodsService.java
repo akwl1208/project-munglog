@@ -1,6 +1,9 @@
 package kr.inyo.munglog.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import com.siot.IamportRestClient.exception.IamportResponseException;
 
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
@@ -36,4 +39,6 @@ public interface GoodsService {
 	void deleteExpiredBasket(MemberVO user);
 	//기본배송지 정보 가져오기
 	AddressVO getMainAddress(MemberVO user);
+	//결제 검증하기
+	boolean verifyPayment(String rsp) throws IamportResponseException, IOException;
 }

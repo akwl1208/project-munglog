@@ -1,10 +1,16 @@
 package kr.inyo.munglog.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.Payment;
 
 import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.dto.BasketDTO;
@@ -23,6 +29,25 @@ public class GoodsServiceImp implements GoodsService {
 	
 	@Autowired
 	GoodsDAO goodsDao;
+	
+	private IamportClient api;
+	
+  public GoodsServiceImp(){
+    this.api = new IamportClient("", "");
+  }
+  
+/* 메소드 *************************************************************************************************************** */
+	// strExtraction : 문자 추출 =========================================================================================
+	public String strExtraction(String rsp, String findStartStr, String findEndStr) {
+		int startIndex = rsp.indexOf(findStartStr) + findStartStr.length();
+		String str = "";
+		if(findEndStr != "") {
+			int endIndex = rsp.indexOf(findEndStr);
+			str = rsp.substring(startIndex, endIndex);				
+		} else
+			str = rsp.substring(startIndex);
+		return str;
+	}
 	
 /* override ************************************************************************************************************ */
 	// getGoodsList : 굿즈 리스트 가져오기 =============================================================================
@@ -177,5 +202,26 @@ public class GoodsServiceImp implements GoodsService {
 		if(user == null || user.getMb_num() < 1)
 			return null;
 		return goodsDao.selectMainAddress(user.getMb_num());
+	}
+
+	//verifyPayment : 결제 검증하기 ====================================================================================	
+	@Override
+	public boolean verifyPayment(String rsp) throws IamportResponseException, IOException {
+		//값이 없으면
+		if(rsp == "" || api == null)
+			return false;
+		//값 추출하기
+		String imp_uid = strExtraction(rsp, "imp_uid=","&");
+		int paid_amount = Integer.parseInt(strExtraction(rsp, "&paid_amount=",""));
+		Payment payment = api.paymentByImpUid(imp_uid).getResponse();
+		int amount = payment.getAmount().intValue();
+		//결제 금액이 같은지 확인(검증)
+		//다르면 결제 취소
+		if(paid_amount != amount) {
+			CancelData cancelData = new CancelData(imp_uid, true, payment.getAmount());
+			api.cancelPaymentByImpUid(cancelData);
+			return false;
+		}
+		return true;
 	}
 }
