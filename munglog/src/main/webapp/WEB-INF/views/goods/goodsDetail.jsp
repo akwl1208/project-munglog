@@ -90,7 +90,7 @@
 	<div class="box-message">굿즈의 상세보기를 보고, 장바구니에 담아보세요.</div>
 </div>
 <!-- box-content ------------------------------------------------------------------------------------------------- -->		
-<div class="box-content">
+<form class="box-content" action="<%=request.getContextPath()%>/goods/order/${user.mb_num}" method="get">
 	<a class="goToGoods float-right" href="<c:url value="/goods"></c:url>" data-toggle="tooltip" data-placement="right" title="굿즈 목록으로">
 		<i class="fa-solid fa-list"></i>
 	</a>	
@@ -154,7 +154,7 @@
 			<hr>
 			<!-- box-btn ---------------------------------------------------------------------------------- -->
 			<div class="box-btn">
-				<button type="button" class="btn-buy col-5 mr-2">바로 구매</button>
+				<button type="submit" class="btn-buy col-5 mr-2">바로 구매</button>
 				<button type="button" class="btn-basket col-5">장바구니</button>
 			</div>
 		</div>			
@@ -183,14 +183,15 @@
 		<div id="qna" class="container tab-pane fade">
 		</div>
 	</div>
-	<a class="btn-scrollTop" href="javascipt:0;" onclick="scrollTop()"><i class="fa-regular fa-circle-up"></i></a>
-</div>
+	<a class="btn-scrollTop" href="javascript:0;" onclick="scrollTop()"><i class="fa-regular fa-circle-up"></i></a>
+</form>
 </body>
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
 	let gsName = '${goods.gs_name}';
 	let user = '${user.mb_num}';
+	let index = 0;
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){	
 		$(document).ready(function(){
@@ -279,6 +280,9 @@
 			let otAmount = $(this).children("option:selected").data('amount');
 			let otPrice = $(this).children("option:selected").data('price');
 			let otPriceStr = numberToCurrency(otPrice);
+			//제목 클릭하면
+			if($(this).val() == 0)
+				return;
 			//품절이면 선택 못함
 			if(otAmount == 0)
 				return;
@@ -294,10 +298,11 @@
 			if(!isSelected){
 				alert('이미 선택한 상품입니다.')
 				return;
-			}
+			}		
 			//화면 구성
 			let html = '';
 			html += '<tr class="row-select" data-value="'+otNum+'">';
+			html += 	'<input type="hidden" name="orderList['+index+'].otNum" value="'+otNum+'">';
 			html += 	'<th class="item-title" width="50%">';
 			html += 		'<p class="title m-0">';
 			html += 			'<strong class="gs_name">'+gsName+'</strong><br>';
@@ -306,9 +311,9 @@
 			html += 	'</th>';
 			html += 	'<td class="item-quantity" width="20%">';
 			html += 		'<div class="quantity" data-value="'+otAmount+'">';
-			html += 			'<input type="text" class="bs_amount" min="1" max="10" value="1">';
-			html += 			'<a href="javascipt:0;" class="up"><i class="fa-solid fa-caret-up"></i></a>';
-			html += 			'<a href="javascipt:0;" class="down"><i class="fa-solid fa-caret-down"></i></a>';
+			html += 			'<input type="text" class="bs_amount" name="orderList['+index+'].orAmount" min="1" max="10" value="1">';
+			html += 			'<a href="javascript:0;" class="up"><i class="fa-solid fa-caret-up"></i></a>';
+			html += 			'<a href="javascript:0;" class="down"><i class="fa-solid fa-caret-down"></i></a>';
 			html += 		'</div>';
 			html += 	'</td>';
 			html += 	'<td width="25%">';
@@ -318,6 +323,7 @@
 			html += 		'<div class="btn-delete"><i class="fa-solid fa-xmark"></i></div>';
 			html += 	'</td>';
 			html += '</tr>';
+			index++;
 			$('.main .box-content .box-select table tbody').append(html);
 			//총 금액 수정
 			editTotal();
@@ -331,24 +337,26 @@
 					location.href = '<%=request.getContextPath()%>/account/login';
 				return;
 			}
-			/*
-			if(!confirm('해당 상품을 장바구니에 담겠습니까?'))
-				return;*/
 			//옵션을 선택 안했으면
 			let trLength = $('.main .box-content .box-select table tbody tr').length;
 			if(trLength == 0){
 				alert('옵션을 선택해주세요.');
 				$('.main .box-content .box-option select').focus();
+				return;
 			}
 			//수량이 입력 안했으면
+			let isInput = true;
 			$('.main .box-content .box-select input').each(function(){
 				let value = $(this).val();
 				if(value == ''){
 					alert('수량을 입력해주세요.')
 					$(this).focus();
+					isInput = false;
 					return false;
 				}
 			});
+			if(isInput == false)
+				return;		
 			//장바구니에 담기
 			let optionList = [];
 			$('.main .box-content .box-select table tbody tr').each(function(){
@@ -366,6 +374,36 @@
 			}
 			//장바구니에 담기
 			putBasket(obj);
+		})//
+		
+		//form 보내기 전에 ============================================================================
+		$('form').submit(function(){
+			//로그인 안했으면 로그인화면으로
+			if(user == ''){
+				if(confirm('바로 결제하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/account/login';
+				return false;
+			}
+			//옵션을 선택 안했으면
+			let trLength = $('.main .box-content .box-select table tbody tr').length;
+			if(trLength == 0){
+				alert('옵션을 선택해주세요.');
+				$('.main .box-content .box-option select').focus();
+				return false;
+			}
+			//수량이 입력 안했으면
+			let isInput = true;
+			$('.main .box-content .box-select input').each(function(){
+				let value = $(this).val();
+				if(value == ''){
+					alert('수량을 입력해주세요.')
+					$(this).focus();
+					isInput = false;
+					return false;
+				}
+			});
+			if(isInput == false)
+				return false;			
 		})//
 	});	
 
