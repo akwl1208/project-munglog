@@ -248,6 +248,12 @@ $(function(){
 		$('.main .box-content .box-basket table thead .checkAll').click();
 	})//
 	
+	//바로 주문하기 클릭(btn-buy)====================================================================
+	$('.main .box-content .box-basket table tbody .item-btn .btn-buy').click(function () {
+		$(this).parents('tr').find('.check').prop('checked', true);
+		$('form').submit();
+	})//
+	
 	//form 보내기 전에 ============================================================================
 	$('form').submit(function(){
 		//장바구니에 담긴게 없으면
