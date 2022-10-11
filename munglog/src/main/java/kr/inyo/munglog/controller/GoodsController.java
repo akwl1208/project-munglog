@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +69,12 @@ public class GoodsController {
 	
 	/* 장바구니 -------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/basket", method = RequestMethod.GET)
-	public ModelAndView goodsBasketGet(ModelAndView mv, HttpSession session) {
+	public ModelAndView goodsBasketGet(ModelAndView mv, HttpSession session,
+			HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
+		//회원이 아니거나 
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
 		ArrayList<BasketDTO> basketList = goodsService.getBasketList(user);
 		
 		mv.addObject("basketList", basketList);
@@ -80,8 +85,14 @@ public class GoodsController {
 	/* 주문하기 -------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/order/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView goodsOrderGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
-			OrderListDTO orderList, HttpSession session) {
+			OrderListDTO orderList, HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
+		//회원이 아니거나 
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		//회원번호가 다르면 접근 할 수 없음
+		if(user.getMb_num() != mb_num)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		//주문내역 가져오기
 		ArrayList<OrderDTO> oList = goodsService.getOrderList(mb_num, orderList, user);
 		//기본 배송지 가져오기
@@ -149,12 +160,12 @@ public class GoodsController {
 	@RequestMapping(value = "/complete/payment", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<Object, Object> completePayment(@RequestBody PaymentDTO payment, 
-			HttpSession session){
+			HttpSession session) throws IamportResponseException, IOException{
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = goodsService.completePayment(payment, user);
 		
-		System.out.println(user);
-		System.out.println(payment);
+		map.put("res", res);
 		return map;
 	}//
 

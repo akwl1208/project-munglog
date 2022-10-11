@@ -1,6 +1,7 @@
 package kr.inyo.munglog.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,9 +14,11 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.Payment;
 
 import kr.inyo.munglog.dao.GoodsDAO;
+import kr.inyo.munglog.dao.MemberDAO;
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
+import kr.inyo.munglog.dto.PaymentDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
@@ -23,12 +26,15 @@ import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionVO;
+import kr.inyo.munglog.vo.OrderVO;
 
 @Service
 public class GoodsServiceImp implements GoodsService {
 	
 	@Autowired
 	GoodsDAO goodsDao;
+	@Autowired
+	MemberDAO memberDao;
 	
 	private IamportClient api;
 	
@@ -47,6 +53,12 @@ public class GoodsServiceImp implements GoodsService {
 		} else
 			str = rsp.substring(startIndex);
 		return str;
+	}
+	
+	//cancelPayment : 결제 취소하기 =========================================================================================
+	public void cancelPayment(String imp_uid, BigDecimal amount) throws IamportResponseException, IOException {
+		CancelData cancelData = new CancelData(imp_uid, true, amount);
+		api.cancelPaymentByImpUid(cancelData);
 	}
 	
 /* override ************************************************************************************************************ */
@@ -218,10 +230,121 @@ public class GoodsServiceImp implements GoodsService {
 		//결제 금액이 같은지 확인(검증)
 		//다르면 결제 취소
 		if(paid_amount != amount) {
-			CancelData cancelData = new CancelData(imp_uid, true, payment.getAmount());
-			api.cancelPaymentByImpUid(cancelData);
+			cancelPayment(imp_uid, payment.getAmount());
 			return false;
 		}
 		return true;
 	}
+
+	//completePayment : 결제 완료하기 ====================================================================================	
+	@Override
+	public boolean completePayment(PaymentDTO payment, MemberVO user) throws IamportResponseException, IOException{
+		//값이 없으면
+		if(payment == null || user == null)
+			return false;
+		if(payment.getImp_uid() == null || payment.getMbNum() < 1 || user.getMb_num() < 1)
+			return false;
+		if(payment.getOrCode() == "" || payment.getEmail() == "") {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		if(payment.getPointAmount() < 1000 || payment.getPayAmount() < 0) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		if(payment.getOrderList().isEmpty()) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		if(payment.getAdNum() < 0 || payment.getRecipient() == "" || payment.getPhone() == "" || 
+				payment.getPostcode() == "" || payment.getAddress() == "") {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		//다른 회원이면
+		if(payment.getMbNum() != user.getMb_num()) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		//배송지 정보 ----------------------------------------------------------------------------------------------------
+		AddressVO dbAddress;
+		AddressVO address = new AddressVO(payment.getMbNum(), payment.getRecipient(), payment.getPhone(), 
+				payment.getPostcode(), payment.getAddress(), payment.getDetail(), payment.getRequest());
+		//배송지 번호가 0이면(배송지에 추가되지 않은)
+		if(payment.getAdNum() == 0) {
+			address.setAd_main("0");
+			//배송지가 있는지 확인
+			dbAddress = goodsDao.selectAddressByAll(address);
+			if(dbAddress == null) {
+				//배송지 추가	
+				goodsDao.insertAddressAll(address);
+				dbAddress = goodsDao.selectAddressByAll(address);
+			}
+		}
+		//배송지 번호가 0이 아니면(배송지에 추가된)
+		else {
+			dbAddress = goodsDao.selectAddress(payment.getAdNum(), payment.getMbNum());
+			//값이 없으면 배송지 추가
+			if(dbAddress == null) {
+				//배송지 추가	
+				address.setAd_main("0");
+				goodsDao.insertAddressAll(address);
+				dbAddress = goodsDao.selectAddressByAll(address);
+			}
+			//값이 다르면 배송지 정보 수정
+			if(!dbAddress.getAd_recipient().equals(address.getAd_recipient()))
+				dbAddress.setAd_recipient(address.getAd_recipient());
+			if(!dbAddress.getAd_phone().equals(address.getAd_phone()))
+				dbAddress.setAd_phone(address.getAd_phone());
+			if(!dbAddress.getAd_post_code().equals(address.getAd_post_code()))
+				dbAddress.setAd_post_code(address.getAd_post_code());
+			if(!dbAddress.getAd_address().equals(address.getAd_address()))
+				dbAddress.setAd_address(address.getAd_address());
+			if(!dbAddress.getAd_detail().equals(address.getAd_detail()))
+				dbAddress.setAd_detail(address.getAd_detail());
+			if(!dbAddress.getAd_request().equals(address.getAd_request()))
+				dbAddress.setAd_request(address.getAd_request());
+			goodsDao.updateAddress(dbAddress);
+		}
+		//배송지 없으면
+		if(dbAddress.getAd_num() < 1) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}			
+		//주문 추가 -------------------------------------------------------------------------------
+		goodsDao.insertOrder(payment, dbAddress.getAd_num());
+		//주문 가져오기
+		OrderVO dbOrder = goodsDao.selectOrderByPayment(payment.getMbNum(), payment.getImp_uid());
+		//주문 추가 못했으면
+		if(dbOrder == null) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		//주문 상세 추가 -----------------------------------------------------------------------------
+		boolean isInserted = true;
+		for(OrderDTO order : payment.getOrderList()) {
+			if(order == null) {
+				isInserted = false;
+				break;
+			}
+			if(order.getOtNum() < 1 || order.getOrAmount() < 1 || order.getTotalPrice() < 1) {
+				isInserted = false;
+				break;
+			}
+			if(!goodsDao.insertOrderDetail(dbOrder.getOr_code(), order, "배송준비중")) {
+				isInserted = false;
+				break;
+			}else
+				goodsDao.deleteBasketByOtNum(payment.getMbNum(), order.getOtNum());
+		}
+		//주문 상세 추가 못했으면
+		if(!isInserted) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		//포인트 사용 ------------------------------------------------------------------------------
+		if(payment.getPointAmount() > 0)
+			memberDao.insertPoint(payment.getMbNum(), "사용", "굿즈 구매", payment.getPointAmount());
+		return true;
+	}//
 }

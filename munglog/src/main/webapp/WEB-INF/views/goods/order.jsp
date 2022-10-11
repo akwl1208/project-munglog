@@ -97,7 +97,7 @@
 								<span class="mr-2">-</span><span class="ot_name">${order.ot_name}</span>
 							</div>
 						</td>
-						<td class="item-price"><span class="ot_price">${order.ot_price_str}</span></td>
+						<td class="item-price"><span class="ot_price" data-value="${order.ot_price}">${order.ot_price_str}</span></td>
 						<td class="item-amount"><span class="or_amount" data-value="${order.orAmount}">${order.orAmount}</span></td>
 						<td class="item-delivery"><span class="deliveryFee"></span></td>
 						<td class="item-total"><span class="totalPrice" data-value="${order.totalPrice}">${order.totalPrice_str}</span></td>
@@ -213,9 +213,7 @@
 					<th>배송메시지</th>
 					<td>
 						<div class="form-group m-0">
-							<textarea class="form-control" id="ad_request" rows="3" style="resize: none;">
-								${address.ad_request}
-							</textarea>
+							<textarea class="form-control" id="ad_request" rows="3" style="resize: none;">${address.ad_request}</textarea>
 						</div>
 					</td>
 				</tr>
@@ -243,10 +241,10 @@
 						</div>
 						<div class="message mt-3 text-left">
 							<small>
-								<i class="fa-solid fa-paw mr-2"></i>포인트은 최소 1000P 이상일 때 사용 가능합니다.
+								<i class="fa-solid fa-paw mr-2"></i>포인트는 최소 1000P 이상일 때 사용 가능합니다.
 							</small><br>
 							<small>
-								<i class="fa-solid fa-paw mr-2"></i>최대 사용포인트는 제한이 없습니다.
+								<i class="fa-solid fa-paw mr-2"></i>최대 사용 가능한 포인트는 제한이 없습니다.
 							</small><br>
 							<small>
 								<i class="fa-solid fa-paw mr-2"></i>포인트으로만 결제할 경우, 결제금액이 0으로 보여지는 것은 정상이며 [결제하기] 버튼을 누르면 주문이 완료됩니다.
@@ -344,7 +342,7 @@ $(function(){
 	 // input:text 값 바뀌면 이벤트 =================================================================================
    $('.main .box-content .box-delivery input:text').change(function() {
 	   $('.main .box-content .box-delivery .error').text('').hide();
-	   if(!validatedelivery())
+	   if(!validateInputs())
 		   return;
    })//
    
@@ -356,7 +354,7 @@ $(function(){
 		   alert('포인트는 최소 1000P 이상일 때 사용가능합니다.')
 		   return;
 	   }
-	   //결제금액보다 보유 포인트가 많은 경우
+	   //전체금액보다 보유 포인트가 많은 경우
 	   if(point > totalPrice){
 		   $('.main .box-content .box-point .usePoint').val(totalPrice);
 	   }
@@ -367,7 +365,11 @@ $(function(){
    
    //포인트 입력 제한 =================================================================================
    $('.main .box-content .box-point .usePoint').keyup(function() {
-		 //숫자 이외의 값 입력 못하게 막음
+	   //첫자리가 0이면 0으로 입력되게 함
+	   if($(this).val().indexOf(0) == 0){
+		   $(this).val('0');
+	   }
+	   //숫자 이외의 값 입력 못하게 막음
 		 $(this).val($(this).val().replace(/[^0-9]/g, ''));
    })//
    
@@ -375,19 +377,78 @@ $(function(){
    $('.main .box-content .box-point .usePoint').change(function() {
 		 //0이 아니고 1000이상만
 		 let value = $(this).val();
-		 if(value == 0)
+		 if(value.length == 0){
 			 $(this).val('0');
+			 editPayment();
+			 return;
+		 }
 		 if((value != 0 && value < 1000)){
 		   alert('포인트는 최소 1000P 이상일 때 사용가능합니다.')
 		   $(this).val('0');
+			 editPayment();
+			 return;
 	   }
+		 //보유 금액보다 많으면
+		 let point = '${user.availablePoint}';
+		 if(Number(value) > Number(point)){
+			 alert('보유 포인트를 넘는 포인트를 사용할 수 없습니다.');
+			 $(this).val('0');
+			 editPayment();
+			 return;
+		 }
+		 //상품 금액보다 많으면
+		 let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
+		 if(Number(value) > Number(totalPrice)){
+			 alert('전체 금액를 넘는 포인트를 사용할 수 없습니다.');
+			 $(this).val('0');
+			 editPayment();
+			 return;
+		 }
 		 editPayment();
    })//
    
+   //결제하기(btn-pay) 클릭 ================================================================================
    $('.main .box-content .btn-pay').click(function(){
-	   //if(!validatedelivery())
-		   //return;
-	   payment();
+	   //로그인 안했으면
+	   if('${user.mb_num}' < 1){
+		   alert('로그인 후 결제 가능합니다.');
+		   location.href = '<%=request.getContextPath()%>/account/login';
+		   return;
+	   }
+	   //주문서에 담긴 상품이 없으면
+	   let trLength = $('.main .box-content .box-orderList table tbody tr').length;
+	   if(trLength == 0){
+		   alert('주문할 굿즈가 없습니다.');
+		   location.href = '<%=request.getContextPath()%>/goods';
+		   return;
+	   }
+	   //입력 안했으면
+	   if(!validateInputs())
+		   return;
+		 //우편번호
+		 let postcode = $('.main .box-content .box-delivery #ad_post_code').val();
+		 //주소
+		 let address = $('.main .box-content .box-delivery #ad_address').val();
+		 let detail = $('.main .box-content .box-delivery #ad_detail').val();
+		 //전체 금액
+		 let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
+		 //결제 금액
+		 let amount = $('.main .box-content .box-summary table .paymentPrice').attr('data-value');
+		 //주문코드
+		 let merchant_uid = makeOrderCode();
+		 //사용포인트
+		 let pointAmount = $('.main .box-content .box-point .usePoint').val();
+		 if(pointAmount > ${user.availablePoint}){
+			 alert('사용 포인트는 보유 포인트보다 많을 수 없습니다.')			
+			 return;
+		 }
+		 //포인트 전액 결제
+		 if(pointAmount != 0 && amount == 0 && (totalPrice == pointAmount)){
+			 completePayment(postcode, address, detail, amount, pointAmount, "포인트전액결제", merchant_uid);
+			 return;
+		 }
+		 //포인트 전액 결제 아님
+	   payment(postcode, address, detail, amount, pointAmount, merchant_uid);
    })
 });	
 	
@@ -423,7 +484,7 @@ $(function(){
 			goodsPrice += $(this).find('.totalPrice').data('value');
 		});
 		//배송비
-		let deliveryFee = 0;
+		let deliveryFee = 3000;
 		let basketLength = $('.main .box-content .box-orderList table tbody tr').length;
 		if(goodsPrice >= 50000 || basketLength == 0)
 			deliveryFee = 0;
@@ -453,8 +514,8 @@ $(function(){
 	  	$(selector).val($(selector).val().substring(0, limit));
 	}//
 	
-	//validatedelivery : 배송지 입력값 검사 =====================================================================================
-	function validatedelivery(){
+	//validateInputs : 입력값 검사 =====================================================================================
+	function validateInputs(){
 		//수령인 ---------------------------------------------------------------------------------
 		let recipient = $('.main .box-content .box-delivery #ad_recipient').val();
 		if(recipient == ''){
@@ -527,11 +588,17 @@ $(function(){
 			$('.main .box-content .box-delivery #ad_address').focus();
 			return false;
 		}
+		//포인트
+		let pointAmount = $('.main .box-content .box-point .usePoint').val();
+		if(pointAmount > ${user.availablePoint}){
+			alert('사용 포인트는 보유 포인트보다 많을 수 없습니다.')			
+			return false;
+		}
 		return true;
 	}//
 	
 	//payment : 결제하기 =======================================================================================
-	function payment(){
+	function payment(postcode, address, detail, amount, pointAmount, merchant_uid){
 		//값 가져오기 -------------------------------------------------------------------------------------------
 		//주문명
 		let gsName = $('.main .box-content .box-orderList tbody tr').eq(0).find('.gs_name').text()
@@ -540,29 +607,23 @@ $(function(){
 		let name = gsName + '(' + otName + ')';
 		if(orCount > 0)
 			name += ' 외 ' + orCount + '개'
-		//결제 금액
-		let amount = $('.main .box-content .box-summary table .paymentPrice').attr('data-value');
 		//이메일
-		let emailId = $('.main .box-content .box-delivery #mb_email_id').val();
-		let emailDomain = $('.main .box-content .box-delivery #mb_email_domain').val();
-		let buyer_email = emailId + '@' + emailDomain;
+		let buyer_email = '${user.mb_email}';
 		//구매자 이름
 		let buyer_name = '${user.mb_name}';
 		//핸드폰 번호
 		let buyer_tel = '${user.mb_phone}';
 		//주소
-		let address = $('.main .box-content .box-delivery #ad_address').val();
-		let detail = $('.main .box-content .box-delivery #ad_detail').val();
 		let buyer_addr = address + ' ' +detail;
 		//우편번호
-		let buyer_postcode = $('.main .box-content .box-delivery #ad_post_code').val();
+		let buyer_postcode = postcode;
 		//주문하기 -------------------------------------------------------------------------------------------
 		IMP.init('');
 
 		IMP.request_pay({
 	    pg : 'html5_inicis.INIpayTest',
 	    pay_method : 'card',
-	    merchant_uid : makeOrderCode(),
+	    merchant_uid : merchant_uid,
 	    name : name,
 	    amount : amount,
 	    buyer_email : buyer_email,
@@ -573,8 +634,6 @@ $(function(){
 		}, 
 		function(rsp) {
 	    if (rsp.success) { // 결제 성공 시
-	    	console.log(rsp)
-	    	console.log('----------------------')
 	      jQuery.ajax({
 	        url: '<%=request.getContextPath()%>/verify/payment',
 	        method: 'POST',
@@ -588,7 +647,7 @@ $(function(){
 	        		let payAmount = rsp.paid_amount;
 	        		let imp_uid = rsp.imp_uid;
 	        		let merchant_uid =rsp.merchant_uid;
-	        		completePayment(buyer_postcode, address, detail, payAmount, imp_uid, merchant_uid);
+	        		completePayment(buyer_postcode, address, detail, payAmount, pointAmount, imp_uid, merchant_uid);
 	        	} else
 	        		alert('결제에 실패했습니다.');
 	        }
@@ -600,7 +659,7 @@ $(function(){
 	}//
 	
 	//completePayment : 결제 완료 =====================================================================================
-	function completePayment(postcode, address, detail, payAmount, imp_uid, merchant_uid){
+	function completePayment(postcode, address, detail, payAmount, pointAmount, imp_uid, merchant_uid){
 		//값 가져오기 ----------------------------------------------------------------------------------
 		//배송 번호
 		let adNum = $('.main .box-content .box-delivery input[name=address]:radio').val();
@@ -614,8 +673,10 @@ $(function(){
 		let phone = phoneFirst + '-' + phoneMiddle + '-' + phoneLast;
 		//배송요구사항
 		let request = $('.main .box-content .box-delivery #ad_request').val();
-		//포인트
-		let pointAmount = $('.main .box-content .box-point .usePoint').val();
+		//이메일
+		let emailId = $('.main .box-content .box-delivery #mb_email_id').val();
+		let emailDomain = $('.main .box-content .box-delivery #mb_email_domain').val();
+		let email = emailId + '@' + emailDomain;
 		//주문 상품
 		let orderList = [];
 		$('.main .box-content .box-orderList table tbody tr').each(function(){
@@ -623,10 +684,10 @@ $(function(){
 			let order = {};
 			let otNum = $(this).data('value');
 			let orAmount = $(this).find('.or_amount').data('value');
-			let totalAmount = $(this).find('.totalPrice').data('value');
+			let ot_price = $(this).find('.ot_price').data('value');
 			order.otNum = otNum;
 			order.orAmount = orAmount;
-			order.totalPrice = totalPrice;
+			order.ot_price = ot_price;
 			orderList.push(order);
 		});
 		let obj = {
@@ -640,6 +701,7 @@ $(function(){
 			request,
 			pointAmount,
 			payAmount,
+			email,
 			orderList,
 			imp_uid,
 			orCode : merchant_uid
@@ -649,11 +711,11 @@ $(function(){
 				alert('결제에 성공했습니다.');
 				location.href = '<%=request.getContextPath()%>';
 			}else
-				alert('결제에 실패했습니다.(db)')
+				alert('결제에 실패했습니다.')
 		});
 	}//
 	
-	//
+	//makeOrderCode : 주문코드 만들기 =============================================================
 	function makeOrderCode(){
 		let today = new Date();   
 		let year = today.getFullYear(); // 년도

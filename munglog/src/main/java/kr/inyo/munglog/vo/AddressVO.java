@@ -1,8 +1,10 @@
 package kr.inyo.munglog.vo;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class AddressVO {
 	private int ad_num;
 	private int ad_mb_num;
@@ -15,6 +17,17 @@ public class AddressVO {
 	private String ad_main;
 	private String ad_request;
 	
+	//생성자
+	public AddressVO(int mbNum, String recipient, String phone, String postcode, String address, String detail, String request) {
+		this.ad_mb_num = mbNum;
+		this.ad_recipient = recipient;
+		this.ad_phone = phone;
+		this.ad_post_code = postcode;
+		this.ad_address = address;
+		this.ad_detail = detail;
+		this.ad_request = request;
+	}
+
 	//010 추출
 	public String getAd_phone_first() {
 		int index = ad_phone.indexOf("-");

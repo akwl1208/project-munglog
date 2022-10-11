@@ -8,6 +8,7 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
+import kr.inyo.munglog.dto.PaymentDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
@@ -41,4 +42,6 @@ public interface GoodsService {
 	AddressVO getMainAddress(MemberVO user);
 	//결제 검증하기
 	boolean verifyPayment(String rsp) throws IamportResponseException, IOException;
+	//결제 완료하기
+	boolean completePayment(PaymentDTO payment, MemberVO user) throws IamportResponseException, IOException;
 }

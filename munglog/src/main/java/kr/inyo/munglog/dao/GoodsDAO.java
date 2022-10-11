@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
+import kr.inyo.munglog.dto.PaymentDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
@@ -13,6 +14,7 @@ import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionVO;
+import kr.inyo.munglog.vo.OrderVO;
 
 public interface GoodsDAO {
 	/* 카테고리 ======================================================================================= */
@@ -43,14 +45,36 @@ public interface GoodsDAO {
 	boolean deleteBasket(BasketVO basket);
 	//보관기간이 지난 장바구니 삭제
 	void deleteExpiredBasket(int mb_num);
+	//주문한 상품 장바구니 삭제
+	void deleteBasketByOtNum(@Param("mb_num")int mbNum, @Param("ot_num")int otNum);
 	
 	/* 주문 ======================================================================================= */
 	//옵션번호로 주문 내역 가져오기
 	OrderDTO selectOrderByOtNum(int otNum);
-
+	//주문 추가
+	void insertOrder(@Param("payment")PaymentDTO payment, @Param("ad_num")int ad_num);
+	//주문 가져오기
+	OrderVO selectOrderByPayment(@Param("or_mb_num")int mbNum, @Param("or_payment")String imp_uid);
+	//주문 상세 추가
+	boolean insertOrderDetail(@Param("od_or_code")String or_code, @Param("order")OrderDTO order, @Param("od_state")String od_state);
+	
 	/* 배송지 ======================================================================================= */
-	//배송지 추가
+	//배송지 추가(기본만)
 	void insertAddress(@Param("member")MemberVO dbMember, @Param("ad_name")String ad_name, @Param("ad_main")String ad_main);
 	//회원 번호로 배송지 가져오기
 	AddressVO selectMainAddress(int mb_num);
+	//배송지 추가(모든 정보)
+	void insertAddressAll(AddressVO address);
+	//모든 정보를 비교해서 배송지 가져오기
+	AddressVO selectAddressByAll(AddressVO address);
+	//배송지 번호로 배송지 가져오기
+	AddressVO selectAddress(@Param("ad_num")int adNum, @Param("ad_mb_num")int mbNum);
+	//배송지 수정
+	void updateAddress(AddressVO dbAddress);
+
+	
+
+	
+
+	
 }

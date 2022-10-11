@@ -69,6 +69,8 @@
 	    <beans:ref bean="guestInterceptor"/>
     </interceptor>
 		<interceptor>
+			<mapping path="/goods/order"/>
+			<mapping path="/goods/basket"/>
 			<mapping path="/admin/challenge"/>
 			<mapping path="/log/mylog"/>
 			<mapping path="/log/mglogDetail"/>

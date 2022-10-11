@@ -12,6 +12,7 @@ public class PaymentDTO {
 	private int payAmount;
 	private String imp_uid;
 	private String orCode;
+	private String email;
 	private ArrayList<OrderDTO> orderList;
 	private int adNum;
 	private String recipient;
