@@ -32,6 +32,11 @@
 	.main .box-content .box-basket table tbody .item-name{
 		overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
 	}
+	.main .box-content .box-basket table tbody .box-change .btn{
+		padding: 5px; background-color: #a04c00;
+		border: none; color: #fff7ed; border-radius: 3px;
+		display: inline-block; font-size: 12px; margin-left: 5px;
+	}
 	.main .box-content .box-basket table tbody .item-name .btn-change-option,
 	.main .box-content .box-basket table tbody .item-amount .btn-chage-amount{
 		padding: 5px; background-color: #a04c00;
@@ -96,7 +101,7 @@
 			<!-- tbody ---------------------------------------------------------------------------------------------------- -->
 			<tbody>
 				<c:forEach items="${basketList}" var="basket" varStatus="vs">
-					<tr data-bsnum="${basket.bs_num}" data-mbnum="${basket.bs_mb_num}">
+					<tr data-bsnum="${basket.bs_num}" data-mbnum="${basket.bs_mb_num}" data-gsnum = "${basket.gs_num}">
 						<td class="item-check">
 							<input type="checkbox" class="check" value="${basket.bs_ot_num}" name="orderList[${vs.index}].otNum">
 						</td>
@@ -264,21 +269,42 @@ $(function(){
   
 	// 옵션 수량 변경(btn-chage-amount)클릭 ==========================================================================
   $('.main .box-content .box-basket table tbody .btn-chage-amount').click(function() {
-		/*if(!(confirm('수량을 변경하겠습니까?')))
-			return;*/
+		if(!(confirm('수량을 변경하겠습니까?')))
+			return;
 	  let oriAmount = $(this).siblings('.bs_amount').data('amount');
+		let modiOtNum = $(this).parents('tr').find('.check').val()
 	  let modiAmount = $(this).siblings('.bs_amount').val();
-	  console.log(oriAmount)
-	  console.log(modiAmount)
 	  if(oriAmount == modiAmount){
 		  alert('수량을 변경해주세요.')
 		  return;
 	  }
 	  //옵션 수량 변경
-	  modifyBasket(this,modiAmount);
-	  
+	  modifyBasket(this, modiOtNum, modiAmount);
+  })// 
+  
+	//옵션 변경(btn-chage-option)클릭 ==========================================================================
+  $('.main .box-content .box-basket table tbody .btn-change-option').click(function(){
+		if(!(confirm('옵션을 변경하겠습니까?')))
+			return;
+	  getGoodsOptions(this);
+	  $(this).hide();
   })//
 	
+	//옵션 변경 취소(btn-cancel)클릭 ==========================================================================
+  $(document).on('click', '.main .box-content .box-basket table tbody .box-change .btn-cancel', function(){
+		if(!(confirm('옵션 변경을 취소하겠습니까?')))
+			return;
+	  $(this).parents('.box-change').remove();
+	  $('.main .box-content .box-basket table tbody .btn-change-option').show();
+  })//
+  
+	//옵션 변경 (btn-change)클릭 ==========================================================================
+  $(document).on('click', '.main .box-content .box-basket table tbody .box-change .btn-change', function(){
+	  let modiOtNum = $(this).parents('.box-change').find('select').val();
+	  let modiAmount = $(this).parents('tr').find('.bs_amount').data('amount');
+	  modifyBasket(this, modiOtNum, modiAmount);
+  })//
+  
 	//form 보내기 전에 ============================================================================
 	$('form').submit(function(){
 		//장바구니에 담긴게 없으면
@@ -289,18 +315,27 @@ $(function(){
 		}
 		//선택 안했으면
 		let checkCount = $('.main .box-content .box-basket table tbody .check:checked').length;
-		console.log(checkCount)
 		if(checkCount == 0){
 			alert('주문할 상품을 선택해주세요.')
 			return false;
 		}
-		//수량 변경했는데 변경 클릭 안했으면
+		//옵션 변경
 		let isChanged = true;
 		$('.main .box-content .box-basket table tbody tr').each(function(){
+			//옵션 변경 후 변경 클릭 안함
+			let boxChangeLength = $(this).find('.box-change').length;
+			if(boxChangeLength != 0){
+				alert('변경 또는 취소를 클릭해주세요.')
+				$(this).find('select').focus();
+				isChanged = false;
+				return false;
+			}
+			//옵션 수량 제대로 입력 안함
 			if(!validateAmount($(this).find('.bs_amount'))){
 				isChanged = false;
 				return false;
 			}
+			//수량 변경했는데 변경 클릭 안했으면
 			let orAmount = $(this).find('.bs_amount').data('amount');
 			let maxAmount = $(this).find('.bs_amount').data('otamount');
 			let value = $(this).find('.bs_amount').val();
@@ -382,15 +417,11 @@ $(function(){
 	}//
 	
 	//modifyBasket : 장바구니 수정 =====================================================================================
-	function modifyBasket(selector, modiAmount){
+	function modifyBasket(selector, modiOtNum, modiAmount){
 		let bs_num = $(selector).parents('tr').data('bsnum');
 		let bs_mb_num = $(selector).parents('tr').data('mbnum');
-		let bs_ot_num = $(selector).parents('tr').find('.check').val();
+		let bs_ot_num = modiOtNum;
 		let bs_amount = modiAmount;
-		console.log(bs_num)
-		console.log(bs_mb_num)
-		console.log(bs_ot_num)
-		console.log(bs_amount)
 		//장바구니 삭제
 		let obj = {
 			bs_num,
@@ -407,5 +438,31 @@ $(function(){
 				alert('장바구니 수정에 실패했습니다. 다시 시도해주세요.');
 		});
 	}//
+	
+	function getGoodsOptions(selector){
+		let gs_num = $(selector).parents('tr').data('gsnum');
+		let oriOtNum = $(selector).parents('tr').find('.check').val();
+		let obj = {gs_num};
+		ajaxPost(false, obj, '/get/goodsOptions', function(data){
+			let html = ''
+			html += '<div class="box-change input-group m-0">';
+			html += 	'<select class="form-control">';
+			for(option of data.optionList){
+				if(option.ot_amount != 0){
+					html += 	'<option value="'+option.ot_num+'"';									
+					if(option.ot_num == oriOtNum)
+						html += 	'selected';
+					html +=   '>'+option.ot_name+'</option>';
+				}
+			}
+			html += 	'</select>';
+		  html += 	'<div class="input-group-append">';
+		  html += 		'<button class="btn btn-change" type="button">변경</button>';
+			html += 		'<button class="btn btn-cancel" type="button">취소</button>';
+			html += 	'</div>';
+			html += '</div>';
+			$(selector).parent('.box-option').append(html);
+		});
+	}
 </script>
 </html>

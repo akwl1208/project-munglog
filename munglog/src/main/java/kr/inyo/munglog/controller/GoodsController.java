@@ -175,10 +175,20 @@ public class GoodsController {
 	public Map<Object, Object> modifyBasket(@RequestBody BasketVO basket, HttpSession session) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		System.out.println(basket);
 		boolean res = goodsService.modifyBasket(basket, user);
 		
 		map.put("res", res);
+		return map;
+	}
+	
+	/* 옵션리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/get/goodsOptions", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getGoodsOptions(@RequestBody GoodsVO goods) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		ArrayList<OptionVO> optionList = goodsService.getOtionList(goods.getGs_num());
+		
+		map.put("optionList", optionList);
 		return map;
 	}
 
