@@ -41,6 +41,11 @@
 		select * from attachment where at_bd_num = #{bd_num}
 	</select>
 	
+	<!-- 게시글 번호 주고 게시글 가져오기 -->
+	<select id="selectBoard" resultType="kr.inyo.munglog.vo.BoardVO">
+		select * from board where bd_num = #{bd_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">
@@ -62,5 +67,13 @@
 	<!-- update ************************************************************************************************* -->
 	
 	<!-- delete ************************************************************************************************* -->
-
+	<!-- 첨부파일 삭제 -->
+	<delete id="deleteAttachment">
+		delete from attachment where at_num = #{at_num}
+	</delete>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoard">
+		delete from board where bd_num = #{bd_num}
+	</delete>
 </mapper>

@@ -280,4 +280,17 @@ public class GoodsController {
 		map.put("qnaList", qnaList);
 		return map;
 	}//
+	
+	/* QNA 삭제 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/delete/qna", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> deleteQna(@RequestBody BoardVO board, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		board.setBd_type("QNA");
+		boolean res = boardService.deleteBoard(board, user);
+		
+		map.put("res", res);
+		return map;
+	}//
 }

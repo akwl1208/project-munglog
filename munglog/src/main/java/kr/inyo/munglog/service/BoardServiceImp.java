@@ -58,7 +58,13 @@ public class BoardServiceImp implements BoardService {
 			e.printStackTrace();
 		}
 		return url;
-	}
+	}//
+	
+	//파일 삭제 ============================================================================================
+	private void deleteFile(AttachmentVO attachment, String uploadPath) {
+		UploadFileUtils.deleteFile(uploadPath, attachment.getAt_name());
+		boardDao.deleteAttachment(attachment.getAt_num());
+	}//
 	
 /* overide 메소드 *********************************************************************************************************** */
 	//registerQna : qna 등록 ==========================================================================
@@ -136,5 +142,40 @@ public class BoardServiceImp implements BoardService {
 		if(bd_num < 1)
 			return null;
 		return boardDao.selectAttachmentList(bd_num);
+	}
+	
+	//deleteBoard : 게시글 삭제 ==========================================================================
+	@Override
+	public boolean deleteBoard(BoardVO board, MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(board == null || board.getBd_num() < 1)
+			return false;
+		//게시글 있는지 확인
+		BoardVO dbBoard = boardDao.selectBoard(board);
+		if(dbBoard == null)
+			return false;
+		//관리자가 아닌 다른 회원이면
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S")
+				&& (dbBoard.getBd_mb_num() != user.getMb_num()))
+			return false;
+		//다른 게시글이면
+		if(!dbBoard.getBd_type().equals(board.getBd_type()))
+			return false;
+		//업로드한 첨부파일 삭제--------------------------------------------------------
+		ArrayList<AttachmentVO> dbAttachmentList = boardDao.selectAttachmentList(dbBoard.getBd_num());
+		//첨부파일이 있으면
+		if(!dbAttachmentList.isEmpty()) {
+			for(AttachmentVO tmpAttachment : dbAttachmentList) {
+				if(tmpAttachment == null)
+					continue;
+				if(tmpAttachment.getAt_num() < 1 || tmpAttachment.getAt_name() == "")
+					continue;
+				deleteFile(tmpAttachment, fileUploadPath);
+			}
+		}
+		//게시글 삭제
+		return boardDao.deleteBoard(dbBoard.getBd_num());
 	}
 }

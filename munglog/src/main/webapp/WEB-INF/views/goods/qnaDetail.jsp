@@ -87,14 +87,50 @@
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
-
+	let userMbNum = '${user.mb_num}';
+	let userLevel = '${user.mb_level}'
 /* 이벤트 *********************************************************************************************************** */
-	$(function(){
-
-	})//	
+$(function(){
+	//QNA 삭제(btn-delete) 클릭	=================================================================================
+	$('.main .box-content .box-btn .btn-delete').click(function(){
+		//로그인 안했으면
+		if(userMbNum == ''){
+			if(confirm('Q&A를 삭제하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+				location.href = '<%=request.getContextPath()%>/account/login';
+			e.preventDefault();
+			return;
+		}
+		//관리자가 아닌 다른 회원이 삭제하면
+		let mbNum = ${qna.bd_mb_num};
+		if(userLevel != 'A' && userLevel != 'S' && (userMbNum != mbNum)){
+			alert('Q&A를 작성한 회원만 삭제 수 있습니다.')	
+			e.preventDefault();	
+			return;
+		}
+		//삭제할건지 묻기
+		if(!confirm('Q&A를 삭제하겠습니까?'))
+			return;
+		//삭제하기
+		deleteQna();
+	})//
+})//	
 	
 /* 함수 *********************************************************************************************************** */
-	// getQnaList : QNA 리스트 가져오기 =============================================================================
-
+	// deleteQna : QNA 삭제 =============================================================================
+	function deleteQna(){
+		let bd_num = ${qna.qn_bd_num};
+		let bd_mb_num = ${qna.bd_mb_num};
+		let obj = {
+			bd_num,
+			bd_mb_num
+		}
+		ajaxPost(false, obj, '/delete/qna', function(data){
+			if(data.res){
+				alert('Q&A를 삭제했습니다.');
+				location.href = '<%=request.getContextPath()%>/goods/qna';
+			} else
+				alert('Q&A 삭제에 실패했습니다.');
+		});
+	}//
 </script>
 </html>

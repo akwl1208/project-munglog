@@ -13,8 +13,12 @@ public interface BoardDAO {
 	/* 게시글 ===================================================== */
 	//게시글 추가
 	boolean insertBoard(BoardVO board);
-	//게시글 가져오기
+	//모든 정보 주고 게시글 가져오기
 	BoardVO selectBoardByAll(BoardVO board);
+	//게시글 번호로 게시글 가져오기
+	BoardVO selectBoard(BoardVO board);
+	//게시글 삭제
+	boolean deleteBoard(int bd_num);
 	
 	/* QNA ===================================================== */
 	//QNA 등록
@@ -31,5 +35,6 @@ public interface BoardDAO {
 	void insertAttachment(AttachmentVO attachment);
 	//첨부파일 리스트 가져오기
 	ArrayList<AttachmentVO> selectAttachmentList(int bd_num);
-
+	//첨부파일 삭제
+	void deleteAttachment(int at_num);
 }

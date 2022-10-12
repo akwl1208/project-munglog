@@ -23,5 +23,6 @@ public interface BoardService {
 	QnaDTO getQna(MemberVO user, int qn_num);
 	//첨부파일 리스트 가져오기
 	ArrayList<AttachmentVO> getAttachmentList(int bd_num);
-
+	//게시글 삭제
+	boolean deleteBoard(BoardVO board, MemberVO user);
 }
