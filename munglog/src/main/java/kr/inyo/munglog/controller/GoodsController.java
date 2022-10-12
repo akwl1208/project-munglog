@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -25,10 +27,12 @@ import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.dto.PaymentDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
+import kr.inyo.munglog.service.BoardService;
 import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
+import kr.inyo.munglog.vo.BoardVO;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
@@ -41,6 +45,8 @@ public class GoodsController {
 	GoodsService goodsService;
 	@Autowired
 	MessageService messageService;
+	@Autowired
+	BoardService boardService;
 	
 /* ajax 아님 ***************************************************************/
 	/* 굿즈 ---------------------------------------------------------------*/
@@ -101,6 +107,37 @@ public class GoodsController {
 		mv.addObject("address", address);
 		mv.addObject("oList", oList);
 		mv.setViewName("/goods/order");
+		return mv;
+	}//
+	
+	/* 굿즈 QnA ---------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/qna", method = RequestMethod.GET)
+	public ModelAndView goodsQnaGet(ModelAndView mv) {
+		
+		mv.setViewName("/goods/qna");
+		return mv;
+	}//
+	
+	/* 굿즈 QnA 등록 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/registerQna", method = RequestMethod.GET)
+	public ModelAndView goodsRegisterQnaGet(ModelAndView mv) {
+		ArrayList<GoodsVO> goodsList = goodsService.getGoodsList();
+		
+		mv.addObject("goodsList", goodsList);
+		mv.setViewName("/goods/registerQna");
+		return mv;
+	}//
+	
+	@RequestMapping(value = "/goods/registerQna", method = RequestMethod.POST)
+	public ModelAndView goodsRegisterQnaPost(ModelAndView mv, HttpSession session,
+			BoardVO board, MultipartFile [] attachments, Integer qn_gs_num, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = boardService.registerQna(user, board, qn_gs_num, attachments);
+		
+		if(res)
+			messageService.message(response, "Q&A를 등록했습니다.", "/munglog/goods/qna");
+		else
+			messageService.message(response, "Q&A 등록에 실패했습니다.", "/munglog/goods/registerQna");
 		return mv;
 	}//
 	
@@ -191,5 +228,15 @@ public class GoodsController {
 		map.put("optionList", optionList);
 		return map;
 	}
-
+	
+	/* 굿즈 qna 이미지 업로드 ------------------------------------------------------------------------------------------- */
+	@RequestMapping(value="/upload/qnaImg", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> uploadQnaImg(@RequestParam("file") MultipartFile file){
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		String url = boardService.uploadQnaImage(file);
+		
+		map.put("url", url);
+		return map;
+	}
 }

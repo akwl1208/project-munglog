@@ -46,4 +46,6 @@ public interface GoodsService {
 	boolean completePayment(PaymentDTO payment, MemberVO user) throws IamportResponseException, IOException;
 	//장바구니 수정
 	boolean modifyBasket(BasketVO basket, MemberVO user);
+	//굿즈 리스트 가져오기
+	ArrayList<GoodsVO> getGoodsList();
 }

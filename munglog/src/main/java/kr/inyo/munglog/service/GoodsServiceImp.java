@@ -69,7 +69,7 @@ public class GoodsServiceImp implements GoodsService {
 		if(cri == null)
 			return null;
 		//회원번호 주고 로그 가져오기
-		return goodsDao.selectGoodsList(cri);
+		return goodsDao.selectGoodsListByCri(cri);
 	}
 	
 	//getGoodsTotalCount : 굿즈 총 개수 가져오기 =============================================================================
@@ -369,5 +369,11 @@ public class GoodsServiceImp implements GoodsService {
 		dbBasket.setBs_ot_num(basket.getBs_ot_num());
 		dbBasket.setBs_amount(basket.getBs_amount());
 		return goodsDao.updateBasket(dbBasket);
-	}
+	}//
+	
+	//getGoodsList : cri 없이 굿즈 리스트 가져오기 ==========================================================================
+	@Override
+	public ArrayList<GoodsVO> getGoodsList() {
+		return goodsDao.selectGoodsList();
+	}//
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.inyo.munglog.dao.BoardDAO">
+	
+	<!-- select ************************************************************************************************ -->
+	<!-- 모든 정보로 게시글 가져오기 -->
+	<select id="selectBoardByAll" resultType="kr.inyo.munglog.vo.BoardVO">
+		select * from board 
+			where bd_type = #{bd_type} and bd_mb_num = #{bd_mb_num} and bd_title = #{bd_title} and bd_content = #{bd_content}
+	</select>
+	
+	<!-- insert *********************************************************************************************** -->
+	<!-- 게시글 추가 -->
+	<insert id="insertBoard">
+		insert into board(bd_type, bd_mb_num, bd_title, bd_content)
+			values(#{bd_type}, #{bd_mb_num}, #{bd_title}, #{bd_content})
+	</insert>
+	
+	<!-- QNA 추가 -->
+	<insert id="insertQna">
+		insert into qna(qn_bd_num, qn_gs_num, qn_state)
+			values(#{qn_bd_num}, #{qn_gs_num}, #{qn_state})
+	</insert>
+	
+	<!-- 첨부파일 추가 -->
+	<insert id="insertAttachment">
+		insert into attachment(at_bd_num, at_ori_name, at_name)
+			values(#{at_bd_num}, #{at_ori_name}, #{at_name})
+	</insert>
+	<!-- update ************************************************************************************************* -->
+	
+	<!-- delete ************************************************************************************************* -->
+
+</mapper>

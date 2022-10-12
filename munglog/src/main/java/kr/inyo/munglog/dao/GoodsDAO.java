@@ -21,12 +21,14 @@ public interface GoodsDAO {
 	ArrayList<CategoryVO> selectCategoryList();
 	
 	/* 굿즈 ======================================================================================= */
-	//굿즈 리스트 가져오기
-	ArrayList<GoodsVO> selectGoodsList(Criteria cri);
+	//cri로 굿즈 리스트 가져오기
+	ArrayList<GoodsVO> selectGoodsListByCri(Criteria cri);
 	//굿즈 총 개수 가져오기
 	int selectGoodsTotalCount(Criteria cri);
 	//굿즈 번호로 굿즈 정보 가져오기
 	GoodsVO selectGoods(int gs_num);
+	//굿즈 리스트 가져오기
+	ArrayList<GoodsVO> selectGoodsList();
 
 	/* 옵션 ======================================================================================= */
 	//굿즈 번호로 옵션 리스트 가져오기
