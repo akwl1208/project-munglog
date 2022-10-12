@@ -44,4 +44,6 @@ public interface GoodsService {
 	boolean verifyPayment(String rsp) throws IamportResponseException, IOException;
 	//결제 완료하기
 	boolean completePayment(PaymentDTO payment, MemberVO user) throws IamportResponseException, IOException;
+	//장바구니 수정
+	boolean modifyBasket(BasketVO basket, MemberVO user);
 }

@@ -168,5 +168,18 @@ public class GoodsController {
 		map.put("res", res);
 		return map;
 	}//
+	
+	/* 장바구니 수정 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/modify/basket", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> modifyBasket(@RequestBody BasketVO basket, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		System.out.println(basket);
+		boolean res = goodsService.modifyBasket(basket, user);
+		
+		map.put("res", res);
+		return map;
+	}
 
 }

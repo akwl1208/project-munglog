@@ -143,6 +143,14 @@
 			where ad_num = #{ad_num} and ad_mb_num = #{ad_mb_num}
 	</update>
 	
+	<!-- 장바구니 수정 -->
+	<update id="updateBasket">
+		update basket
+			set bs_ot_num = #{bs_ot_num},
+				bs_amount = #{bs_amount}
+			where bs_num = #{bs_num} and bs_mb_num = #{bs_mb_num}
+	</update>
+	
 	<!-- delete ************************************************************************************************* -->
 	<!-- 장바구니 삭제 -->
 	<delete id="deleteBasket">

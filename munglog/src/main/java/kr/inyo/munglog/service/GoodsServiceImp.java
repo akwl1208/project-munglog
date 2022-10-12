@@ -154,7 +154,9 @@ public class GoodsServiceImp implements GoodsService {
 	@Override
 	public boolean deleteBasket(BasketVO basket, MemberVO user) {
 		//값이 없으면
-		if(basket == null || user == null || user.getMb_num() < 1)
+		if(basket == null || user == null)
+			return false;
+		if(basket.getBs_mb_num() < 1 || user.getMb_num() < 1)
 			return false;
 		//회원 번호가 다르면
 		if(basket.getBs_mb_num() != user.getMb_num())
@@ -163,7 +165,7 @@ public class GoodsServiceImp implements GoodsService {
 		BasketVO dbBasket = goodsDao.selectBasket(basket);
 		if(dbBasket == null)
 			return false;
-		return goodsDao.deleteBasket(basket);
+		return goodsDao.deleteBasket(dbBasket);
 	}
 
 	//getOrderList : 주문할 상품들 가져오기 =========================================================================
@@ -347,4 +349,25 @@ public class GoodsServiceImp implements GoodsService {
 			memberDao.insertPoint(payment.getMbNum(), "사용", "굿즈 구매", payment.getPointAmount());
 		return true;
 	}//
+
+	//modifyBasket : 장바구니 수정 ====================================================================================
+	@Override
+	public boolean modifyBasket(BasketVO basket, MemberVO user) {
+		//값이 없으면
+		if(basket == null || user == null || user.getMb_num() < 1)
+			return false;
+		if(basket.getBs_num() < 1 || basket.getBs_ot_num() < 1 || basket.getBs_amount() < 1)
+			return false;
+		//회원 번호가 다르면
+		if(basket.getBs_mb_num() != user.getMb_num())
+			return false;
+		//장바구니에 담긴 상품인지 확인
+		BasketVO dbBasket = goodsDao.selectBasket(basket);
+		if(dbBasket == null)
+			return false;
+		//값 재설정
+		dbBasket.setBs_ot_num(basket.getBs_ot_num());
+		dbBasket.setBs_amount(basket.getBs_amount());
+		return goodsDao.updateBasket(dbBasket);
+	}
 }

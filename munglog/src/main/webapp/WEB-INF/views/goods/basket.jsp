@@ -111,7 +111,7 @@
 							</a>			
 							<div class="box-option mt-2">
 								<span class="ot_name">- ${basket.ot_name}</span><br>
-								<a class="btn-change-option" href="#">옵션 변경</a>
+								<a class="btn-change-option" href="javascript:0;">옵션 변경</a>
 							</div>
 						</td>
 						<td class="item-price">
@@ -120,7 +120,8 @@
 						<td class="item-amount">
 							<input type="number" class="bs_amount" min="1" 
 								max="<c:if test="${basket.ot_amount < 10}">${basket.ot_amount}</c:if><c:if test="${basket.ot_amount >= 10}">10</c:if>" 
-								value="${basket.bs_amount}" data-amount="${basket.bs_amount}" name="orderList[${vs.index}].orAmount">
+								value="${basket.bs_amount}" data-amount="${basket.bs_amount}" data-otamount="${basket.ot_amount}"
+								name="orderList[${vs.index}].orAmount">
 							<button type="button" class="btn-chage-amount">변경</button>
 						</td>
 						<td class="item-delivery"><span class="deliveryFee"></span></td>
@@ -155,9 +156,9 @@
 			<!-- tbody ----------------------------------------------------------------------------------------------------- -->
 			<tbody>
 				<tr>
-					<td><span class="goodsPrice">95000</span></td>
-					<td><span class="deliveryFee">95000</span></td>
-					<td><span class="totalPrice">95000</span></td>
+					<td><span class="goodsPrice"></span></td>
+					<td><span class="deliveryFee"></span></td>
+					<td><span class="totalPrice"></span></td>
 				</tr>
 			</tbody>
 		</table>
@@ -172,7 +173,7 @@
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
-
+	
 /* 이벤트 *********************************************************************************************************** */
 $(function(){
 	$(document).ready(function(){
@@ -254,6 +255,30 @@ $(function(){
 		$('form').submit();
 	})//
 	
+	// 옵션 수량 입력 이벤트 ==========================================================================
+  $('.main .box-content .box-basket table tbody .bs_amount').keyup(function() {
+	  if(!validateAmount($(this)))
+		  return;
+    editSummary();
+  })//
+  
+	// 옵션 수량 변경(btn-chage-amount)클릭 ==========================================================================
+  $('.main .box-content .box-basket table tbody .btn-chage-amount').click(function() {
+		/*if(!(confirm('수량을 변경하겠습니까?')))
+			return;*/
+	  let oriAmount = $(this).siblings('.bs_amount').data('amount');
+	  let modiAmount = $(this).siblings('.bs_amount').val();
+	  console.log(oriAmount)
+	  console.log(modiAmount)
+	  if(oriAmount == modiAmount){
+		  alert('수량을 변경해주세요.')
+		  return;
+	  }
+	  //옵션 수량 변경
+	  modifyBasket(this,modiAmount);
+	  
+  })//
+	
 	//form 보내기 전에 ============================================================================
 	$('form').submit(function(){
 		//장바구니에 담긴게 없으면
@@ -267,6 +292,27 @@ $(function(){
 		console.log(checkCount)
 		if(checkCount == 0){
 			alert('주문할 상품을 선택해주세요.')
+			return false;
+		}
+		//수량 변경했는데 변경 클릭 안했으면
+		let isChanged = true;
+		$('.main .box-content .box-basket table tbody tr').each(function(){
+			if(!validateAmount($(this).find('.bs_amount'))){
+				isChanged = false;
+				return false;
+			}
+			let orAmount = $(this).find('.bs_amount').data('amount');
+			let maxAmount = $(this).find('.bs_amount').data('otamount');
+			let value = $(this).find('.bs_amount').val();
+			if(orAmount != value){
+				alert('수량 변경을 클릭해주세요.')
+				$(this).find('.bs_amount').focus();
+				isChanged = false;
+				return false;
+			}
+		});
+		if(isChanged == false){
+			$('.main .box-content .box-basket table tbody .check, .checkAll').prop('checked', false);
 			return false;
 		}
 	})//
@@ -312,6 +358,53 @@ $(function(){
 		ajaxPost(false, obj, '/delete/basket', function(data){
 			if(data.res)
 				$(selector).parents('tr').remove();
+		});
+	}//
+	
+	//validateAmount : 옵션 수량 검사 =====================================================================================
+	function validateAmount(selector){
+	  let oriAmount = selector.data('amount');
+	  let value = selector.val();
+		//재고량 초과하여 주문할 수 없다.
+		let maxAmount = selector.data('otamount');
+		if(value > maxAmount){
+		 alert('현재 주문 가능한 수량은'+maxAmount+'개 입니다.');
+		 selector.val(oriAmount);
+		 return false;
+		}
+		//최소 1개 이상 최대 10 이하로 입력
+		if(value.length != 0 && (Number(value) > 10 || Number(value) < 1)){
+		 alert('최소 1개 이상 최대 10개 이하로 입력할 수 있습니다.');
+		 selector.val(oriAmount);
+		 return false;
+		}
+		return true;
+	}//
+	
+	//modifyBasket : 장바구니 수정 =====================================================================================
+	function modifyBasket(selector, modiAmount){
+		let bs_num = $(selector).parents('tr').data('bsnum');
+		let bs_mb_num = $(selector).parents('tr').data('mbnum');
+		let bs_ot_num = $(selector).parents('tr').find('.check').val();
+		let bs_amount = modiAmount;
+		console.log(bs_num)
+		console.log(bs_mb_num)
+		console.log(bs_ot_num)
+		console.log(bs_amount)
+		//장바구니 삭제
+		let obj = {
+			bs_num,
+			bs_mb_num,
+			bs_ot_num,
+			bs_amount
+		};
+		ajaxPost(false, obj, '/modify/basket', function(data){
+			if(data.res){
+				alert('장바구니를 수정했습니다.');
+				location.reload();
+			}
+			else
+				alert('장바구니 수정에 실패했습니다. 다시 시도해주세요.');
 		});
 	}//
 </script>

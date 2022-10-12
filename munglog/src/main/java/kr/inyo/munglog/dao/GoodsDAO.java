@@ -47,6 +47,8 @@ public interface GoodsDAO {
 	void deleteExpiredBasket(int mb_num);
 	//주문한 상품 장바구니 삭제
 	void deleteBasketByOtNum(@Param("mb_num")int mbNum, @Param("ot_num")int otNum);
+	//장바구니 수정
+	boolean updateBasket(BasketVO dbBasket);
 	
 	/* 주문 ======================================================================================= */
 	//옵션번호로 주문 내역 가져오기
@@ -72,9 +74,4 @@ public interface GoodsDAO {
 	//배송지 수정
 	void updateAddress(AddressVO dbAddress);
 
-	
-
-	
-
-	
 }
