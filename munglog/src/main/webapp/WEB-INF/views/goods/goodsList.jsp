@@ -201,7 +201,7 @@
 			if(!pm.prev)
 				html += 	' disabled';
 			html += 	'">';
-			html += 		'<a class="page-link" href="#" data-page="'+(pm.startPage-1)+'">이전</a>';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.startPage-1)+'">이전</a>';
 			html += 	'</li>';
 			//페이지 숫자
 			for(let i = pm.startPage; i <= pm.endPage; i++){
@@ -217,7 +217,7 @@
 			if(!pm.next)
 				html += 	' disabled';
 			html += 	'">';
-			html += 		'<a class="page-link" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
 			html += 	'</li>';
 			$('.main .box-content .pagination').html(html);
 		});
