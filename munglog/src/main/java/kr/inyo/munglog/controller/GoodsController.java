@@ -25,6 +25,7 @@ import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.dto.PaymentDTO;
+import kr.inyo.munglog.dto.QnaDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.BoardService;
@@ -167,7 +168,7 @@ public class GoodsController {
 		
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 장바구니 삭제 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/delete/basket", method = RequestMethod.POST)
@@ -179,7 +180,7 @@ public class GoodsController {
 		
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 결제 검증 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/verify/payment", method = RequestMethod.POST)
@@ -216,7 +217,7 @@ public class GoodsController {
 		
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 옵션리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/get/goodsOptions", method = RequestMethod.POST)
@@ -227,7 +228,7 @@ public class GoodsController {
 		
 		map.put("optionList", optionList);
 		return map;
-	}
+	}//
 	
 	/* 굿즈 qna 이미지 업로드 ------------------------------------------------------------------------------------------- */
 	@RequestMapping(value="/upload/qnaImg", method = RequestMethod.POST)
@@ -238,5 +239,20 @@ public class GoodsController {
 		
 		map.put("url", url);
 		return map;
-	}
+	}//
+	
+	/* QNA 리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/get/qnaList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getQnaList(@RequestBody Criteria cri) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		//qna 리스트 가져오기
+		ArrayList<QnaDTO> qnaList = boardService.getQnaList(cri);
+		int totalCount = boardService.getBoardTotalCount(cri, "QNA");
+		PageMaker pm = new PageMaker(totalCount, 5, cri);
+		
+		map.put("pm", pm);
+		map.put("qnaList", qnaList);
+		return map;
+	}//
 }

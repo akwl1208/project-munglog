@@ -11,6 +11,22 @@
 			where bd_type = #{bd_type} and bd_mb_num = #{bd_mb_num} and bd_title = #{bd_title} and bd_content = #{bd_content}
 	</select>
 	
+	<!-- cri로 qna 리스트 가져오기 -->
+	<select id="selectQnaListByCri" resultType="kr.inyo.munglog.dto.QnaDTO">
+		select qna.*, board.*, gs_thumb, mb_nickname from qna
+			join board on qna.qn_bd_num = board.bd_num
+      join goods on qna.qn_gs_num = goods.gs_num
+      join member on board.bd_mb_num = member.mb_num
+		  order by bd_reg_date desc
+		  limit #{pageStart}, #{perPageNum}
+	</select>
+	
+	<!-- cri로 게시글 총 개수 가져오기 -->
+	<select id="selectQnaTotalCount" resultType="int">
+		select count(*) from board
+			where bd_type = #{bd_type}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">

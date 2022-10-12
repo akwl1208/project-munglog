@@ -33,6 +33,14 @@
 	.main .box-content .box-qna table tbody .item-nickname{
 		overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
 	}
+	.main .box-content .pagination .page-item.active .page-link{
+	 z-index: 1; color: #fb9600; font-weight:bold;
+	 background : #fff; border-color: #DFE0DF;	 
+	}	
+	.main .box-content .pagination .page-link:focus,
+	.main .box-content .pagination .page-link:hover {
+	  color: #000; background-color: #DFE0DF; border-color: #ccc;
+	}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
@@ -60,29 +68,7 @@
 					<th width="15%">작성일</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td class="item-state">
-						<span class="">답변 상태</span>
-					</td>
-					<td class="item-thumb p-0">
-						<a class="link-goods" href="#">
-							<img class="gs_thumb" src="/akwl.jpg">
-						</a>
-					</td>
-					<td class="item-title text-left">
-						<a class="link-qna" href="#">
-							<strong class="bd_title">제목</strong>
-						</a>
-					</td>
-					<td class="item-nickname">
-						<span class="mb_nickname">아지짱짱아지짱짱아지</span>
-					</td>
-					<td class="item-date">
-						<span class="bd_reg_date">2022-10-12</span>
-					</td>
-				</tr>
-			</tbody>
+			<tbody></tbody>
 		</table>
 	</div>
 	<!-- 페이지네이션 ------------------------------------------------------------------------------------------------- -->
@@ -97,9 +83,21 @@
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
-
+	let page = 1;
+	let cri = {
+		page,
+		perPageNum : 10
+	};  
+	let year = new Date().getFullYear(); // 년도
+	let month = new Date().getMonth() + 1;  // 월
+	let date = new Date().getDate();  // 날짜
+	let today = year + '-' + month + '-' + date;
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
+		$(document).ready(function(){
+			getQnaList(cri);
+		})//
+		
 		//QNA 등록(btn-register) 클릭 =================================================================
 		$('.main .box-content .box-register .btn-register').click(function(){
 			if('${user.mb_num}' == ''){
@@ -108,10 +106,77 @@
 				return;
 			}
 		})//
+		
+		//페이지네이션(page-link) 클릭 ====================================================================================
+		$(document).on('click','.main .box-content .pagination .page-link',function(e){
+			e.preventDefault();
+			cri.page = $(this).data('page');
+			getQnaList(cri);
+		})//
 	})//	
 	
 /* 함수 *********************************************************************************************************** */
-	//  :  =============================================================================
+	// getQnaList : QNA 리스트 가져오기 =============================================================================
+	function getQnaList(obj){
+		ajaxPost(false, obj, '/get/qnaList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			//리스트 구현-----------------------------------------------------------------------------------
+			for(qna of data.qnaList){
+				html += '<tr>';
+				html += 	'<td class="item-state">';
+				html += 		'<span class="qn_state">'+qna.qn_state+'</span>';
+				html += 	'</td>';
+				html += 	'<td class="item-thumb p-0">';
+				html += 		'<a class="link-goods" href="'+contextPath+'/goods/goodsDetail/'+qna.qn_gs_num+'">';
+				html += 			'<img class="gs_thumb" src="'+ contextPath +qna.gs_thumb_url+'">';
+				html += 		'</a>';
+				html += 	'</td>';
+				html += 	'<td class="item-title text-left">';
+				html += 		'<a class="link-qna" href="#">';
+				if(qna.bd_reg_date_str == today)
+					html +=			'<span class="badge badge-warning mr-2">NEW</span>';
+				html += 			'<strong class="bd_title">'+qna.bd_title+'</strong>';
+				html += 		'</a>';
+				html += 	'</td>';
+				html += 	'<td class="item-nickname">';
+				html += 		'<span class="mb_nickname">'+qna.mb_nickname+'</span>';
+				html += 	'</td>';
+				html += 	'<td class="item-date">';
+				html += 		'<span class="bd_reg_date">'+qna.bd_reg_date_str+'</span>';
+				html += 	'</td>';
+				html += '</tr>';
+			}
+			$('.main .box-content .box-qna table tbody').html(html);
+			//페이지네이션 구현--------------------------------------------------------------------------
+			html = '';
+			let pm = data.pm;
+			//이전
+			html += 	'<li class="page-item';
+			if(!pm.prev)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.startPage-1)+'">이전</a>';
+			html += 	'</li>';
+			//페이지 숫자
+			for(let i = pm.startPage; i <= pm.endPage; i++){
+				html += '<li class="page-item';
+				if(pm.cri.page == i)
+					html += ' active';
+				html += '">';
+				html += 	'<a class="page-link text-muted" href="#" data-page="'+i+'">'+i+'</a>';
+				html += '</li>';				
+			}
+			//다음
+			html += 	'<li class="page-item';
+			if(!pm.next)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
+			html += 	'</li>';
+			$('.main .box-content .pagination').html(html);
+		})
+	}//
 
 </script>
 </html>

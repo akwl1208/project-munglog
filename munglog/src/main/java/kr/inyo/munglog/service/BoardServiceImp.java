@@ -1,10 +1,14 @@
 package kr.inyo.munglog.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dao.BoardDAO;
+import kr.inyo.munglog.dto.QnaDTO;
+import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.AttachmentVO;
@@ -96,5 +100,24 @@ public class BoardServiceImp implements BoardService {
 			return null;
 		//이미지 파일 업로드
 		return uploadFile(file, qnaUploadPath);
+	}//
+	
+	//getQnaList : qna 리스트 가져오기 ==========================================================================
+	@Override
+	public ArrayList<QnaDTO> getQnaList(Criteria cri) {
+		//값이 없으면
+		if(cri == null)
+			return null;
+		//회원번호 주고 로그 가져오기
+		return boardDao.selectQnaListByCri(cri);
+	}//
+
+	//getBoardTotalCount : 게시글 총 개수 가져오기 ==========================================================================
+	@Override
+	public int getBoardTotalCount(Criteria cri, String bd_type) {
+		//값이 없으면
+		if(cri == null)
+			return 0;
+		return boardDao.selectQnaTotalCount(cri, bd_type);
 	}//
 }
