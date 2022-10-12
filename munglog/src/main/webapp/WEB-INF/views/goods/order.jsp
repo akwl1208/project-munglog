@@ -85,7 +85,7 @@
 				<c:forEach items="${oList}" var="order">
 					<tr data-value="${order.otNum}">
 						<td class="item-thumb">
-							<a class="link-goods" href="/goods/goodsDetail/${order.gs_num}">
+							<a class="link-goods" href="<c:url value="/goods/goodsDetail/${order.gs_num}"></c:url>">
 								<img class="gs_thumb" src="<c:url value="${order.gs_thumb_url}"></c:url>">	
 							</a>
 						</td>
