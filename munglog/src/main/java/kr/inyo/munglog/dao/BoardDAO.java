@@ -23,9 +23,13 @@ public interface BoardDAO {
 	ArrayList<QnaDTO> selectQnaListByCri(Criteria cri);
 	//게시글 총 개수 가져오기
 	int selectQnaTotalCount(@Param("cri")Criteria cri, @Param("bd_type")String bd_type);
+	//qna 가져오기
+	QnaDTO selectQna(int qn_num);
 	
 	/* 첨부파일 ===================================================== */
 	//첨부파일 추가
 	void insertAttachment(AttachmentVO attachment);
+	//첨부파일 리스트 가져오기
+	ArrayList<AttachmentVO> selectAttachmentList(int bd_num);
 
 }

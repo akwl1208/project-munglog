@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dto.QnaDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.AttachmentVO;
 import kr.inyo.munglog.vo.BoardVO;
 import kr.inyo.munglog.vo.MemberVO;
 
@@ -18,5 +19,9 @@ public interface BoardService {
 	ArrayList<QnaDTO> getQnaList(Criteria cri);
 	//게시글 총 개수 가져오기
 	int getBoardTotalCount(Criteria cri, String bd_type);
+	//qna 가져오기
+	QnaDTO getQna(MemberVO user, int qn_num);
+	//첨부파일 리스트 가져오기
+	ArrayList<AttachmentVO> getAttachmentList(int bd_num);
 
 }

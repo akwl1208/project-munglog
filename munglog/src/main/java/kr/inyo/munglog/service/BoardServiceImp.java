@@ -65,7 +65,7 @@ public class BoardServiceImp implements BoardService {
 	@Override
 	public boolean registerQna(MemberVO user, BoardVO board, Integer qn_gs_num, MultipartFile[] files) {
 		//값이 없으면
-		if(user == null || board == null || user.getMb_num() < 1)
+		if(user == null || board == null || user.getMb_num() < 1 || !user.getMb_activity().equals("0"))
 			return false;
 		if(qn_gs_num < 1 || board.getBd_title() == "" || board.getBd_content() == "")
 			return false;
@@ -120,4 +120,21 @@ public class BoardServiceImp implements BoardService {
 			return 0;
 		return boardDao.selectQnaTotalCount(cri, bd_type);
 	}//
+
+	//getQna : QNA 가져오기 ==========================================================================
+	@Override
+	public QnaDTO getQna(MemberVO user, int qn_num) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1 || qn_num < 1)
+			return null;
+		return boardDao.selectQna(qn_num);
+	}//
+
+	//getAttachmentList : 첨부파일 리스트 가져오기 ==========================================================================
+	@Override
+	public ArrayList<AttachmentVO> getAttachmentList(int bd_num) {
+		if(bd_num < 1)
+			return null;
+		return boardDao.selectAttachmentList(bd_num);
+	}
 }

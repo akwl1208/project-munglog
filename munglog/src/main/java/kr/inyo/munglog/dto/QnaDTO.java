@@ -13,7 +13,8 @@ public class QnaDTO {
 	private int qn_gs_num;
 	private String qn_state; //답변 상태
 	private String gs_thumb; //굿즈 썸네일
-	private String bd_mb_num; //해당회원만 상세 보기로 
+	private String gs_name; //굿즈명
+	private int bd_mb_num; //해당회원만 상세 보기로 
 	private Date bd_reg_date; //등록일
 	private String bd_title; //제목
 	private String bd_content; //내용

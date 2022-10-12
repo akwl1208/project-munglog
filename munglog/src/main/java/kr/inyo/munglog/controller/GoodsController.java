@@ -32,6 +32,7 @@ import kr.inyo.munglog.service.BoardService;
 import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.AddressVO;
+import kr.inyo.munglog.vo.AttachmentVO;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.BoardVO;
 import kr.inyo.munglog.vo.CategoryVO;
@@ -139,6 +140,30 @@ public class GoodsController {
 			messageService.message(response, "Q&A를 등록했습니다.", "/munglog/goods/qna");
 		else
 			messageService.message(response, "Q&A 등록에 실패했습니다.", "/munglog/goods/registerQna");
+		return mv;
+	}//
+	
+	/* 굿즈 QnA 상세보기 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/qnaDetail/{qn_num}", method = RequestMethod.GET)
+	public ModelAndView goodsQnaDetailGet(ModelAndView mv, @PathVariable("qn_num")int qn_num,
+			HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//로그인 안했으면
+		if(user == null)
+			messageService.message(response, "로그인해주세요.", "/munglog/account/login");
+		//qna 가져오기
+		QnaDTO qna = boardService.getQna(user, qn_num);
+		//다른 회원이 접근한거면
+		if(qna != null && (user.getMb_num() != qna.getBd_mb_num()))
+			messageService.message(response, "Q&A를 작성한 회원만 볼 수 있습니다.", "/munglog/goods/qna");
+		//첨부파일 리스트 가져오기
+		ArrayList<AttachmentVO> attachmentList = null;
+		if(qna != null)
+			attachmentList = boardService.getAttachmentList(qna.getQn_bd_num());
+		
+		mv.addObject("qna", qna);
+		mv.addObject("attachmentList", attachmentList);
+		mv.setViewName("/goods/qnaDetail");
 		return mv;
 	}//
 	

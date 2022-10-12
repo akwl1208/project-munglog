@@ -19,6 +19,7 @@
 	<resources mapping="/challenge/img/**" location="file:///D:/git/munglog/challenge/" />
 	<resources mapping="/goods/img/**" location="file:///D:/git/munglog/goods/" />
 	<resources mapping="/qna/img/**" location="file:///D:/git/munglog/qna/" />
+	<resources mapping="/file/**" location="file:///D:/git/munglog/file/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -70,6 +71,7 @@
 	    <beans:ref bean="guestInterceptor"/>
     </interceptor>
 		<interceptor>
+			<mapping path="/goods/qnaDetail"/>
 			<mapping path="/goods/registerQna"/>
 			<mapping path="/goods/order"/>
 			<mapping path="/goods/basket"/>

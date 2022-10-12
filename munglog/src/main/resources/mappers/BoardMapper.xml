@@ -27,6 +27,20 @@
 			where bd_type = #{bd_type}
 	</select>
 	
+	<!-- qna 가져오기 -->
+	<select id="selectQna" resultType="kr.inyo.munglog.dto.QnaDTO">
+		select qna.*, board.*, gs_name, mb_nickname from qna
+			join board on qna.qn_bd_num = board.bd_num
+      join goods on qna.qn_gs_num = goods.gs_num
+      join member on board.bd_mb_num = member.mb_num
+      where qn_num = #{qn_num}
+	</select>
+	
+	<!-- 첨부파일 리스트 가져오기 -->
+	<select id="selectAttachmentList" resultType="kr.inyo.munglog.vo.AttachmentVO">
+		select * from attachment where at_bd_num = #{bd_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">

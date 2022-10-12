@@ -30,6 +30,7 @@
 	.main .box-content .box-qna table tbody .item-thumb .gs_thumb{
 		max-width: 100%; width: 100%;
 	}
+	.main .box-content .box-qna table tbody .item-title .link-qna:hover .bd_title{color: #FF9E54;}
 	.main .box-content .box-qna table tbody .item-nickname{
 		overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
 	}
@@ -113,6 +114,25 @@
 			cri.page = $(this).data('page');
 			getQnaList(cri);
 		})//
+		
+		//QNA 제목(link-qna) 클릭 =================================================================
+		$(document).on('click','.main .box-content .box-qna .link-qna',function(e){
+			let userMbNum = '${user.mb_num}';
+			//로그인 안했으면
+			if(userMbNum == ''){
+				if(confirm('Q&A을 보려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/account/login';
+				e.preventDefault();
+				return;
+			}
+			//다른 회원이 보려고 하면
+			let mbNum = $(this).parents('tr').data('value');
+			if(userMbNum != mbNum){
+				alert('Q&A를 작성한 회원만 볼 수 있습니다.')	
+				e.preventDefault();	
+				return;
+			}
+		})//
 	})//	
 	
 /* 함수 *********************************************************************************************************** */
@@ -123,7 +143,7 @@
 			let contextPath = '<%=request.getContextPath()%>';
 			//리스트 구현-----------------------------------------------------------------------------------
 			for(qna of data.qnaList){
-				html += '<tr>';
+				html += '<tr data-value="'+qna.bd_mb_num+'">';
 				html += 	'<td class="item-state">';
 				html += 		'<span class="qn_state">'+qna.qn_state+'</span>';
 				html += 	'</td>';
@@ -133,7 +153,7 @@
 				html += 		'</a>';
 				html += 	'</td>';
 				html += 	'<td class="item-title text-left">';
-				html += 		'<a class="link-qna" href="#">';
+				html += 		'<a class="link-qna" href="'+contextPath+'/goods/qnaDetail/'+qna.qn_num+'">';
 				if(qna.bd_reg_date_str == today)
 					html +=			'<span class="badge badge-warning mr-2">NEW</span>';
 				html += 			'<strong class="bd_title">'+qna.bd_title+'</strong>';
