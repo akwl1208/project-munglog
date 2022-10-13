@@ -12,7 +12,7 @@ import kr.inyo.munglog.vo.MemberVO;
 
 public interface BoardService {
 	//QNA 등록
-	boolean registerQna(MemberVO user, BoardVO board, Integer qn_gs_num, MultipartFile[] files);
+	boolean registerQna(MemberVO user, BoardVO board, Integer qn_gs_num, MultipartFile[] attachments);
 	//QNA 내용 이미지 업로드
 	String uploadQnaImage(MultipartFile file);
 	//QNA 리스트 가져오기
@@ -25,4 +25,6 @@ public interface BoardService {
 	ArrayList<AttachmentVO> getAttachmentList(int bd_num);
 	//게시글 삭제
 	boolean deleteBoard(BoardVO board, MemberVO user);
+	//qna 수정
+	boolean modifyQna(MemberVO user, QnaDTO qna, MultipartFile[] files, int[] nums);
 }

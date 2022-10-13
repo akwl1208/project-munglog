@@ -16,9 +16,11 @@ public interface BoardDAO {
 	//모든 정보 주고 게시글 가져오기
 	BoardVO selectBoardByAll(BoardVO board);
 	//게시글 번호로 게시글 가져오기
-	BoardVO selectBoard(BoardVO board);
+	BoardVO selectBoard(int bd_num);
 	//게시글 삭제
 	boolean deleteBoard(int bd_num);
+	//게시글 수정
+	void updateBoard(BoardVO dbBoard);
 	
 	/* QNA ===================================================== */
 	//QNA 등록
@@ -29,6 +31,8 @@ public interface BoardDAO {
 	int selectQnaTotalCount(@Param("cri")Criteria cri, @Param("bd_type")String bd_type);
 	//qna 가져오기
 	QnaDTO selectQna(int qn_num);
+	//qna 수정
+	void updateQna(QnaDTO dbQna);
 	
 	/* 첨부파일 ===================================================== */
 	//첨부파일 추가
@@ -37,4 +41,7 @@ public interface BoardDAO {
 	ArrayList<AttachmentVO> selectAttachmentList(int bd_num);
 	//첨부파일 삭제
 	void deleteAttachment(int at_num);
+	//첨부파일 가져오기
+	AttachmentVO selectAttachment(int at_num);
+	
 }

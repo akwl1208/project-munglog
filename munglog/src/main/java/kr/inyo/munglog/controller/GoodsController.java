@@ -167,6 +167,46 @@ public class GoodsController {
 		return mv;
 	}//
 	
+	/* 굿즈 QnA 수정 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/modifyQna/{qn_num}", method = RequestMethod.GET)
+	public ModelAndView goodsModifyQnaGet(ModelAndView mv, @PathVariable("qn_num")int qn_num,
+			HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//로그인 안했으면
+		if(user == null)
+			messageService.message(response, "로그인해주세요.", "/munglog/account/login");
+		//qna 가져오기
+		QnaDTO qna = boardService.getQna(user, qn_num);
+		//다른 회원이 접근한거면
+		if(qna != null && (user.getMb_num() != qna.getBd_mb_num()))
+			messageService.message(response, "Q&A를 작성한 회원만 수정할 수 있습니다.", "/munglog/goods/qna");
+		//첨부파일 리스트 가져오기
+		ArrayList<AttachmentVO> attachmentList = null;
+		if(qna != null)
+			attachmentList = boardService.getAttachmentList(qna.getQn_bd_num());
+		ArrayList<GoodsVO> goodsList = goodsService.getGoodsList();
+		
+		mv.addObject("qna", qna);
+		mv.addObject("attachmentList", attachmentList);
+		mv.addObject("goodsList", goodsList);
+		mv.setViewName("/goods/modifyQna");
+		return mv;
+	}//
+	
+	@RequestMapping(value = "/goods/modifyQna/{qn_num}", method = RequestMethod.POST)
+	public ModelAndView goodsModifyQnaPost(ModelAndView mv, @PathVariable("qn_num")int qn_num, HttpSession session,
+			QnaDTO qna, MultipartFile [] attachments, int[] nums, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		qna.setQn_num(qn_num);
+		boolean res = boardService.modifyQna(user, qna, attachments, nums);
+		
+		if(res)
+			messageService.message(response, "Q&A를 수정했습니다.", "/munglog/goods/qnaDetail/"+qn_num);
+		else
+			messageService.message(response, "Q&A 수정에 실패했습니다.", "/munglog/goods/modifyQna/"+qn_num);
+		return mv;
+	}//
+	
 /* ajax **************************************************************************************************************** */
 	/* 굿즈 리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
 	@RequestMapping(value = "/get/goodsList", method = RequestMethod.POST)

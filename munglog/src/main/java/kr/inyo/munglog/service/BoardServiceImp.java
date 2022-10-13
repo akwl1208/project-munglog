@@ -49,7 +49,7 @@ public class BoardServiceImp implements BoardService {
 		return true;
 	}//
 	
-	// 파일 없로드 ============================================================================================
+	// 파일 업로드 ============================================================================================
 	public String uploadFile(MultipartFile file, String uploadPath) {
 		String url = "";
 		try {
@@ -153,7 +153,7 @@ public class BoardServiceImp implements BoardService {
 		if(board == null || board.getBd_num() < 1)
 			return false;
 		//게시글 있는지 확인
-		BoardVO dbBoard = boardDao.selectBoard(board);
+		BoardVO dbBoard = boardDao.selectBoard(board.getBd_num());
 		if(dbBoard == null)
 			return false;
 		//관리자가 아닌 다른 회원이면
@@ -178,4 +178,56 @@ public class BoardServiceImp implements BoardService {
 		//게시글 삭제
 		return boardDao.deleteBoard(dbBoard.getBd_num());
 	}
+
+	//modifyQna : QNA 수정 ==========================================================================
+	@Override
+	public boolean modifyQna(MemberVO user, QnaDTO qna, MultipartFile[] files, int[] nums) {
+		//값이 없으면
+		if(user == null || qna == null || user.getMb_num() < 1 || !user.getMb_activity().equals("0"))
+			return false;
+		if(qna.getQn_num() < 1 || qna.getQn_gs_num() < 1)
+			return false;
+		if(qna.getQn_bd_num() < 1 || qna.getBd_title() == "" || qna.getBd_content() == "")
+			return false;
+		if(files.length > 3 || (nums!=null && nums.length > 3))
+			return false;
+		//qna 가져오기
+		QnaDTO dbQna = boardDao.selectQna(qna.getQn_num());
+		if(dbQna == null || dbQna.getQn_bd_num() != qna.getQn_bd_num() || dbQna.getBd_mb_num() != user.getMb_num())
+			return false;
+		//답변완료한 QNA는 수정 못함
+		if(dbQna.getQn_state().equals("답변 완료"))
+			return false;
+		//기존 첨부파일 삭제 ------------------------------------------------------------------------ 
+		if(nums != null) {
+			for(int at_num : nums) {
+				if(at_num < 1)
+					continue;
+				AttachmentVO dbAttachment = boardDao.selectAttachment(at_num);
+				if(dbAttachment == null || dbAttachment.getAt_name().length() == 0)
+					continue;
+				deleteFile(dbAttachment, fileUploadPath);
+			}			
+		}
+		//새로운 첨부파일 추가 -----------------------------------------------------------------------
+		if(files != null) {
+			for(MultipartFile file : files) {
+				//값이 없으면
+				if(file == null || file.getOriginalFilename().length() == 0)
+					continue;
+				insertAttachment(file, dbQna.getQn_bd_num());
+			}			
+		}
+		//qna 수정 -------------------------------------------------------------------------------
+		//값 재설정
+		BoardVO dbBoard = new BoardVO();
+		dbBoard.setBd_num(dbQna.getQn_bd_num());
+		dbBoard.setBd_title(qna.getBd_title());
+		dbBoard.setBd_content(qna.getBd_content());
+		dbQna.setQn_gs_num(qna.getQn_gs_num());
+		//수정
+		boardDao.updateBoard(dbBoard);
+		boardDao.updateQna(dbQna);
+		return true;
+	}//
 }

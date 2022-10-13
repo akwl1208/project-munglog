@@ -46,7 +46,7 @@
 		<a class="link-list" href="<c:url value="/goods/qna"></c:url>">
 			<i class="btn-goToList fa-solid fa-list mr-4"></i>
 		</a>
-		<a class="link-modify" href="#">
+		<a class="link-modify" href="<c:url value="/goods/modifyQna/${qna.qn_num}"></c:url>">
 			<i class="btn-modify fa-solid fa-pen-to-square mr-4"></i>
 		</a>
 		<i class="btn-delete fa-solid fa-trash-can"></i>
@@ -88,7 +88,7 @@
 <script>
 /* 변수 *********************************************************************************************************** */
 	let userMbNum = '${user.mb_num}';
-	let userLevel = '${user.mb_level}'
+	let userLevel = '${user.mb_level}';
 /* 이벤트 *********************************************************************************************************** */
 $(function(){
 	//QNA 삭제(btn-delete) 클릭	=================================================================================
@@ -97,14 +97,12 @@ $(function(){
 		if(userMbNum == ''){
 			if(confirm('Q&A를 삭제하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
 				location.href = '<%=request.getContextPath()%>/account/login';
-			e.preventDefault();
 			return;
 		}
 		//관리자가 아닌 다른 회원이 삭제하면
 		let mbNum = ${qna.bd_mb_num};
 		if(userLevel != 'A' && userLevel != 'S' && (userMbNum != mbNum)){
-			alert('Q&A를 작성한 회원만 삭제 수 있습니다.')	
-			e.preventDefault();	
+			alert('Q&A를 작성한 회원만 삭제할 수 있습니다.');	
 			return;
 		}
 		//삭제할건지 묻기
@@ -112,6 +110,35 @@ $(function(){
 			return;
 		//삭제하기
 		deleteQna();
+	})//
+	
+	//QNA 수정(link-modify) 클릭	=================================================================================
+	$('.main .box-content .box-btn .link-modify').click(function(e){
+		//로그인 안했으면
+		if(userMbNum == ''){
+			if(confirm('Q&A를 수정하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+				location.href = '<%=request.getContextPath()%>/account/login';
+			e.preventDefault();
+			return;
+		}
+		//다른 회원이 수정하면
+		let mbNum = ${qna.bd_mb_num};
+		if(userMbNum != mbNum){
+			alert('Q&A를 작성한 회원만 수정할 수 있습니다.');	
+			e.preventDefault();	
+			return;
+		}
+		//답변 완료한 게시글은 수정 못함
+		if('${qna.qn_state}' == '답변 완료'){
+			alert('답변을 완료한 Q&A는 수정할 수 없습니다. 새로 등록해주세요.');
+			e.preventDefault();
+			return;
+		}
+		//수정할건지 묻기
+		if(!confirm('Q&A를 수정하겠습니까?')){
+			e.preventDefault();
+			return;
+		}
 	})//
 })//	
 	

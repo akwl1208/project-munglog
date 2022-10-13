@@ -46,6 +46,11 @@
 		select * from board where bd_num = #{bd_num}
 	</select>
 	
+	<!-- 첨부파일 가져오기 -->
+	<select id="selectAttachment" resultType="kr.inyo.munglog.vo.AttachmentVO">
+		select * from attachment where at_num = #{at_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">
@@ -65,7 +70,21 @@
 			values(#{at_bd_num}, #{at_ori_name}, #{at_name})
 	</insert>
 	<!-- update ************************************************************************************************* -->
+	<!-- 게시글 수정 -->
+	<update id="updateBoard">
+		update board
+			set bd_title = #{bd_title},
+				bd_content = #{bd_content}
+			where bd_num = #{bd_num}		
+	</update>
 	
+	<!-- QNA 수정 -->
+	<update id="updateQna">
+		update qna
+			set qn_gs_num = #{qn_gs_num},
+				qn_state = #{qn_state}
+			where qn_num = #{qn_num}		
+	</update>
 	<!-- delete ************************************************************************************************* -->
 	<!-- 첨부파일 삭제 -->
 	<delete id="deleteAttachment">
