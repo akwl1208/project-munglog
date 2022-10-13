@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>굿즈 Q&A</title>
+<title>굿즈 Q&A 관리</title>
 <!-- css ************************************************************************************************************* -->
 <style>
 	.main .box-title{
@@ -17,15 +17,18 @@
 		font-size: 12px; margin: 5px 0; padding-left: 24px;
 	}
 	.main .box-content{margin: 44px;}
-	.main .box-content .btn-register{
-		float: right; background-color: #a04c00;
-		border: none; color: #fff7ed; box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3);
-		border-radius: 3px; padding: 5px 10px;
+	.main .box-content .box-state span:nth-child(n+1):not(:last-of-type)::after{
+		display: inline-block; content: ''; margin: 0 6px 3px;
+		width: 1px; height: 12px; background-color: #b9ab9a; 
+		vertical-align: middle; line-height: 24px;
 	}
+	.main .box-content .box-state span:hover{color:#fb9600; cursor:pointer;}
+	.main .box-content .box-state .select{color:#fb9600; font-weight:bold;}
 	.main .box-content .box-qna table{
 		table-layout: fixed; text-align: center; 
 	}
 	.main .box-content .box-qna table thead{background-color: #d7d5d5;}
+	.main .box-content .box-qna table thead th,
 	.main .box-content .box-qna table tbody td{vertical-align: middle;}
 	.main .box-content .box-qna table tbody .item-thumb .gs_thumb{
 		max-width: 100%; width: 100%;
@@ -42,20 +45,29 @@
 	.main .box-content .pagination .page-link:hover {
 	  color: #000; background-color: #DFE0DF; border-color: #ccc;
 	}
+		.main .box-content .box-search{
+		width: 50%; margin: 0 auto;
+	}
+	.main .box-content .box-search .btn-search{
+		padding: 0 10px; background-color: #a04c00;
+		border: none; border-radius: 3px;
+	}
+	.main .box-content .box-search .btn-search .fa-solid{color: #fff7ed;}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
 <body>
 <!-- box-title(제목) ------------------------------------------------------------------------------------------------- -->
 <div class="box-title">
-	<i class="fa-solid fa-paw"></i><span>굿즈 Q&A</span>
-	<div class="box-message">Q&A를 등록하고 확인하세요.</div>
+	<i class="fa-solid fa-paw"></i><span>굿즈 Q&A 관리</span>
+	<div class="box-message">답변 대기 중인 Q&A를 확인하고, 관리하세요.</div>
 </div>
 <!-- box-content ------------------------------------------------------------------------------------------------- -->			
 <div class="box-content">
-	<!-- box-register(등록) ------------------------------------------------------------------------------------------------- -->
-	<div class="box-register clearfix">
-		<a href="<c:url value="/goods/registerQna"></c:url>" class="btn-register mb-4">Q&A 등록</a>
+	<div class="box-state text-right">
+		<span class="wait select">답변 대기</span>
+		<span class="complete">답변 완료</span>
+		<span class="all">전체</span>
 	</div>
 	<!-- box-qna ------------------------------------------------------------------------------------------------- -->
 	<div class="box-qna">
@@ -66,7 +78,7 @@
 					<th width="110px">상품 이미지</th>
 					<th>제목</th>
 					<th width="20%">작성자</th>
-					<th width="15%">작성일</th>
+					<th width="17%">작성일</th>
 				</tr>
 			</thead>
 			<tbody></tbody>
@@ -74,16 +86,54 @@
 	</div>
 	<!-- 페이지네이션 ------------------------------------------------------------------------------------------------- -->
 	<ul class="pagination justify-content-center mt-5"></ul>
+	<!-- box-search --------------------------------------------------------------------------------------- -->
+	<div class="box-search">
+		<div class="input-group mt-5">
+			<div class="input-group-prepend">
+				<select class="searchType form-control">
+					<option value="gs_num">굿즈명</option>
+					<option value="bd_title">제목</option>
+					<option value="mb_nickname">작성자</option>
+				</select>
+			</div>
+			<!-- 굿즈 선택 --------------------------------------------------------------------------------------- -->
+			<select class="keyword gs_keyword form-control">
+				<option value="0">굿즈 선택</option>
+				<c:forEach items="${goodsList}" var="goods">
+					<option value="${goods.gs_num}">${goods.gs_name}</option>
+				</c:forEach>
+			</select>
+			<!-- 제목 선택 --------------------------------------------------------------------------------------- -->
+			<select class="keyword bd_keyword form-control" style="display: none;">
+				<option value="">제목 선택</option>
+				<option>상품 문의</option>
+				<option>배송 문의</option>
+				<option>교환 및 환불 문의</option>
+				<option>결제 문의</option>
+				<option>기타 문의</option>
+			</select>
+			<!-- 작성자 선택 --------------------------------------------------------------------------------------- -->
+			<input type="text" class="keyword mb_keyword form-control" placeholder="검색어를 입력하세요." style="display: none;">
+			<div class="input-group-append">
+				<button class="btn btn-search" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+			</div>
+		</div>
+	</div>
 </div>
 </body>
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
+	let userMbNum = '${user.mb_num}';
 	let userLevel = '${user.mb_level}';
 	let page = 1;
 	let cri = {
 		page,
-		perPageNum : 10
+		perPageNum : 10,
+		qn_state : '답변 대기',
+		gs_num : 0,
+		searchType : '',
+		keyword : ''
 	};  
 	let year = new Date().getFullYear(); // 년도
 	let month = new Date().getMonth() + 1;  // 월
@@ -92,16 +142,8 @@
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
 		$(document).ready(function(){
+			console.log(userLevel)
 			getQnaList(cri);
-		})//
-		
-		//QNA 등록(btn-register) 클릭 =================================================================
-		$('.main .box-content .box-register .btn-register').click(function(){
-			if('${user.mb_num}' == ''){
-				if(confirm('Q&A를 등록하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
-					location.href = '<%=request.getContextPath()%>/account/login';
-				return;
-			}
 		})//
 		
 		//페이지네이션(page-link) 클릭 ====================================================================================
@@ -113,7 +155,6 @@
 		
 		//QNA 제목(link-qna) 클릭 =================================================================
 		$(document).on('click','.main .box-content .box-qna .link-qna',function(e){
-			let userMbNum = '${user.mb_num}';
 			//로그인 안했으면
 			if(userMbNum == ''){
 				if(confirm('Q&A을 보려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
@@ -123,13 +164,75 @@
 			}
 			//관리자가 아닌 다른 회원이 보려고 하면
 			let mbNum = $(this).parents('tr').data('value');
+			console.log(userLevel)
 			if(userLevel != 'A' && userLevel != 'S' && (userMbNum != mbNum)){
 				alert('Q&A를 작성한 회원만 볼 수 있습니다.')	
 				e.preventDefault();	
 				return;
 			}
 		})//
-	})//	
+		
+		// 검색타입 값 바뀜====================================================================================
+		$('.main .box-content .box-search .searchType').change(function(){
+			let searchType = $(this).val();
+			if(searchType == 'gs_num'){
+				$('.main .box-content .box-search .gs_keyword').show();
+				$('.main .box-content .box-search .bd_keyword').hide();
+				$('.main .box-content .box-search .mb_keyword').hide();
+			}
+			else if(searchType == 'bd_title'){
+				$('.main .box-content .box-search .gs_keyword').hide();
+				$('.main .box-content .box-search .bd_keyword').show();
+				$('.main .box-content .box-search .mb_keyword').hide();
+			}
+			else if(searchType == 'mb_nickname'){
+				$('.main .box-content .box-search .gs_keyword').hide();
+				$('.main .box-content .box-search .bd_keyword').hide();
+				$('.main .box-content .box-search .mb_keyword').show();
+			}
+		})//
+		
+		//검색 버튼(btn-search) 클릭 ====================================================================================
+		$('.main .box-content .box-search .btn-search').click(function(){
+			let searchType = $('.main .box-content .box-search .searchType').val();
+			let gs_num = 0;
+			let keyword = '';
+			//searchType에 따라 검색어 받는 곳이 다름
+			if(searchType == 'gs_num'){
+				searchType = '';				
+				gs_num = $('.main .box-content .box-search .gs_keyword').val();
+			}
+			else if(searchType == 'bd_title')
+				keyword = $('.main .box-content .box-search .bd_keyword').val();
+			else if(searchType == 'mb_nickname')
+				keyword = $('.main .box-content .box-search .mb_keyword').val();
+			//키워드를 입력 안하면 전체 검색되도록
+			if(keyword == '' && gs_num == 0){
+				cri.searchType = '';
+				cri.gs_num = 0;
+				cri.keyword = '';
+			} 
+			else{
+				cri.searchType = searchType;
+				cri.gs_num = gs_num;
+				cri.keyword = keyword;			
+			}
+			getQnaList(cri);
+		})//
+		
+		//상태 변경 클릭 ====================================================================================
+		$('.main .box-content .box-state span').click(function(){
+			//글자색 변경
+			$('.main .box-content .box-state span').removeClass('select');
+			$(this).addClass('select');
+			//리스트 변경
+			let qn_state = $(this).text();
+			if(qn_state == '전체')
+				qn_state = '';
+			cri.qn_state = qn_state;
+			getQnaList(cri);
+		})//
+	});	
 	
 /* 함수 *********************************************************************************************************** */
 	// getQnaList : QNA 리스트 가져오기 =============================================================================
@@ -193,6 +296,5 @@
 			$('.main .box-content .pagination').html(html);
 		})
 	}//
-
 </script>
 </html>

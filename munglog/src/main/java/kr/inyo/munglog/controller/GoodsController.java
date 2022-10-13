@@ -154,7 +154,8 @@ public class GoodsController {
 		//qna 가져오기
 		QnaDTO qna = boardService.getQna(user, qn_num);
 		//다른 회원이 접근한거면
-		if(qna != null && (user.getMb_num() != qna.getBd_mb_num()))
+		if(qna != null && (user.getMb_num() != qna.getBd_mb_num()) 
+				&& !user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
 			messageService.message(response, "Q&A를 작성한 회원만 볼 수 있습니다.", "/munglog/goods/qna");
 		//첨부파일 리스트 가져오기
 		ArrayList<AttachmentVO> attachmentList = null;

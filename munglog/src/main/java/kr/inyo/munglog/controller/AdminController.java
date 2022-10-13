@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.AdminService;
+import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.ChallengeVO;
@@ -35,6 +36,8 @@ public class AdminController {
 	AdminService adminService;
 	@Autowired
 	MessageService messageService;
+	@Autowired
+	GoodsService goodsService;
 	
 /* ajax 아님 ***************************************************************/
 	/* 관리자홈화면 ---------------------------------------------------------------*/
@@ -42,7 +45,7 @@ public class AdminController {
 	public ModelAndView adminGet(ModelAndView mv) {
 		mv.setViewName("/admin/adminHome");
 		return mv;
-	}
+	}//
 	
 	/* 챌린지 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/admin/challenge", method = RequestMethod.GET)
@@ -57,19 +60,26 @@ public class AdminController {
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		mv.setViewName("/admin/challenge");
 		return mv;
-	}
+	}//
 	
 	/* 굿즈 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/admin/goods", method = RequestMethod.GET)
 	public ModelAndView adminGoodsGet(ModelAndView mv, HttpSession session,
 			HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//로그인 안했거나
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		//회원번호가 다르면 접근 할 수 없음
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		//굿즈 리스트 가져오기
 		ArrayList<CategoryVO> goodsList = adminService.getGoodsList();
 		
 		mv.addObject("goodsList", goodsList);
 		mv.setViewName("/admin/goods");
 		return mv;
-	}
+	}//
 	
 	/* 굿즈 등록 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/admin/registerGoods", method = RequestMethod.GET)
@@ -87,7 +97,7 @@ public class AdminController {
 		mv.addObject("categoryList", categoryList);
 		mv.setViewName("/admin/registerGoods");
 		return mv;
-	}
+	}//
 
 	@RequestMapping(value = "/admin/registerGoods", method = RequestMethod.POST)
 	public ModelAndView adminRegisterGoodsPost(ModelAndView mv, OptionListVO optionList,
@@ -99,6 +109,23 @@ public class AdminController {
 			messageService.message(response, "굿즈가 등록되었습니다.", "/munglog/admin/goods");
 		else
 			messageService.message(response, "굿즈 등록에 실패했습니다.", "/munglog/admin/registerGoods");
+		return mv;
+	}//
+	
+	/* QNA 관리 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/admin/qna", method = RequestMethod.GET)
+	public ModelAndView adminQnaGet(ModelAndView mv, HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//로그인 안했거나
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		//회원번호가 다르면 접근 할 수 없음
+		if(!user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
+		ArrayList<GoodsVO> goodsList = goodsService.getGoodsList();
+		
+		mv.addObject("goodsList", goodsList);
+		mv.setViewName("/admin/qna");
 		return mv;
 	}
 	

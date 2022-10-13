@@ -26,9 +26,11 @@
 			<i class="fa-solid fa-screwdriver-wrench mr-2"></i><span>관리자 메뉴</span>
 		</div>
 		<div class="list-group">
+			<h5>일지</h5>
 		  <a href="<c:url value="/admin/challenge"></c:url>" class="list-group-item list-group-item-action">챌린지 관리</a>
+		  <h5 class="mt-2">굿즈</h5>
 		  <a href="<c:url value="/admin/goods"></c:url>" class="list-group-item list-group-item-action">굿즈 관리</a>
-		  <a href="#" class="list-group-item list-group-item-action">Third item</a>
+		  <a href="<c:url value="/admin/qna"></c:url>" class="list-group-item list-group-item-action">Q&A 관리</a>
 		</div>
 	</div>
 </body>

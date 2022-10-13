@@ -17,9 +17,16 @@
 			join board on qna.qn_bd_num = board.bd_num
       join goods on qna.qn_gs_num = goods.gs_num
       join member on board.bd_mb_num = member.mb_num
+      where bd_type = "QNA"
       <if test = "gs_num != 0">
-				where qn_gs_num = #{gs_num} 
-			</if> 
+				and qn_gs_num = #{gs_num} 
+			</if>
+			<if test = "qn_state != ''">
+				and qn_state = #{qn_state} 
+			</if>
+			<if test = "searchType != ''">
+				and ${searchType} like concat('%',#{keyword},'%') 
+			</if>
 		  order by bd_reg_date desc
 		  limit #{pageStart}, #{perPageNum}
 	</select>
@@ -28,9 +35,16 @@
 	<select id="selectQnaTotalCount" resultType="int">
 		select count(*) from board 
 			join qna on board.bd_num = qna.qn_bd_num
+			join member on board.bd_mb_num = member.mb_num
 			where bd_type = #{bd_type}
 			<if test = "cri.gs_num != 0">
 				and qn_gs_num = #{cri.gs_num} 
+			</if>
+			<if test = "cri.qn_state != ''">
+				and qn_state = #{cri.qn_state} 
+			</if>
+			<if test = "cri.searchType != ''">
+				and ${cri.searchType} like concat('%',#{cri.keyword},'%') 
 			</if> 
 	</select>
 	

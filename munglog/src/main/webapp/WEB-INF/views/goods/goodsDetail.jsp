@@ -72,7 +72,7 @@
 	}
 	.main .box-content .nav-tabs .nav-item .nav-link.active{color: #fb9600;}
 	.main .box-content .tab-content .tab-pane{
-		padding: 30px 60px; text-align: center;
+		padding: 60px; text-align: center;
 	}
 	.main .box-content .tab-content .tab-pane table{margin: 0 auto;}
 		.main .box-content .tab-content .box-qna table{
