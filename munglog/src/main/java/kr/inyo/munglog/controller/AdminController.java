@@ -20,10 +20,12 @@ import org.springframework.web.servlet.ModelAndView;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.AdminService;
+import kr.inyo.munglog.service.BoardService;
 import kr.inyo.munglog.service.GoodsService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.CategoryVO;
 import kr.inyo.munglog.vo.ChallengeVO;
+import kr.inyo.munglog.vo.CommentVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionListVO;
@@ -38,6 +40,8 @@ public class AdminController {
 	MessageService messageService;
 	@Autowired
 	GoodsService goodsService;
+	@Autowired
+	BoardService boardService;
 	
 /* ajax 아님 ***************************************************************/
 	/* 관리자홈화면 ---------------------------------------------------------------*/
@@ -180,7 +184,6 @@ public class AdminController {
 	@ResponseBody
 	public Map<Object, Object> deleteChallenge(@RequestBody ChallengeVO challenge, HttpSession session) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
-		System.out.println(challenge);
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		int res = adminService.deleteChallenge(challenge, user);
 		
@@ -207,6 +210,18 @@ public class AdminController {
 		ArrayList<OptionVO> optionList = adminService.getOptionList(option);
 
 		map.put("optionList", optionList);
+		return map;
+	}
+	
+	/* QNA 답변 등록 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/answer/qna", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> answerQna(@RequestBody CommentVO comment, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = boardService.registerBoardComment(comment, user);
+
+		map.put("res", res);
 		return map;
 	}
 }

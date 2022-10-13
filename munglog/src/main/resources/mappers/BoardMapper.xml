@@ -72,6 +72,11 @@
 		select * from attachment where at_num = #{at_num}
 	</select>
 	
+	<!-- 게시글 번호로 qna 가져오기 -->
+	<select id="selectQnaByBdNum" resultType="kr.inyo.munglog.vo.QnaVO">
+		select * from qna where qn_bd_num = #{qn_bd_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">
@@ -90,6 +95,13 @@
 		insert into attachment(at_bd_num, at_ori_name, at_name)
 			values(#{at_bd_num}, #{at_ori_name}, #{at_name})
 	</insert>
+	
+	<!-- 게시글 댓글 추가 -->
+	<insert id="insertBoardComment">
+		insert into comment(cm_mb_num, cm_content, cm_bd_num)
+			values(#{cm_mb_num},#{cm_content},#{cm_bd_num})
+	</insert>
+	
 	<!-- update ************************************************************************************************* -->
 	<!-- 게시글 수정 -->
 	<update id="updateBoard">

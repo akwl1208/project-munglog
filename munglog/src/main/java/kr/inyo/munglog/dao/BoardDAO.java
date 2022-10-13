@@ -8,6 +8,8 @@ import kr.inyo.munglog.dto.QnaDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AttachmentVO;
 import kr.inyo.munglog.vo.BoardVO;
+import kr.inyo.munglog.vo.CommentVO;
+import kr.inyo.munglog.vo.QnaVO;
 
 public interface BoardDAO {
 	/* 게시글 ===================================================== */
@@ -29,10 +31,12 @@ public interface BoardDAO {
 	ArrayList<QnaDTO> selectQnaListByCri(Criteria cri);
 	//게시글 총 개수 가져오기
 	int selectQnaTotalCount(@Param("cri")Criteria cri, @Param("bd_type")String bd_type);
-	//qna 가져오기
+	//qna 번호로 qna 가져오기
 	QnaDTO selectQna(int qn_num);
 	//qna 수정
-	void updateQna(QnaDTO dbQna);
+	void updateQna(QnaVO dbQna);
+	//게시글 번호로 qna 가져오기
+	QnaVO selectQnaByBdNum(int qn_bd_num);
 	
 	/* 첨부파일 ===================================================== */
 	//첨부파일 추가
@@ -43,5 +47,9 @@ public interface BoardDAO {
 	void deleteAttachment(int at_num);
 	//첨부파일 가져오기
 	AttachmentVO selectAttachment(int at_num);
+	
+	/* 댓글 ===================================================== */
+	//댓글 추가
+	boolean insertBoardComment(CommentVO comment);
 	
 }

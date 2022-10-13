@@ -8,6 +8,7 @@ import kr.inyo.munglog.dto.QnaDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AttachmentVO;
 import kr.inyo.munglog.vo.BoardVO;
+import kr.inyo.munglog.vo.CommentVO;
 import kr.inyo.munglog.vo.MemberVO;
 
 public interface BoardService {
@@ -27,4 +28,6 @@ public interface BoardService {
 	boolean deleteBoard(BoardVO board, MemberVO user);
 	//qna 수정
 	boolean modifyQna(MemberVO user, QnaDTO qna, MultipartFile[] files, int[] nums);
+	//게시글 댓글 등록하기
+	boolean registerBoardComment(CommentVO comment, MemberVO user);
 }

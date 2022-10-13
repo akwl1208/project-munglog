@@ -13,7 +13,9 @@ import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.AttachmentVO;
 import kr.inyo.munglog.vo.BoardVO;
+import kr.inyo.munglog.vo.CommentVO;
 import kr.inyo.munglog.vo.MemberVO;
+import kr.inyo.munglog.vo.QnaVO;
 
 @Service
 public class BoardServiceImp implements BoardService {
@@ -219,15 +221,47 @@ public class BoardServiceImp implements BoardService {
 			}			
 		}
 		//qna 수정 -------------------------------------------------------------------------------
-		//값 재설정
+		//게시글
 		BoardVO dbBoard = new BoardVO();
 		dbBoard.setBd_num(dbQna.getQn_bd_num());
 		dbBoard.setBd_title(qna.getBd_title());
 		dbBoard.setBd_content(qna.getBd_content());
-		dbQna.setQn_gs_num(qna.getQn_gs_num());
-		//수정
 		boardDao.updateBoard(dbBoard);
-		boardDao.updateQna(dbQna);
+		//qna
+		QnaVO dbQnaVo = new QnaVO();
+		dbQnaVo.setQn_num(dbQna.getQn_num());
+		dbQnaVo.setQn_gs_num(qna.getQn_gs_num());
+		dbQnaVo.setQn_state(dbQna.getQn_state());
+		boardDao.updateQna(dbQnaVo);
 		return true;
 	}//
+	
+	//registerBoardComment : 게시글 댓글 등록하기 ==========================================================================
+	@Override
+	public boolean registerBoardComment(CommentVO comment, MemberVO user) {
+		// 값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(comment == null || comment.getCm_content().trim().length() == 0)
+			return false;
+		if(comment.getCm_bd_num() < 1)
+			return false;
+		//없는 게시글에 댓글 등록하려고 하면
+		BoardVO dbBoard = boardDao.selectBoard(comment.getCm_bd_num());
+		if(dbBoard == null)
+			return false;
+		//QNA게시글에 관리자가 아닌데 댓글 달면
+		if(dbBoard.getBd_type().equals("QNA") && !user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			return false;
+		//댓글 등록
+		comment.setCm_mb_num(user.getMb_num());
+		boardDao.insertBoardComment(comment);
+		//qna 게시글이면
+		QnaVO dbQna = boardDao.selectQnaByBdNum(comment.getCm_bd_num());
+		if(dbQna != null) {
+			dbQna.setQn_state("답변 완료");
+			boardDao.updateQna(dbQna);			
+		}			
+		return true;
+	}
 }
