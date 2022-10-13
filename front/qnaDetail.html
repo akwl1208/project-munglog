@@ -32,9 +32,7 @@
 		.main .box-title .box-message{
 			font-size: 12px; margin: 5px 0; padding-left: 24px;
 		}
-		.main .box-content{
-			margin: 44px;  border-bottom: 2px solid #d7d5d5;
-		}
+		.main .box-content{margin: 44px;}
 		.main .box-content .box-btn{font-size: 18px; font-weight: bold;}
 		.main .box-content .box-btn .fa-solid:hover{color: #FF9E54; cursor: pointer;}
 		.main .box-content .box-qna-title{
@@ -45,7 +43,19 @@
 			width: 100%; border-top: 1px solid #d7d5d5; padding: 10px 44px;
 		}
 		.main .box-content .box-qna-content{
-			width: 100%; border-top: 1px solid #d7d5d5; padding: 44px;
+			width: 100%; border-top: 1px solid #d7d5d5; padding: 44px; border-bottom: 2px solid #d7d5d5;
+		}
+		.main .box-content .box-register-answer,
+		.main .box-content .box-answer{padding: 30px;}
+		.main .box-content .box-register-answer .btn-register{
+			box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3); width: 100%;
+			font-size: 18px; font-weight: bold; padding: 5px 0;
+			border: none; background-color: #fb9600; margin-bottom: 10px;
+		}
+		.main .box-content .box-register-answer .btn-register:hover{color:#fff7ed;}
+		.main .box-content .box-answer{
+			background-color:#fff7ed; border: 1px solid #d7d5d5;
+			border-radius: 10px; margin: 30px;
 		}
 	</style>
 </head>
@@ -101,13 +111,32 @@
 							내용
 						</div>
 					</div>
+					<form class="box-register-answer" style="display: none;">
+						<div class="mb-2 font-weight-bold">Q&A 답변 작성</div>
+						<textarea name="cm_content"></textarea>
+						<button type="submit" class="btn-register mt-3">답변 등록</button>
+					</form>
+					<div class="box-answer">
+						<div class="box-btn text-right">
+							<i class="btn-modify fa-solid fa-pen-to-square"></i>
+						</div>
+						<div class="box-answer-content">
+							<div class="mb-2 font-weight-bold">Q&A 답변</div>
+							<div class="cm_reg_date text-right">2022-10-13</div>
+							<div class="cm_content">답변</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
   </div>
 	<script>
 		$(function(){
-
+			$('[name=cm_content]').summernote({
+				placeholder: '제품 설명을 입력하세요.',
+				tabsize: 2,
+				height: 600
+			});
 		})
 	</script> 
 </body>
