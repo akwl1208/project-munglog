@@ -32,4 +32,8 @@ public interface BoardService {
 	boolean registerBoardComment(CommentVO comment, MemberVO user);
 	//게시글 번호로 게시글 댓글 가져오기
 	CommentVO getBoardComment(int bd_num);
+	//게시글 댓글 삭제
+	boolean deleteBoardComment(CommentVO comment, MemberVO user);
+	//게시글 댓글 수정
+	boolean modifyBoardComment(CommentVO comment, MemberVO user);
 }

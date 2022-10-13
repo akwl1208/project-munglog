@@ -82,6 +82,11 @@
 		select * from comment where cm_bd_num = #{bd_num}
 	</select>
 	
+	<!-- 댓글 번호로 댓글 가져오기 -->
+	<select id="selectComment" resultType="kr.inyo.munglog.vo.CommentVO">
+		select * from comment where cm_num = #{cm_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">
@@ -123,6 +128,15 @@
 				qn_state = #{qn_state}
 			where qn_num = #{qn_num}		
 	</update>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateComment">
+		update comment
+			set cm_content = #{cm_content},
+				cm_report = #{cm_report}
+			where cm_num = #{cm_num}		
+	</update>
+	
 	<!-- delete ************************************************************************************************* -->
 	<!-- 첨부파일 삭제 -->
 	<delete id="deleteAttachment">
@@ -132,5 +146,10 @@
 	<!-- 게시글 삭제 -->
 	<delete id="deleteBoard">
 		delete from board where bd_num = #{bd_num}
+	</delete>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteComment">
+		delete from comment where cm_num = #{cm_num}
 	</delete>
 </mapper>

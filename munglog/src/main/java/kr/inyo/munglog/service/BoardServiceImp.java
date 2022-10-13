@@ -268,8 +268,70 @@ public class BoardServiceImp implements BoardService {
 	//getBoardComment : 게시글 댓글 가져오기 ==========================================================================
 	@Override
 	public CommentVO getBoardComment(int bd_num) {
+		//값이 없으면
 		if(bd_num < 1)
 			return null;
 		return boardDao.selectBoardComment(bd_num);
+	}
+	
+	//deleteBoardComment : 게시글 댓글 삭제 ==========================================================================
+	@Override
+	public boolean deleteBoardComment(CommentVO comment, MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(comment == null || comment.getCm_num() < 1)
+			return false;
+		//댓글이 없으면
+		CommentVO dbComment = boardDao.selectComment(comment.getCm_num());
+		if(dbComment == null)
+			return false;
+		//게시글이 다른 경우
+		if(comment.getCm_bd_num() != dbComment.getCm_bd_num())
+			return false;
+		//QNA 댓글인지 확인
+		QnaVO dbQna = boardDao.selectQnaByBdNum(dbComment.getCm_bd_num());
+		//QNA가 아닌데 댓글을 작성한 회원과 다른 경우
+		if(dbQna == null && (dbComment.getCm_mb_num() != user.getMb_num()))
+			return false;
+		//QNA인데 관리자가 아닌 경우
+		if(dbQna != null && !user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			return false;
+		//댓글 삭제
+		boardDao.deleteComment(comment.getCm_num());
+		//QNA 답변 삭제한 경우 답변 대기로 수정
+		if(dbQna != null) {
+			dbQna.setQn_state("답변 대기");
+			boardDao.updateQna(dbQna);
+		}
+		return true;
+	}
+
+	//modifyBoardComment : 게시글 댓글 수정 ==========================================================================
+	@Override
+	public boolean modifyBoardComment(CommentVO comment, MemberVO user) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(comment == null || comment.getCm_num() < 1)
+			return false;
+		//댓글이 없으면
+		CommentVO dbComment = boardDao.selectComment(comment.getCm_num());
+		if(dbComment == null)
+			return false;
+		//게시글이 다른 경우
+		if(comment.getCm_bd_num() != dbComment.getCm_bd_num())
+			return false;
+		//QNA 댓글인지 확인
+		QnaVO dbQna = boardDao.selectQnaByBdNum(dbComment.getCm_bd_num());
+		//QNA가 아닌데 댓글을 작성한 회원과 다른 경우
+		if(dbQna == null && (dbComment.getCm_mb_num() != user.getMb_num()))
+			return false;
+		//QNA인데 관리자가 아닌 경우
+		if(dbQna != null && !user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
+			return false;
+		//댓글 수정
+		dbComment.setCm_content(comment.getCm_content());
+		return boardDao.updateComment(dbComment);
 	}
 }

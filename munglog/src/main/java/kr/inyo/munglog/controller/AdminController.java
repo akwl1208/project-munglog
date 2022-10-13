@@ -224,4 +224,28 @@ public class AdminController {
 		map.put("res", res);
 		return map;
 	}
+	
+	/* QNA 답변 삭제 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/delete/qnaAnswer", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> deleteQnaAnswer(@RequestBody CommentVO comment, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = boardService.deleteBoardComment(comment, user);
+
+		map.put("res", res);
+		return map;
+	}
+	
+	/* QNA 답변 수정 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/modify/qnaAnswer", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> modifyQnaAnswer(@RequestBody CommentVO comment, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = boardService.modifyBoardComment(comment, user);
+
+		map.put("res", res);
+		return map;
+	}
 }

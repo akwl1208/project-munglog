@@ -53,5 +53,10 @@ public interface BoardDAO {
 	boolean insertBoardComment(CommentVO comment);
 	//게시글 댓글 가져오기
 	CommentVO selectBoardComment(int bd_num);
-	
+	//댓글 삭제
+	boolean deleteComment(int cm_num);
+	//댓글 번호로 댓글 가져오기
+	CommentVO selectComment(int cm_num);
+	//댓글 수정
+	boolean updateComment(CommentVO dbComment);
 }

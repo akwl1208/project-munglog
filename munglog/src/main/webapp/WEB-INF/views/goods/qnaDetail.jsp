@@ -17,8 +17,10 @@
 		font-size: 12px; margin: 5px 0; padding-left: 24px;
 	}
 	.main .box-content{margin: 44px;}
-	.main .box-content .box-btn{font-size: 18px; font-weight: bold;}
-	.main .box-content .box-btn .fa-solid:hover{color: #FF9E54; cursor: pointer;}
+	.main .box-content .box-btn,
+	.main .box-content .box-answer .box-set{font-size: 18px; font-weight: bold;}
+	.main .box-content .box-btn .fa-solid:hover,
+	.main .box-content .box-answer .box-set .fa-solid:hover{color: #FF9E54; cursor: pointer;}
 	.main .box-content .box-qna-title{
 		padding: 30px 30px 10px; font-size: 18px; border-top: 2px solid #d7d5d5;
 	}
@@ -33,15 +35,24 @@
 	}
 	.main .box-content .box-register-answer,
 	.main .box-content .box-answer{padding: 30px;}
-	.main .box-content .box-register-answer .btn-register{
+	.main .box-content .box-register-answer .btn-register,
+	.main .box-content .box-register-answer .btn-modify{
 		box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3); width: 100%;
 		font-size: 18px; font-weight: bold; padding: 5px 0;
 		border: none; background-color: #fb9600; margin-bottom: 10px;
 	}
-	.main .box-content .box-register-answer .btn-register:hover{color:#fff7ed;}
+	.main .box-content .box-register-answer .btn-register:hover,
+	.main .box-content .box-register-answer .btn-modify:hover{color:#fff7ed;}
 	.main .box-content .box-answer{
 		background-color:#fff7ed; border: 1px solid #d7d5d5;
 		border-radius: 10px; margin: 30px;
+	}
+	.main .box-content .box-register-answer .btn-modify{width: 49%;}
+	.main .box-content .box-register-answer .btn-cancel{
+		box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3); width: 49%;
+		font-size: 18px; font-weight: bold; padding: 5px 0;
+		border: none; background-color: #fff7ed; margin-bottom: 10px;
+		margin-left: 1%;
 	}
 </style>
 </head>
@@ -93,18 +104,24 @@
 	<div class="box-qna-content">
 		<div class="bd_content">${qna.bd_content}</div>
 	</div>
-	<c:if test="${qna.qn_state == '답변 대기' && (user.mb_level == 'A' || user.mb_level == 'S')}">
-		<div class="box-register-answer">
-			<div class="mb-2 font-weight-bold">Q&A 답변 작성</div>
-			<textarea name="cm_content"></textarea>
+	<div class="box-register-answer" 
+	<c:if test="${(user != null && user.mb_level != 'A' && user.mb_level != 'S') || (qna.qn_state != '답변 대기') || comment != null}">style="display:none;"</c:if>>
+		<div class="mb-2 font-weight-bold">Q&A 답변 작성</div>
+		<textarea name="cm_content"><c:if test="${comment != null}">${comment.cm_content}</c:if></textarea>
+		<c:if test="${qna.qn_state == '답변 대기' && comment == null}">
 			<button type="button" class="btn-register mt-3">Q&A 답변 등록</button>
-		</div>
-	</c:if>
-	<c:if test="${qna.qn_state == '답변 완료' || comment != null}">
+		</c:if>
+		<c:if test="${qna.qn_state == '답변 완료' && comment != null}">
+			<button type="button" class="btn-modify mt-3">Q&A 답변 수정</button>
+			<button type="button" class="btn-cancel">취소</button>
+		</c:if>
+	</div>
+	<c:if test="${qna.qn_state == '답변 완료' && comment != null}">
 		<div class="box-answer">
 			<c:if test="${user.mb_level == 'A' || user.mb_level == 'S'}">
-				<div class="box-btn text-right">
-					<i class="btn-modify fa-solid fa-pen-to-square"></i>
+				<div class="box-set text-right">
+					<i class="btn-modify fa-solid fa-pen-to-square mr-3"></i>
+					<i class="btn-delete fa-solid fa-trash-can"></i>
 				</div>
 			</c:if>
 			<div class="box-answer-content">
@@ -138,7 +155,7 @@ $(function(){
 			  ['color', ['color']],
 			  ['para', ['ul', 'ol', 'paragraph']],
 			  ['table', ['table']],
-			  ['insert', ['picture']]
+			  ['insert', ['link', 'picture']]
 			],
 			callbacks: {
 				onImageUpload: function(files) {
@@ -189,7 +206,7 @@ $(function(){
 			return;
 		}
 		//다른 회원이 수정하면
-		let mbNum = ${qna.bd_mb_num};
+		let mbNum = '${qna.bd_mb_num}';
 		if(userMbNum != mbNum){
 			alert('Q&A를 작성한 회원만 수정할 수 있습니다.');	
 			e.preventDefault();	
@@ -210,7 +227,6 @@ $(function(){
 	
 	//답변 등록(btn-register) 클릭	=================================================================================
 	$('.main .box-content .box-register-answer .btn-register').click(function(){
-		/*
 		//로그인 안했으면
 		if(userMbNum == ''){
 			if(confirm('Q&A를 삭제하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
@@ -221,7 +237,7 @@ $(function(){
 		if(userLevel != 'A' && userLevel != 'S'){
 			alert('관리자만 작성할 수 있습니다.');	
 			return;
-		}*/
+		}
 		//이미 답변한 QNA
 		if('${qna.qn_state}' != '답변 대기'){
 			alert('이미 답변한 Q&A입니다.')
@@ -232,15 +248,104 @@ $(function(){
 			alert('답변을 작성해주세요.');	
 			return;
 		}
+		//등록할건지 묻기
+		if(!confirm('Q&A 답변을 등록하겠습니까?'))
+			return;
 		answerQna(cm_content);
-	})
-})//	
+	})//
+	
+	//QNA 답변 삭제(btn-delete) 클릭	=================================================================================
+	$('.main .box-content .box-answer .box-set .btn-delete').click(function(){
+		//로그인 안했으면
+		if(userMbNum == ''){
+			if(confirm('Q&A를 삭제하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+				location.href = '<%=request.getContextPath()%>/account/login';
+			return;
+		}
+		//관리자가 아니면
+		if(userLevel != 'A' && userLevel != 'S'){
+			alert('관리자만 삭제할 수 있습니다.');	
+			return;
+		}
+		//삭제할건지 묻기
+		if(!confirm('Q&A 답변을 삭제하겠습니까?'))
+			return;
+		//삭제하기
+		let cm_num = '${comment.cm_num}';
+		let cm_bd_num = '${comment.cm_bd_num}';
+		let obj = {
+			cm_num,
+			cm_bd_num
+		};
+		deleteQnaAnswer(obj);
+	})//
+	
+	//QNA 답변 수정(btn-modify) 클릭	=================================================================================
+	$('.main .box-content .box-answer .box-set .btn-modify').click(function(){
+		//로그인 안했으면
+		if(userMbNum == ''){
+			if(confirm('Q&A를 수정하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+				location.href = '<%=request.getContextPath()%>/account/login';
+			return;
+		}
+		//관리자가 아니면
+		if(userLevel != 'A' && userLevel != 'S'){
+			alert('관리자만 수정할 수 있습니다.');	
+			return;
+		}
+		//수정할건지 묻기
+		if(!confirm('Q&A 답변을 수정하겠습니까?'))
+			return;
+		//화면 재구성
+		$('.main .box-content .box-answer').hide();
+		$('.main .box-content .box-register-answer').show();
+	})//
+	
+	//답변 수정 취소(btn-cancel) 클릭	=================================================================================
+	$('.main .box-content .box-register-answer .btn-cancel').click(function(){
+		if(!confirm('답변 수정을 취소하겠습니까?'))
+			return;
+		//내용 다시 되돌리기
+		let cmContent = '${comment.cm_content}';
+		$('.main .box-content .box-register-answer [name=cm_content]').summernote('code', cmContent);
+		//화면 재구성
+		$('.main .box-content .box-answer').show();
+		$('.main .box-content .box-register-answer').hide();
+	})//
+	
+	//답변 수정(btn-modify) 클릭	=================================================================================
+	$('.main .box-content .box-register-answer .btn-modify').click(function(){
+		//로그인 안했으면
+		if(userMbNum == ''){
+			if(confirm('Q&A를 수정하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+				location.href = '<%=request.getContextPath()%>/account/login';
+			return;
+		}
+		//관리자가 아니면
+		if(userLevel != 'A' && userLevel != 'S'){
+			alert('관리자만 수정할 수 있습니다.');	
+			return;
+		}
+		//수정할건지 묻기
+		if(!confirm('Q&A 답변을 수정하겠습니까?'))
+			return;
+		let cm_num = '${comment.cm_num}';
+		let cm_bd_num = '${qna.qn_bd_num}';
+		let cm_content = $('[name=cm_content]').val();
+		let obj = {
+			cm_num,
+			cm_bd_num,
+			cm_content
+		};
+		modifyQnaAnswer(obj);
+	})//
+});
 	
 /* 함수 *********************************************************************************************************** */
 	// deleteQna : QNA 삭제 =============================================================================
 	function deleteQna(){
-		let bd_num = ${qna.qn_bd_num};
-		let bd_mb_num = ${qna.bd_mb_num};
+		let bd_num = '${qna.qn_bd_num}';
+		let bd_mb_num = '${qna.bd_mb_num}';
 		let obj = {
 			bd_num,
 			bd_mb_num
@@ -256,7 +361,7 @@ $(function(){
 	
 	// answerQna : QNA 답변 =============================================================================
 	function answerQna(cm_content){
-		let cm_bd_num = ${qna.qn_bd_num};
+		let cm_bd_num = '${qna.qn_bd_num}';
 		let obj = {
 			cm_bd_num,
 			cm_content
@@ -267,6 +372,28 @@ $(function(){
 				location.reload();
 			} else
 				alert('Q&A 답변 등록에 실패했습니다.');
+		});
+	}//
+	
+	// deleteQnaAnswer : QNA 답변 삭제 =============================================================================
+	function deleteQnaAnswer(obj){
+		ajaxPost(false, obj, '/delete/qnaAnswer', function(data){
+			if(data.res){
+				alert('Q&A 답변을 삭제했습니다.');
+				location.reload();
+			} else
+				alert('Q&A 답변 삭제에 실패했습니다.');
+		});
+	}//
+	
+	// modifyQnaAnswer : QNA 답변 수정 =============================================================================
+	function modifyQnaAnswer(obj){
+		ajaxPost(false, obj, '/modify/qnaAnswer', function(data){
+			if(data.res){
+				alert('Q&A 답변을 수정했습니다.');
+				location.reload();
+			} else
+				alert('Q&A 답변 수정에 실패했습니다.');
 		});
 	}//
 </script>
