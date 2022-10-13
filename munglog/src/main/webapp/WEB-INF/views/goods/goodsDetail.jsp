@@ -75,6 +75,27 @@
 		padding: 30px 60px; text-align: center;
 	}
 	.main .box-content .tab-content .tab-pane table{margin: 0 auto;}
+		.main .box-content .tab-content .box-qna table{
+		table-layout: fixed; text-align: center; 
+	}
+	.main .box-content .tab-content #qna .box-qna table thead{background-color: #d7d5d5;}
+	.main .box-content .tab-content #qna .box-qna table tbody td{vertical-align: middle;}
+	.main .box-content .tab-content #qna .box-qna table tbody .item-title .link-qna:hover .bd_title{color: #FF9E54;}
+	.main .box-content .tab-content #qna .box-qna table tbody .item-nickname{
+		overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
+	}
+	.main .box-content .tab-content #qna .pagination .page-item.active .page-link{
+	 z-index: 1; color: #fb9600; font-weight:bold;
+	 background : #fff; border-color: #DFE0DF;	 
+	}	
+	.main .box-content .tab-content #qna .pagination .page-link:focus,
+	.main .box-content .tab-content #qna .pagination .page-link:hover {
+	  color: #000; background-color: #DFE0DF; border-color: #ccc;
+	}
+	.main .box-content .tab-content #qna .box-btn a{
+		background-color: #a04c00; border-radius: 3px; padding: 5px 10px;
+		border: none; color: #fff7ed; box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3);
+	}
 	.main .btn-scrollTop{
     font-weight: bold; color: #444; font-size:24px;
     position:fixed; bottom:50px; right:400px; display:none;
@@ -90,11 +111,11 @@
 	<div class="box-message">굿즈의 상세보기를 보고, 장바구니에 담아보세요.</div>
 </div>
 <!-- box-content ------------------------------------------------------------------------------------------------- -->		
-<form class="box-content" action="<%=request.getContextPath()%>/goods/order/${user.mb_num}" method="get">
+<div class="box-content">
 	<a class="goToGoods float-right" href="<c:url value="/goods"></c:url>" data-toggle="tooltip" data-placement="right" title="굿즈 목록으로">
 		<i class="fa-solid fa-list"></i>
 	</a>	
-	<div class="clearfix">
+	<form class="clearfix" action="<%=request.getContextPath()%>/goods/order/${user.mb_num}" method="get">
 		<!-- box-thumb(썸네일) ----------------------------------------------------------------------------------------- -->		
 		<div class="box-thumb float-left">				
 			<img class="gs_thumb" width="100%" height="100%" src="<c:url value="${goods.gs_thumb_url}"></c:url>">
@@ -158,7 +179,7 @@
 				<button type="button" class="btn-basket col-5">장바구니</button>
 			</div>
 		</div>			
-	</div>
+	</form>
 	<!-- 탭메뉴 ---------------------------------------------------------------------------------- -->
 	<ul class="nav nav-tabs mt-5" role="tablist">
 		<li class="nav-item">
@@ -180,11 +201,33 @@
 		<div id="gs_guidance" class="container tab-pane fade">${goods.gs_guidance}</div>
 		<div id="review" class="container tab-pane fade">
 		</div>
+		<!-- tab-content(탭 내용) ---------------------------------------------------------------------------------- -->
 		<div id="qna" class="container tab-pane fade">
+			<!-- box-btn ------------------------------------------------------------------------------------------------- -->
+			<div class="box-btn text-right mb-4">
+				<a href="<c:url value="/goods/qna"></c:url>" class="btn-goToQna mr-3">Q&A 목록</a>
+				<a href="<c:url value="/goods/registerQna"></c:url>" class="btn-register">Q&A 등록</a>
+			</div>
+			<!-- box-qna ------------------------------------------------------------------------------------------------- -->
+			<div class="box-qna">
+				<table class="table table-bordered">
+					<thead>
+						<tr class="text-center">
+							<th width="15%">답변 상태</th>
+							<th>제목</th>
+							<th width="20%">작성자</th>
+							<th width="15%">작성일</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<!-- 페이지네이션 ------------------------------------------------------------------------------------------------- -->
+			<ul class="pagination justify-content-center mt-4"></ul>
 		</div>
 	</div>
 	<a class="btn-scrollTop" href="javascript:0;" onclick="scrollTop()"><i class="fa-regular fa-circle-up"></i></a>
-</form>
+</div>
 </body>
 <!-- script *********************************************************************************************************** -->
 <script>
@@ -192,9 +235,21 @@
 	let gsName = '${goods.gs_name}';
 	let user = '${user.mb_num}';
 	let index = 0;
+	let page = 1;
+	let cri = {
+		page,
+		perPageNum : 10,
+		gs_num : '${goods.gs_num}'
+	};  
+	let year = new Date().getFullYear(); // 년도
+	let month = new Date().getMonth() + 1;  // 월
+	let date = new Date().getDate();  // 날짜
+	let today = year + '-' + month + '-' + date;
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){	
 		$(document).ready(function(){
+			//Qna 리스트 가져오기
+			getQnaList(cri);
 			//목록 호버하면 tooltip
 		  $('[data-toggle="tooltip"]').tooltip();
 			//스크롤 내리면 상단으로 버튼 나옴
@@ -219,7 +274,7 @@
 			editTotal();
 		})//
 		
-		// input 입력 이벤트 ----------------------------------------------------------------------------------
+		// input 입력 이벤트 ======================================================================================
     $(document).on('input', '.main .box-content .box-select .quantity input', function() {
       //숫자 이외의 값 입력 못하게 막음
       $(this).val($(this).val().replace(/[^0-9]/g, ''));
@@ -239,7 +294,7 @@
       editTotal();
     })//
     
-		// up 클릭 이벤트 ----------------------------------------------------------------------------------
+		// up 클릭 이벤트 =========================================================================================
     $(document).on('click', '.main .box-content .box-select .quantity .up', function() {
     	let value = $(this).siblings('input').val();
       let maxAmount = $(this).parents('.quantity').data('value');
@@ -259,7 +314,7 @@
 			editTotal();
     })//
     
-		// down 클릭 이벤트 ----------------------------------------------------------------------------------
+		// down 클릭 이벤트 =====================================================================================
     $(document).on('click', '.main .box-content .box-select .quantity .down', function() {
     	let value = $(this).siblings('input').val();
     	//최소 1개까지 입력 가능
@@ -405,6 +460,40 @@
 			if(isInput == false)
 				return false;			
 		})//
+		
+		//qna 페이지네이션(page-link) 클릭 ====================================================================================
+		$(document).on('click','.main .box-content #qna .pagination .page-link',function(e){
+			e.preventDefault();
+			cri.page = $(this).data('page');
+			getQnaList(cri);
+		})//
+		
+		//QNA 등록(btn-register) 클릭 =================================================================
+		$('.main .box-content .tab-content #qna .box-btn .btn-register').click(function(){
+			if(user == ''){
+				if(confirm('Q&A를 등록하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/account/login';
+				return;
+			}
+		})//
+		
+		//QNA 제목(link-qna) 클릭 =================================================================
+		$(document).on('click','.main .box-content .tab-content #qna .box-qna .link-qna',function(e){
+			//로그인 안했으면
+			if(user == ''){
+				if(confirm('Q&A을 보려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+					location.href = '<%=request.getContextPath()%>/account/login';
+				e.preventDefault();
+				return;
+			}
+			//다른 회원이 보려고 하면
+			let mbNum = $(this).parents('tr').data('value');
+			if(user != mbNum){
+				alert('Q&A를 작성한 회원만 볼 수 있습니다.')	
+				e.preventDefault();	
+				return;
+			}
+		})//
 	});	
 
 /* 함수 *********************************************************************************************************** */
@@ -449,6 +538,63 @@
 			else
 				alert('장바구니 담기에 실패했습니다. 다시 시도해주세요.')
 		});
+	}//
+	
+	// getQnaList : QNA 리스트 가져오기 =============================================================================
+	function getQnaList(obj){
+		ajaxPost(false, obj, '/get/qnaList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			//리스트 구현-----------------------------------------------------------------------------------
+			for(qna of data.qnaList){
+				html += '<tr data-value="'+qna.bd_mb_num+'">';
+				html += 	'<td class="item-state">';
+				html += 		'<span class="qn_state">'+qna.qn_state+'</span>';
+				html += 	'</td>';
+				html += 	'<td class="item-title text-left">';
+				html += 		'<a class="link-qna" href="'+contextPath+'/goods/qnaDetail/'+qna.qn_num+'">';
+				if(qna.bd_reg_date_str == today)
+					html +=			'<span class="badge badge-warning mr-2">NEW</span>';
+				html += 			'<strong class="bd_title">'+qna.bd_title+'</strong>';
+				html += 		'</a>';
+				html += 	'</td>';
+				html += 	'<td class="item-nickname">';
+				html += 		'<span class="mb_nickname">'+qna.mb_nickname+'</span>';
+				html += 	'</td>';
+				html += 	'<td class="item-date">';
+				html += 		'<span class="bd_reg_date">'+qna.bd_reg_date_str+'</span>';
+				html += 	'</td>';
+				html += '</tr>';
+			}
+			$('.main .box-content .tab-content #qna .box-qna table tbody').html(html);
+			//페이지네이션 구현--------------------------------------------------------------------------
+			html = '';
+			let pm = data.pm;
+			//이전
+			html += 	'<li class="page-item';
+			if(!pm.prev)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.startPage-1)+'">이전</a>';
+			html += 	'</li>';
+			//페이지 숫자
+			for(let i = pm.startPage; i <= pm.endPage; i++){
+				html += '<li class="page-item';
+				if(pm.cri.page == i)
+					html += ' active';
+				html += '">';
+				html += 	'<a class="page-link text-muted" href="#" data-page="'+i+'">'+i+'</a>';
+				html += '</li>';				
+			}
+			//다음
+			html += 	'<li class="page-item';
+			if(!pm.next)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
+			html += 	'</li>';
+			$('.main .box-content .tab-content #qna .pagination').html(html);
+		})
 	}//
 </script>
 </html>

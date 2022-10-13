@@ -17,14 +17,21 @@
 			join board on qna.qn_bd_num = board.bd_num
       join goods on qna.qn_gs_num = goods.gs_num
       join member on board.bd_mb_num = member.mb_num
+      <if test = "gs_num != 0">
+				where qn_gs_num = #{gs_num} 
+			</if> 
 		  order by bd_reg_date desc
 		  limit #{pageStart}, #{perPageNum}
 	</select>
 	
 	<!-- cri로 게시글 총 개수 가져오기 -->
 	<select id="selectQnaTotalCount" resultType="int">
-		select count(*) from board
+		select count(*) from board 
+			join qna on board.bd_num = qna.qn_bd_num
 			where bd_type = #{bd_type}
+			<if test = "cri.gs_num != 0">
+				and qn_gs_num = #{cri.gs_num} 
+			</if> 
 	</select>
 	
 	<!-- qna 가져오기 -->

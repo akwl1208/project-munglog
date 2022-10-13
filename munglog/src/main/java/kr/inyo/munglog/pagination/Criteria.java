@@ -24,7 +24,8 @@ public class Criteria {
 	//검색기능
 	private String searchType = "";
 	private String keyword = "";
-	
+	//굿즈 번호
+	private int gs_num = 0;
 	
 	//Criteria 디폴트 생성자 : 현재 페이지를 1페이지로, 한 페이지에 12개의 컨텐츠
 	public Criteria() {

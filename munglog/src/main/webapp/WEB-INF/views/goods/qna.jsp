@@ -73,12 +73,7 @@
 		</table>
 	</div>
 	<!-- 페이지네이션 ------------------------------------------------------------------------------------------------- -->
-	<ul class="pagination justify-content-center mt-5">
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">이전</a></li>
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">1</a></li>
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">2</a></li>
-		<li class="page-item"><a class="page-link text-muted" href="javascript:void(0);">다음</a></li>
-	</ul>
+	<ul class="pagination justify-content-center mt-5"></ul>
 </div>
 </body>
 <!-- script *********************************************************************************************************** -->
