@@ -264,4 +264,12 @@ public class BoardServiceImp implements BoardService {
 		}			
 		return true;
 	}
+	
+	//getBoardComment : 게시글 댓글 가져오기 ==========================================================================
+	@Override
+	public CommentVO getBoardComment(int bd_num) {
+		if(bd_num < 1)
+			return null;
+		return boardDao.selectBoardComment(bd_num);
+	}
 }

@@ -100,7 +100,7 @@
 			<button type="button" class="btn-register mt-3">Q&A 답변 등록</button>
 		</div>
 	</c:if>
-	<c:if test="${qna.qn_state == '답변 완료'}">
+	<c:if test="${qna.qn_state == '답변 완료' || comment != null}">
 		<div class="box-answer">
 			<c:if test="${user.mb_level == 'A' || user.mb_level == 'S'}">
 				<div class="box-btn text-right">
@@ -109,8 +109,8 @@
 			</c:if>
 			<div class="box-answer-content">
 				<div class="mb-2 font-weight-bold">Q&A 답변</div>
-				<div class="cm_reg_date text-right">2022-10-13</div>
-				<div class="cm_content">답변</div>
+				<div class="cm_reg_date text-right">${comment.cm_reg_date_str}</div>
+				<div class="cm_content">${comment.cm_content}</div>
 			</div>
 		</div>
 	</c:if>

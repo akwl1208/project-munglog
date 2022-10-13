@@ -30,4 +30,6 @@ public interface BoardService {
 	boolean modifyQna(MemberVO user, QnaDTO qna, MultipartFile[] files, int[] nums);
 	//게시글 댓글 등록하기
 	boolean registerBoardComment(CommentVO comment, MemberVO user);
+	//게시글 번호로 게시글 댓글 가져오기
+	CommentVO getBoardComment(int bd_num);
 }

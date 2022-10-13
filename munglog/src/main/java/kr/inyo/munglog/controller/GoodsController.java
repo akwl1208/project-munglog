@@ -36,6 +36,7 @@ import kr.inyo.munglog.vo.AttachmentVO;
 import kr.inyo.munglog.vo.BasketVO;
 import kr.inyo.munglog.vo.BoardVO;
 import kr.inyo.munglog.vo.CategoryVO;
+import kr.inyo.munglog.vo.CommentVO;
 import kr.inyo.munglog.vo.GoodsVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OptionVO;
@@ -157,11 +158,16 @@ public class GoodsController {
 		if(qna != null && (user.getMb_num() != qna.getBd_mb_num()) 
 				&& !user.getMb_level().equals("A") && !user.getMb_level().equals("S"))
 			messageService.message(response, "Q&A를 작성한 회원만 볼 수 있습니다.", "/munglog/goods/qna");
-		//첨부파일 리스트 가져오기
 		ArrayList<AttachmentVO> attachmentList = null;
-		if(qna != null)
+		CommentVO comment = null;
+		if(qna != null) {
+			//첨부파일 리스트 가져오기
 			attachmentList = boardService.getAttachmentList(qna.getQn_bd_num());
+			//답변 가져오기
+			comment = boardService.getBoardComment(qna.getQn_bd_num());			
+		}
 		
+		mv.addObject("comment", comment);
 		mv.addObject("qna", qna);
 		mv.addObject("attachmentList", attachmentList);
 		mv.setViewName("/goods/qnaDetail");

@@ -77,6 +77,11 @@
 		select * from qna where qn_bd_num = #{qn_bd_num}
 	</select>
 	
+	<!-- 게시글 번호로 댓글 가져오기 -->
+	<select id="selectBoardComment" resultType="kr.inyo.munglog.vo.CommentVO">
+		select * from comment where cm_bd_num = #{bd_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard">

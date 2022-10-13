@@ -49,7 +49,9 @@ public interface BoardDAO {
 	AttachmentVO selectAttachment(int at_num);
 	
 	/* 댓글 ===================================================== */
-	//댓글 추가
+	//게시글 댓글 추가
 	boolean insertBoardComment(CommentVO comment);
+	//게시글 댓글 가져오기
+	CommentVO selectBoardComment(int bd_num);
 	
 }
