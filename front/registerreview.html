@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>모달</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.modal-body .box-goods{
+			position: relative; padding-left: 120px;
+		}
+		.box-goods .link-goods{
+  		position: absolute; left: 9px; top: 50%;
+			width: 90px; height: 90px;
+    	margin-top: -45px; text-align: center; overflow: hidden;
+		}
+		.box-goods .link-goods .gs_thumb{
+			vertical-align: top; width: 90px; height: 90px;
+		}
+		.box-goods-info .gs_name{
+			max-width: 100%; 
+			overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+		}
+		.box-goods-info .goods-info{margin: 8px 0px 12px;}
+		.box-goods-info .goods-info li{
+			display: inline-block; line-height: 18px; position: relative;
+		}
+		.box-goods-info .goods-info li+li::before{
+			position: absolute; left: 0; top: 50%;
+    	width: 1px; height: 17px; margin-top: -8px;
+    	background-color: #d7d5d5; content: '';
+		}
+		.box-review{
+			padding: 15px 9px 0; border-top: 1px solid #d7d5d5;
+			margin-top: 30px;
+		}
+		.rv_rating{
+			font-size: 36px;
+		}
+		.box-image .btn-image{
+			padding: 5px; background-color: #a04c00;
+			border: none; color: #fff7ed; border-radius: 3px;
+			display: inline-block; margin-top: 5px;
+		}
+		.modal-footer .btn{
+			display: inline-block; border: 1px solid #dfe0df; padding: 10px 20px;
+			font-weight: bold; width: 48%;
+		}
+		.btn-register{
+			background-color: #fb9600; color: #fff7ed;
+		}
+		.btn-cancel{background-color: #fff7ed; margin-left: 1%;}
+	</style>
+</head>
+<body>
+
+	<a class="btn btn-primary" data-toggle="modal" data-target="#review">
+    Open modal
+  </a>
+	<div class="modal fade" id="review">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">    
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title font-weight-bold d-block">
+						<i class="fa-solid fa-paw mr-2"></i>리뷰 작성
+					</h4>
+					<div class="box-message" style="line-height: 38px;">
+						<small>리뷰를 작성하고 포인트 적립하세요.</small>
+					</div>
+          <button type="button" class="btn btn-close" data-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+					<div class="box-goods mt-3">
+						<a href="#" class="link-goods">
+							<img class="gs_thumb" src="/akwl.jpg">
+						</a>
+						<div class="box-goods-info">
+							<a href="link-orderDetail" style="display: block;">
+								<p class="gs_name font-weight-bold">케이스케이스케이스케이스케이스케이스케이스케이스케이스케이스</p>
+								<ul class="goods-info">
+									<li class="price font-weight-bold pr-2">
+										<span class="od_total_price">10000원</span>
+									</li>
+									<li class="amount pl-2 pr-2">
+										<span class="od_amount">1개</span>
+									</li>
+									<li class="date pl-2">
+										<span class="or_date">2022-10-14</span>
+									</li>
+								</ul>
+							</a>
+						</div>
+					</div>
+					<div class="box-review">
+						<div class="box-rating mb-3">
+							<strong>별점</strong>
+							<div class="rv_rating d-flex justify-content-center">
+								<i class="fa-regular fa-star"></i>
+								<i class="fa-regular fa-star"></i>
+								<i class="fa-regular fa-star"></i>
+								<i class="fa-regular fa-star"></i>
+								<i class="fa-regular fa-star"></i>
+							</div>
+						</div>
+						<div class="box-review-content">
+							<strong>사용 후기</strong>
+							<div class="mt-2">
+								<textarea class="rv_content" rows="5" style="resize: none; width: 100%;" placeholder="10자 이상 작성해주세요"></textarea>
+							</div>
+						</div>
+						<div class="box-image text-right">
+							<a href="#" class="btn-image">사진 첨부</a>
+							<input type="file" style="display: none;">
+						</div>
+					</div>
+        </div>  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-register">리뷰 작성</button>
+					<button type="button" class="btn btn-cancel" data-dismiss="modal">취소</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>
