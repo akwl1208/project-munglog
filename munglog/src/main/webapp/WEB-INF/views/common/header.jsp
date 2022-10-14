@@ -86,7 +86,7 @@
 							</li>						
 						</c:if>
 						<li class="account-item">
-							<a href="<c:url value="/"></c:url>" class="account-link">마이페이지</a>
+							<a href="<c:url value="/mypage"></c:url>" class="account-link">마이페이지</a>
 						</li>
 						<li class="account-item">
 							<a href="<c:url value="/logout"></c:url>" class="account-link">로그아웃</a>

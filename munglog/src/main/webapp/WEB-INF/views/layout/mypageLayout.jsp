@@ -13,6 +13,11 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <!-- fontawesome -->
 <script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+<!-- datepicker -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 <style type="text/css">
 *{padding:0; margin: 0;}
