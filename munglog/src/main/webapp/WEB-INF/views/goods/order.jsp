@@ -690,6 +690,8 @@ $(function(){
 			order.ot_price = ot_price;
 			orderList.push(order);
 		});
+		//총 금액
+		let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
 		let obj = {
 			mbNum,
 			adNum,
@@ -704,12 +706,13 @@ $(function(){
 			email,
 			orderList,
 			imp_uid,
-			orCode : merchant_uid
+			orCode : merchant_uid,
+			totalPrice
 		}
 		ajaxPost(false, obj, '/complete/payment', function(data){
 			if(data.res){
 				alert('결제에 성공했습니다.');
-				location.href = '<%=request.getContextPath()%>';
+				location.href = '<%=request.getContextPath()%>/mypage/order';
 			}else
 				alert('결제에 실패했습니다.')
 		});

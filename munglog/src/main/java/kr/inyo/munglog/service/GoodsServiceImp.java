@@ -250,7 +250,11 @@ public class GoodsServiceImp implements GoodsService {
 			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
 			return false;
 		}
-		if(payment.getPointAmount() < 1000 || payment.getPayAmount() < 0) {
+		if(payment.getPointAmount() < 1 && payment.getPayAmount() < 1) {
+			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
+			return false;
+		}
+		if(payment.getPointAmount() + payment.getPayAmount() != payment.getTotalPrice()) {
 			cancelPayment(payment.getImp_uid(), new BigDecimal(payment.getPayAmount()));
 			return false;
 		}

@@ -10,6 +10,7 @@ public class PaymentDTO {
 	private int mbNum;
 	private int pointAmount;
 	private int payAmount;
+	private int totalPrice;
 	private String imp_uid;
 	private String orCode;
 	private String email;
