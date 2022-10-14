@@ -48,6 +48,14 @@
 	  <put-attribute name="adminMenu" value="/WEB-INF/views/common/adminMenu.jsp" />
 	</definition>
 	
+	<!-- 마이페이지 레이아웃 -->
+	<definition name="/mypage/*" template="/WEB-INF/views/layout/mypageLayout.jsp">
+		<put-attribute name="body" value="/WEB-INF/views/mypage/{1}.jsp" />
+		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
+	  <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+	  <put-attribute name="mypageMenu" value="/WEB-INF/views/common/mypageMenu.jsp" />
+	</definition>
+	
 	<!-- 기본 레이아웃 -->
 	<definition name=".root" template="/WEB-INF/views/layout/baseLayout.jsp">
 	  <put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
