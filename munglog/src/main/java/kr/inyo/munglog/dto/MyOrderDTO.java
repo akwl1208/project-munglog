@@ -19,6 +19,7 @@ public class MyOrderDTO {
 	private int od_total_price;
 	private String od_state;
 	//주문
+	private int or_mb_num;
 	private Date or_date;
 	private int or_point_amount;
 	private int or_pay_amount;

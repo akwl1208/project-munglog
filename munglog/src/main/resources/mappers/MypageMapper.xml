@@ -24,8 +24,25 @@
 	    order by od_num desc
 	</select>
 	
+	<!-- 주문 상세 번호로 내 주문 내역 가져오기 -->
+	<select id="selectMyOrderDetail" resultType="kr.inyo.munglog.dto.MyOrderDTO">
+		select * from orderDetail 
+			join `order` on orderDetail.od_or_code = `order`.or_code
+	    where od_num = #{od_num}
+	</select>
+	
+	<!-- 주문 상세 번호로 내 리뷰 가져오기 -->
+	<select id="selectMyReview" resultType="kr.inyo.munglog.vo.ReviewVO">
+		select * from review where rv_od_num = #{rv_od_num}
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
-
+	<!-- 리뷰 추가 -->
+	<insert id="insertReview">
+		insert into review(rv_od_num, rv_rating, rv_content, rv_image)
+			values(#{rv_od_num},#{rv_rating},#{rv_content},#{rv_image})
+	</insert>
+	
 	<!-- update ************************************************************************************************* -->
 	
 	<!-- delete ************************************************************************************************* -->
