@@ -16,6 +16,7 @@
 	.main .box-title .box-message{
 		font-size: 12px; margin: 5px 0; padding-left: 24px;
 	}
+	/* box-content =====================================================================*/
 	.main .box-content{margin: 44px;}
 	.main .box-content .goToGoods:hover .fa-list{color:#fb9600;}
 	.main .box-content .box-thumb{
@@ -67,6 +68,7 @@
 		background-color: #fb9600; color: #fff7ed;
 	}
 	.main .box-content .box-btn .btn-basket{background-color: #fff7ed;}
+	/* 탭 내용 =====================================================================*/
 	.main .box-content .nav-tabs .nav-item{
 		width: 25%; text-align: center; font-weight: bold;
 	}
@@ -75,7 +77,47 @@
 		padding: 60px; text-align: center;
 	}
 	.main .box-content .tab-content .tab-pane table{margin: 0 auto;}
-		.main .box-content .tab-content .box-qna table{
+	/* review =====================================================================*/
+	.main .box-content .tab-content #review{text-align:start;}
+	.main .box-content .tab-content #review .box-review .item-review{
+		padding: 30px; margin-bottom: 20px;
+  	border: 2px solid #ae8a68; border-radius: 5px;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-detail{
+		overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  	line-height: 20px;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-detail .mb_nickname::before,
+	.main .box-content .tab-content #review .box-review .item-review .box-review-detail .rv_reg_date::before{
+		display: inline-block; width: 2px; height: 2px;
+   	margin: 0 6px; content: ""; vertical-align: 3px;
+   	background-color: #d8d8d8;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content{
+		display: table; width: 100%; table-layout: fixed;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content>div{
+		display: table-cell; vertical-align: top;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content.more>div{display: block;}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content .box-review-text .rv_content{
+		overflow: hidden; min-height: 22px;	max-height: 100px;
+  	font-size: 14px; line-height: 22px; word-break: break-all;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content .box-review-text .rv_content.more{max-height: none;}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content .box-review-image{
+   	width: 100px; height: 100px; padding-left: 10px; overflow: hidden;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content .box-review-image.more{
+		width: 200px; height: 200px; margin: 10px auto;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-review-content .box-review-image .rv_image{
+		width: 100%; height: 100%; border: 1px solid #d8d8d8;
+	}
+	.main .box-content .tab-content #review .box-review .item-review .box-button a:hover>small,
+	.main .box-content .tab-content #review .box-review .item-review .box-button a:hover .fa-solid{color: #fb9600;}
+	/* qna =====================================================================*/
+	.main .box-content .tab-content .box-qna table{
 		table-layout: fixed; text-align: center; 
 	}
 	.main .box-content .tab-content #qna .box-qna table thead{background-color: #d7d5d5;}
@@ -84,15 +126,16 @@
 	.main .box-content .tab-content #qna .box-qna table tbody .item-nickname{
 		overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
 	}
-	.main .box-content .tab-content #qna .pagination .page-item.active .page-link{
+	/* 페이지네이션 =====================================================================*/
+	.main .box-content .tab-content .pagination .page-item.active .page-link{
 	 z-index: 1; color: #fb9600; font-weight:bold;
 	 background : #fff; border-color: #DFE0DF;	 
 	}	
-	.main .box-content .tab-content #qna .pagination .page-link:focus,
-	.main .box-content .tab-content #qna .pagination .page-link:hover {
+	.main .box-content .tab-content .pagination .page-link:focus,
+	.main .box-content .tab-content .pagination .page-link:hover {
 	  color: #000; background-color: #DFE0DF; border-color: #ccc;
 	}
-	.main .box-content .tab-content #qna .box-btn a{
+	.main .box-content .tab-content .box-btn a{
 		background-color: #a04c00; border-radius: 3px; padding: 5px 10px;
 		border: none; color: #fff7ed; box-shadow: 1px 1px 3px rgba(73, 67, 60, 0.3);
 	}
@@ -199,9 +242,20 @@
 	<div class="tab-content">
 		<div id="gs_description" class="container tab-pane active">${goods.gs_description}</div>
 		<div id="gs_guidance" class="container tab-pane fade">${goods.gs_guidance}</div>
+		<!-- 리뷰 ---------------------------------------------------------------------------------- -->
 		<div id="review" class="container tab-pane fade">
+			<!-- box-btn ------------------------------------------------------------------------------------------------- -->
+			<div class="box-btn text-right mb-4">
+				<a href="<c:url value="/goods/review"></c:url>" class="btn-goToReview">굿즈 리뷰 목록</a>
+			</div>
+			<!-- box-review(리뷰) -------------------------------------------------------------------------------------- -->
+			<div class="box-review">
+				<ul class="list-review"></ul>
+			</div>
+			<!-- 페이지네이션 ------------------------------------------------------------------------------------------------- -->
+			<ul class="pagination justify-content-center mt-5"></ul>
 		</div>
-		<!-- tab-content(탭 내용) ---------------------------------------------------------------------------------- -->
+		<!-- qna ---------------------------------------------------------------------------------- -->
 		<div id="qna" class="container tab-pane fade">
 			<!-- box-btn ------------------------------------------------------------------------------------------------- -->
 			<div class="box-btn text-right mb-4">
@@ -250,6 +304,8 @@
 		$(document).ready(function(){
 			//Qna 리스트 가져오기
 			getQnaList(cri);
+			//리뷰 리스트 가져오기
+			getReviewList(cri);
 			//목록 호버하면 tooltip
 		  $('[data-toggle="tooltip"]').tooltip();
 			//스크롤 내리면 상단으로 버튼 나옴
@@ -494,6 +550,24 @@
 				return;
 			}
 		})//
+		
+		//리뷰 더보기(btn-more) 클릭 ====================================================================================
+		$(document).on('click', '.main .box-content .tab-content #review .box-review .item-review .btn-more', function(){
+			$(this).hide();
+			$(this).parents('.item-review').find('.btn-fold').show();
+			$(this).parents('.item-review').find('.box-review-image').addClass('more');
+			$(this).parents('.item-review').find('.box-review-content').addClass('more');
+			$(this).parents('.item-review').find('.rv_content').addClass('more');
+		})//
+		
+		//리뷰 접기(btn-fold) 클릭 ====================================================================================
+		$(document).on('click', '.main .box-content .tab-content #review .box-review .item-review .btn-fold', function(){
+			$(this).hide();
+			$(this).parents('.item-review').find('.btn-more').show();
+			$(this).parents('.item-review').find('.box-review-image').removeClass('more');
+			$(this).parents('.item-review').find('.box-review-content').removeClass('more');
+			$(this).parents('.item-review').find('.rv_content').removeClass('more');
+		})//
 	});	
 
 /* 함수 *********************************************************************************************************** */
@@ -594,6 +668,86 @@
 			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
 			html += 	'</li>';
 			$('.main .box-content .tab-content #qna .pagination').html(html);
+		})
+	}//
+	
+	// getReviewList : 리뷰 리스트 가져오기 =============================================================================
+	function getReviewList(obj){
+		ajaxPost(false, obj, '/get/reviewList', function(data){
+			let html = '';
+			let contextPath = '<%=request.getContextPath()%>';
+			//리스트 구현-----------------------------------------------------------------------------------
+			for(review of data.reviewList){
+				html += '<li class="item-review">';
+				html += 	'<div class="box-review-detail">';
+				html += 		'<a class="link-goods" href="'+contextPath+'/goods/goodsDetail/'+review.gs_num+'">';
+				html += 			'<strong class="gs_name mr-1">'+review.gs_name+'</strong>';
+				html += 			'<small class="ot_name mr-2">'+review.ot_name+'</small>';
+				html += 		'</a>';
+				html += 		'<small class="mb_nickname">'+review.mb_nickname+'</small>';
+				html += 		'<small class="rv_reg_date">'+review.rv_reg_date_str+'</small>';
+				html += 		'<div class="box-rating ml-3" style="display: inline-block;">';
+				let maxIndex =  Number(review.rv_rating);
+				for(let i = 1; i <= maxIndex; i++){
+					html += 		'<i class="star fa-solid fa-star"></i>';
+				}
+				for(let i = maxIndex + 1 ; i <= 5; i++){
+					html += 		'<i class="fa-regular fa-star"></i>';
+				}
+				html += 			'<strong class="rv_rating ml-1">'+review.rv_rating+'</strong>';
+				html += 		'</div>';
+				html += 		'<div class="box-report float-right" style="display: inline-block;">';
+				html += 			'<i class="fa-solid fa-ellipsis"></i>';
+				html += 		'</div>';
+				html += 	'</div>';
+				html += 	'<div class="box-review-content mt-2">';
+				html += 		'<div class="box-review-text">';
+				html += 			'<p class="rv_content m-0">'+review.rv_content+'</p>';
+				html += 		'</div>';
+				if(review.rv_image != ''){
+					html += 	'<div class="box-review-image">';
+					html += 		'<img class="rv_image" src="'+contextPath+review.rv_image_url+'">';
+					html += 	'</div>';					
+				}
+				html += 	'</div>';
+				html += 	'<div class="box-button mt-2 text-right" style="height: 26px;">';
+				html += 		'<a class="btn-more" href="javascript:0;">';
+				html += 			'<small>리뷰 더보기<i class="fa-solid fa-chevron-down ml-1"></i></small>';
+				html += 		'</a>';
+				html += 		'<a class="btn-fold" href="javascript:0;" style="display: none;">';
+				html += 			'<small>리뷰 접기<i class="fa-solid fa-chevron-up ml-1"></i></small>';
+				html += 		'</a>';
+				html += 	'</div>';
+				html += '</li>';
+			}
+			$('.main .box-content .tab-content #review .box-review .list-review').html(html);
+			//페이지네이션 구현--------------------------------------------------------------------------
+			html = '';
+			let pm = data.pm;
+			//이전
+			html += 	'<li class="page-item';
+			if(!pm.prev)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.startPage-1)+'">이전</a>';
+			html += 	'</li>';
+			//페이지 숫자
+			for(let i = pm.startPage; i <= pm.endPage; i++){
+				html += '<li class="page-item';
+				if(pm.cri.page == i)
+					html += ' active';
+				html += '">';
+				html += 	'<a class="page-link text-muted" href="#" data-page="'+i+'">'+i+'</a>';
+				html += '</li>';				
+			}
+			//다음
+			html += 	'<li class="page-item';
+			if(!pm.next)
+				html += 	' disabled';
+			html += 	'">';
+			html += 		'<a class="page-link text-muted" href="#" data-page="'+(pm.endPage+1)+'">다음</a>';
+			html += 	'</li>';
+			$('.main .box-content .tab-content #review .pagination').html(html);
 		})
 	}//
 </script>
