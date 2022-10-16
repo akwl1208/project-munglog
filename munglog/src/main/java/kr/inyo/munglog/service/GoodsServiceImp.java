@@ -19,6 +19,7 @@ import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.dto.PaymentDTO;
+import kr.inyo.munglog.dto.ReviewDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
@@ -380,4 +381,21 @@ public class GoodsServiceImp implements GoodsService {
 	public ArrayList<GoodsVO> getGoodsList() {
 		return goodsDao.selectGoodsList();
 	}//
+
+	//getReviewList : cri로 리뷰 리스트 가져오기 ==========================================================================
+	@Override
+	public ArrayList<ReviewDTO> getReviewList(Criteria cri) {
+		if(cri == null)
+			return null;
+		return goodsDao.selectReviewList(cri);
+	}
+
+	//getReviewTotalCount : cri로 리뷰 총 개수 가져오기 ==========================================================================
+	@Override
+	public int getReviewTotalCount(Criteria cri) {
+		//값이 없으면
+		if(cri == null)
+			return 0;
+		return goodsDao.selectReviewTotalCount(cri);
+	}
 }

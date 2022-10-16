@@ -26,6 +26,7 @@ import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.dto.PaymentDTO;
 import kr.inyo.munglog.dto.QnaDTO;
+import kr.inyo.munglog.dto.ReviewDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.BoardService;
@@ -51,8 +52,8 @@ public class GoodsController {
 	@Autowired
 	BoardService boardService;
 	
-/* ajax 아님 ***************************************************************/
-	/* 굿즈 ---------------------------------------------------------------*/
+/* ajax 아님 ************************************************************************************************************ */
+	/* 굿즈 ----------------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods", method = RequestMethod.GET)
 	public ModelAndView goodsGet(ModelAndView mv) {
 		//카테고리 리스트 가져오기
@@ -63,7 +64,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 굿즈 상세보기--------------------------------------------------------------------------------*/
+	/* 굿즈 상세보기-------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/goodsDetail/{gs_num}", method = RequestMethod.GET)
 	public ModelAndView goodsDetailGet(ModelAndView mv, @PathVariable("gs_num")int gs_num) {
 		//굿즈 정보 가져오기
@@ -76,7 +77,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 장바구니 -------------------------------------------------------------------------------------*/
+	/* 장바구니 ----------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/basket", method = RequestMethod.GET)
 	public ModelAndView goodsBasketGet(ModelAndView mv, HttpSession session,
 			HttpServletResponse response) {
@@ -91,7 +92,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 주문하기 -------------------------------------------------------------------------------------*/
+	/* 주문하기 -------------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/order/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView goodsOrderGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
 			OrderListDTO orderList, HttpSession session, HttpServletResponse response) {
@@ -113,7 +114,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 굿즈 QnA ---------------------------------------------------------------*/
+	/* 굿즈 QnA ------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/qna", method = RequestMethod.GET)
 	public ModelAndView goodsQnaGet(ModelAndView mv) {
 		
@@ -121,7 +122,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 굿즈 QnA 등록 ---------------------------------------------------------------*/
+	/* 굿즈 QnA 등록 ---------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/registerQna", method = RequestMethod.GET)
 	public ModelAndView goodsRegisterQnaGet(ModelAndView mv) {
 		ArrayList<GoodsVO> goodsList = goodsService.getGoodsList();
@@ -144,7 +145,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 굿즈 QnA 상세보기 ---------------------------------------------------------------*/
+	/* 굿즈 QnA 상세보기 --------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/qnaDetail/{qn_num}", method = RequestMethod.GET)
 	public ModelAndView goodsQnaDetailGet(ModelAndView mv, @PathVariable("qn_num")int qn_num,
 			HttpSession session, HttpServletResponse response) {
@@ -174,7 +175,7 @@ public class GoodsController {
 		return mv;
 	}//
 	
-	/* 굿즈 QnA 수정 ---------------------------------------------------------------*/
+	/* 굿즈 QnA 수정 -----------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/goods/modifyQna/{qn_num}", method = RequestMethod.GET)
 	public ModelAndView goodsModifyQnaGet(ModelAndView mv, @PathVariable("qn_num")int qn_num,
 			HttpSession session, HttpServletResponse response) {
@@ -211,6 +212,16 @@ public class GoodsController {
 			messageService.message(response, "Q&A를 수정했습니다.", "/munglog/goods/qnaDetail/"+qn_num);
 		else
 			messageService.message(response, "Q&A 수정에 실패했습니다.", "/munglog/goods/modifyQna/"+qn_num);
+		return mv;
+	}//
+	
+	/* 굿즈 리뷰 ----------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/goods/review", method = RequestMethod.GET)
+	public ModelAndView goodsReviewGet(ModelAndView mv) {
+		ArrayList<GoodsVO> goodsList = goodsService.getGoodsList();
+		
+		mv.addObject("goodsList", goodsList);
+		mv.setViewName("/goods/review");
 		return mv;
 	}//
 	
@@ -338,6 +349,21 @@ public class GoodsController {
 		boolean res = boardService.deleteBoard(board, user);
 		
 		map.put("res", res);
+		return map;
+	}//
+	
+	/* 리뷰 리스트 가져오기 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/get/reviewList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> getReviewList(@RequestBody Criteria cri) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		//qna 리스트 가져오기
+		ArrayList<ReviewDTO> reviewList = goodsService.getReviewList(cri);
+		int totalCount = goodsService.getReviewTotalCount(cri);
+		PageMaker pm = new PageMaker(totalCount, 5, cri);
+		
+		map.put("pm", pm);
+		map.put("reviewList", reviewList);
 		return map;
 	}//
 }

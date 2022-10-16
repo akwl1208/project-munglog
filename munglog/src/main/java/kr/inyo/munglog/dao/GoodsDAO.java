@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.PaymentDTO;
+import kr.inyo.munglog.dto.ReviewDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
@@ -75,5 +76,11 @@ public interface GoodsDAO {
 	AddressVO selectAddress(@Param("ad_num")int adNum, @Param("ad_mb_num")int mbNum);
 	//배송지 수정
 	void updateAddress(AddressVO dbAddress);
+
+	/* 리뷰 ======================================================================================= */
+	//cri로 리뷰 리스트 가져오기
+	ArrayList<ReviewDTO> selectReviewList(Criteria cri);
+	//cri로 리뷰 총 개수 가져오기
+	int selectReviewTotalCount(Criteria cri);
 
 }

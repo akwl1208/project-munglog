@@ -102,6 +102,32 @@
 		select * from goods
 	</select>
 	
+	<!-- cri로 리뷰 리스트 가져오기 -->
+	<select id="selectReviewList" resultType="kr.inyo.munglog.dto.ReviewDTO">
+		select review.*, ot_name, gs_num, gs_name, mb_nickname from review
+			join orderDetail on review.rv_od_num = orderDetail.od_num
+	    join `option` on orderdetail.od_ot_num = `option`.ot_num
+	    join `order` on orderdetail.od_or_code = `order`.or_code
+			join goods on `option`.ot_gs_num = goods.gs_num
+	    join member on `order`.or_mb_num = member.mb_num
+	    <if test = "gs_num != 0">
+				where gs_num = #{gs_num} 
+			</if>
+		  order by rv_reg_date desc
+		  limit #{pageStart}, #{perPageNum}
+	</select>
+	
+	<!-- cri로 리뷰 총 개수 가져오기 -->
+	<select id="selectReviewTotalCount" resultType="int">
+		select count(*) from review
+			join orderDetail on review.rv_od_num = orderDetail.od_num
+	    join `option` on orderdetail.od_ot_num = `option`.ot_num
+			join goods on `option`.ot_gs_num = goods.gs_num
+			<if test = "gs_num != 0">
+				where gs_num = #{gs_num} 
+			</if>
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 장바구니 추가 -->
 	 <insert id="insertBasket">

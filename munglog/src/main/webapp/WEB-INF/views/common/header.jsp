@@ -126,7 +126,7 @@
 						<h5 class="dropdown-header">굿즈</h5>
 						<a class="dropdown-item" href="<c:url value="/goods"></c:url>">굿즈 보기</a>
 						<a class="dropdown-item" href="<c:url value="/goods/basket"></c:url>">장바구니</a>
-						<a class="dropdown-item" href="#">리뷰</a>
+						<a class="dropdown-item" href="<c:url value="/goods/review"></c:url>">굿즈 리뷰</a>
 						<a class="dropdown-item" href="<c:url value="/goods/qna"></c:url>">Q&A</a>
 						<h5 class="dropdown-header">후원</h5>
 						<a class="dropdown-item" href="#">진행중인 후원</a>

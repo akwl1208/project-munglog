@@ -9,6 +9,7 @@ import kr.inyo.munglog.dto.BasketDTO;
 import kr.inyo.munglog.dto.OrderDTO;
 import kr.inyo.munglog.dto.OrderListDTO;
 import kr.inyo.munglog.dto.PaymentDTO;
+import kr.inyo.munglog.dto.ReviewDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.AddressVO;
 import kr.inyo.munglog.vo.BasketVO;
@@ -48,4 +49,9 @@ public interface GoodsService {
 	boolean modifyBasket(BasketVO basket, MemberVO user);
 	//굿즈 리스트 가져오기
 	ArrayList<GoodsVO> getGoodsList();
+	//리뷰 리스트 가져오기
+	ArrayList<ReviewDTO> getReviewList(Criteria cri);
+	//리뷰 총 개수 가져오기
+	int getReviewTotalCount(Criteria cri);
+
 }
