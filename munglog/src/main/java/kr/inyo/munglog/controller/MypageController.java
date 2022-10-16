@@ -91,5 +91,20 @@ public class MypageController {
 		
 		map.put("res", res);
 		return map;
+	}//
+	
+	/* 리뷰 수정 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/modify/review", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> modifyReview(@RequestParam(value="file", required=false) MultipartFile file, 
+			@RequestParam("rv_num") int rv_num, @RequestParam("rv_od_num") int rv_od_num, @RequestParam("rv_rating") String rv_rating,
+			@RequestParam("rv_content") String rv_content, @RequestParam("delModiImage") boolean delModiImage, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		ReviewVO review = new ReviewVO(rv_num, rv_od_num, rv_rating, rv_content, "");
+		boolean res = mypageService.modifyReview(user, review, file, delModiImage);
+		
+		map.put("res", res);
+		return map;
 	}
 }

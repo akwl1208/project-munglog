@@ -21,5 +21,7 @@ public interface MypageDAO {
 	ReviewVO selectMyReview(int rv_od_num);
 	//리뷰 등록하기
 	boolean insertReview(ReviewVO review);
+	//리뷰 수정하기
+	boolean uploadReview(ReviewVO dbReview);
 
 }

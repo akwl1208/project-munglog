@@ -19,5 +19,7 @@ public interface MypageService {
 	ReviewVO getMyReview(ReviewVO review, MemberVO user);
 	//리뷰 등록하기
 	boolean registerReview(MemberVO user, ReviewVO review, MultipartFile file);
+	//리뷰 수정하기
+	boolean modifyReview(MemberVO user, ReviewVO review, MultipartFile file, boolean delModiImage);
 
 }

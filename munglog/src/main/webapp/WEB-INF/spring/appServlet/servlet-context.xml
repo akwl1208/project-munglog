@@ -19,6 +19,7 @@
 	<resources mapping="/challenge/img/**" location="file:///D:/git/munglog/challenge/" />
 	<resources mapping="/goods/img/**" location="file:///D:/git/munglog/goods/" />
 	<resources mapping="/qna/img/**" location="file:///D:/git/munglog/qna/" />
+	<resources mapping="/review/img/**" location="file:///D:/git/munglog/review/" />
 	<resources mapping="/file/**" location="file:///D:/git/munglog/file/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->

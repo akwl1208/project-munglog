@@ -88,22 +88,25 @@
 	}
 	.main .box-content .box-pay .item-goods .modal-body .rv_rating{font-size: 36px;}
 	.main .box-content .box-pay .item-goods .modal-body .rv_rating .fa-solid{color: #a04c00;}
-	.main .box-content .box-pay .item-goods .modal-body .box-image .btn-image{
+	.main .box-content .box-pay .item-goods .modal-body .box-image .btn{
 		padding: 5px; background-color: #a04c00;
 		border: none; color: #fff7ed; border-radius: 3px;
 		display: inline-block; margin-top: 5px;
 	}
-	.main .box-content .box-pay .item-goods .modal-body .box-image .preview{
+	.main .box-content .box-pay .item-goods .modal-body .box-image .preview,
+	.main .box-content .box-pay .item-goods .modal-body .box-image .modiPreview{
 		max-width: 150px; max-height: 150px;
 	}
 	.main .box-content .box-pay .item-goods .modal-footer .btn{
 		display: inline-block; border: 1px solid #dfe0df; padding: 10px 20px;
 		font-weight: bold; width: 48%;
 	}
-	.main .box-content .box-pay .item-goods .modal-footer .btn-register{
+	.main .box-content .box-pay .item-goods .modal-footer .btn-register,
+	.main .box-content .box-pay .item-goods .modal-footer .btn-modify{
 		background-color: #fb9600; color: #fff7ed;
 	}
-	.main .box-content .box-pay .item-goods .modal-footer .btn-cancel{background-color: #fff7ed; margin-left: 1%;}
+	.main .box-content .box-pay .item-goods .modal-footer .btn-cancel,
+	.main .box-content .box-pay .item-goods .modal-footer .btn-modi-cancel{background-color: #fff7ed; margin-left: 1%;}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
@@ -166,6 +169,9 @@
 		page,
 		perPageNum : 5,
 	};
+	let modiStar;
+	let modiContent;
+	let delModiImage = true; //수정이미지 삭제
 /* 이벤트 *********************************************************************************************************** */
 $(function(){
 	$(document).ready(function(){
@@ -229,12 +235,23 @@ $(function(){
 	$(document).on('change','.main .box-content .box-pay .modal-body .box-image input:file',function(event) {
 		let modalId = $(this).parents('.modal').attr('id');
 		//미리보기 화면 구성
-		if(event.target.files.length == 0){
-			$('.main .box-content  #'+modalId+' .box-image .preview').hide();
+		if(event.target.files.length == 0 && !delModiImage){
+			$('.main .box-content #'+modalId+' .box-image .modiPreview').show();
+			$('.main .box-content #'+modalId+' .box-image .preview').hide();
+			$('.main .box-content #'+modalId+' .box-image .btn-del-image').show();
 			return;
-		} 
-		else
-			$('.main .box-content  #'+modalId+' .box-image .preview').show();
+		} else if(event.target.files.length != 0 && !delModiImage){
+			$('.main .box-content #'+modalId+' .box-image .modiPreview').hide();
+			$('.main .box-content #'+modalId+' .box-image .preview').show(); 
+			$('.main .box-content #'+modalId+' .box-image .btn-del-image').hide();
+		} else if(event.target.files.length == 0 && delModiImage){
+			$('.main .box-content #'+modalId+' .box-image .preview').hide();
+			$('.main .box-content #'+modalId+' .box-image .btn-del-image').hide();
+			return;
+		} else if(event.target.files.length != 0 && delModiImage){
+			$('.main .box-content #'+modalId+' .box-image .preview').show();
+			$('.main .box-content #'+modalId+'  .box-image .btn-del-image').hide();
+		}
 		
 	  let file = event.target.files[0];
 	  let reader = new FileReader(); 
@@ -247,34 +264,14 @@ $(function(){
 	
 	//리뷰 등록 클릭 ===============================================================================================
   $(document).on('click', '.main .box-content .box-pay .modal-footer .btn-register', function(){
-		/*
-	  //로그인 안했으면
-		if(user == ''){
-			if(confirm('Q&A를 수정하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
-				location.href = '<%=request.getContextPath()%>/account/login';
+	  let modalId = $(this).parents('.modal').attr('id');
+	  let rv_rating = $('.main .box-content #'+modalId+' .rv_rating .star').length;
+	  let rv_content = $('.main .box-content #'+modalId+' .box-review-content .rv_content').val();
+	  //정보 입력 제대로 했는지 확인
+	  if(!validateReviewInfo(modalId, rv_rating, rv_content))
+		  return;
+		if(!confirm('리뷰는 삭제할 수 없습니다. 리뷰를 등록하겠습니까?'))
 			return;
-		}*/
-		//별점 선택 안했으면
-		let modalId = $(this).parents('.modal').attr('id');
-		let rv_rating = $('.main .box-content #'+modalId+' .rv_rating .star').length;
-		if(rv_rating == 0){
-			alert('별점을 선택해주세요.')
-			return;
-		}
-		if(rv_rating < 0 || rv_rating > 5){
-			alert('별점 1~5 사이에서 선택해주세요.')
-			return;
-		}
-		//사용 후기 작성 안했으면
-		let rv_content = $('.main .box-content #'+modalId+' .box-review-content .rv_content').val();
-		if(rv_content == '' || rv_content.length == 0){
-			alert('사용 후기를 작성해주세요.')
-			return;
-		}
-		if(rv_content.length < 10){
-			alert('사용 후기는 최소 10자 이상 작성해주세요.')
-			return;
-		}
 		//주문상세 번호 가져오기
 		let rv_od_num = $('.main .box-content #'+modalId).data('value');
 		//리뷰 등록
@@ -284,6 +281,80 @@ $(function(){
 		data.append('rv_content', rv_content);
 		data.append('file', $('.main .box-content #'+modalId+' .box-image input:file')[0].files[0]);
 		registerReview(data, modalId);
+  })//
+  
+	//리뷰 수정 클릭 ===============================================================================================
+  $(document).on('click', '.main .box-content .box-pay .box-button .btn-request.btn-modify', function(){
+		let modalId = $(this).data('target');
+		modiStar = $('.main .box-content '+modalId+' .rv_rating .star').length;
+		modiContent = $('.main .box-content '+modalId+' .box-review-content .rv_content').val(); 
+		let hasModiImg = $('.main .box-content '+modalId+' .box-image .modiPreview').attr('src');
+		if(hasModiImg == '')
+			delModiImage = true;
+		else
+			delModiImage = false;
+  })//
+  
+	//수정 모달 닫기 클릭 ===============================================================================================
+  $(document).on('click', '.main .modal .btn-modi-close, .main .modal .btn-modi-cancel', function(){
+  	let modalId = $(this).parents('.modal').attr('id');
+  	let html = '';
+  	//별점 초기화
+		for(let i = 1; i <= modiStar; i++){
+			html += '<i class="star fa-solid fa-star"></i>';
+		}
+		for(let i = modiStar + 1 ; i <= 5; i++){
+			html += '<i class="fa-regular fa-star"></i>';
+		}
+		$('.main .box-content #'+modalId+' .box-rating .rv_rating').html(html);
+  	//사용 후기 초기화
+  	$('.main .box-content #'+modalId+' .box-review-content .rv_content').val(modiContent);
+  	//사진 초기화
+  	$('.main .box-content #'+modalId+' .box-image input:file').val(''); //파일 비우기
+  	$('.main .box-content  #'+modalId+' .box-image .preview').hide();
+  	$('.main .box-content  #'+modalId+' .box-image .modiPreview').show();
+  	//버튼 초기화
+  	let hasModiImg = $('.main .box-content #'+modalId+' .box-image .modiPreview').attr('src');
+		if(hasModiImg != ''){
+			delModiImage = false;			
+			$('.main .box-content #'+modalId+' .box-image .btn-del-image').show();
+		}
+		else{
+			delModiImage = true;
+			$('.main .box-content #'+modalId+' .box-image .btn-del-image').hide();
+		}
+  })//
+  
+	//리뷰 수정 클릭 ===============================================================================================
+  $(document).on('click', '.main .box-content .box-pay .modal-footer .btn-modify', function(){
+	  let modalId = $(this).parents('.modal').attr('id');
+	  let rv_rating = $('.main .box-content #'+modalId+' .rv_rating .star').length;
+	  let rv_content = $('.main .box-content #'+modalId+' .box-review-content .rv_content').val();
+	  //정보 입력 제대로 했는지 확인
+	  if(!validateReviewInfo(modalId, rv_rating, rv_content))
+		  return;
+		if(!confirm('리뷰를 수정하겠습니까?'))
+			return;
+		//주문상세 번호 가져오기
+		let rv_od_num = $('.main .box-content #'+modalId).data('odnum');
+		let rv_num = $('.main .box-content #'+modalId).data('rvnum');
+		//리뷰 등록
+		let data = new FormData();
+		data.append('rv_num', rv_num);
+		data.append('rv_od_num', rv_od_num);
+		data.append('rv_rating', rv_rating);
+		data.append('rv_content', rv_content);
+		data.append('file', $('.main .box-content #'+modalId+' .box-image input:file')[0].files[0]);
+		data.append('delModiImage', delModiImage);
+		modifyReview(data, modalId);
+  })//
+  
+	//리뷰 수정에서 사진 삭제 클릭 ===============================================================================================
+  $(document).on('click', '.main .box-content .box-pay .modal-body .box-image .btn-del-image', function(){
+	  let modalId = $(this).parents('.modal').attr('id');
+	  delModiImage = true;
+	  $('.main .box-content  #'+modalId+' .box-image .modiPreview').hide();
+	  $(this).hide();
   })//
 });
 	
@@ -389,7 +460,7 @@ $(function(){
 							html += 							'</div>';
 							html += 						'</div>';
 							html += 						'<div class="box-image text-right">';
-							html += 							'<a href="javascript:0;" class="btn-image">사진 선택</a>';
+							html += 							'<a href="javascript:0;" class="btn btn-image">사진 선택</a>';
 							html += 							'<input type="file" style="display: none;" accept="image/jpg, image/jpeg, image/png, image/gif">';
 							html += 							'<div class="box-preview text-center mt-2">';
 							html += 								'<img class="preview" style="display: none;">';
@@ -400,6 +471,84 @@ $(function(){
 							html += 				'<div class="modal-footer">';
 							html += 					'<button type="button" class="btn btn-register">리뷰 작성</button>';
 							html += 					'<button type="button" class="btn btn-cancel" data-dismiss="modal">취소</button>';
+							html += 				'</div>';       
+							html += 			'</div>';
+							html += 		'</div>';
+							html += 	'</div>';
+						}
+						else if(orderDetail.od_state == '구매확정' && review != null){
+							html += 	'<a href="#" class="btn btn-request btn-modify" data-toggle="modal" data-target="#review'+orderDetail.od_num+'">리뷰 수정</a>';
+							html += 	'<div class="modal fade" id="review'+orderDetail.od_num+'" data-odnum="'+orderDetail.od_num+'" data-rvnum="'+review.rv_num+'">';
+							html += 		'<div class="modal-dialog modal-dialog-centered">';
+							html += 			'<div class="modal-content">';
+							html += 				'<div class="modal-header">';
+							html += 					'<h4 class="modal-title font-weight-bold d-block">';
+							html += 						'<i class="fa-solid fa-paw mr-2"></i>리뷰 수정';
+							html += 					'</h4>';
+							html += 					'<div class="box-message" style="line-height: 38px;">';
+							html += 						'<small>리뷰를 수정하세요.</small>';
+							html += 					'</div>';
+							html += 					'<button type="button" class="btn btn-modi-close" data-dismiss="modal">';
+							html += 						'<i class="fa-solid fa-xmark"></i>';
+							html += 					'</button>';
+							html += 				'</div>';
+							html += 				'<div class="modal-body">';
+							html += 					'<div class="box-goods mt-3">';
+							html += 						'<div class="goodsThumb">';
+							html += 							'<img class="gs_thumb" src="'+contextPath+orderDetail.gs_thumb_url+'">';
+							html += 						'</div>';
+							html += 						'<div class="box-goods-info">';
+							html += 							'<p class="gs_name font-weight-bold">'+orderDetail.gs_name+'</p>';
+							html += 							'<ul class="goods-info">';
+							html += 								'<li class="price font-weight-bold pr-2">';
+							html += 									'<span class="od_total_price">'+orderDetail.od_total_price_str+'</span>';
+							html += 								'</li>';
+							html += 								'<li class="amount pl-2 pr-2">';
+							html += 									'<span class="od_amount">'+orderDetail.od_amount_str+'</span>';
+							html += 								'</li>';
+							html += 								'<li class="date pl-2">';
+							html += 									'<span class="or_date">'+orderDetail.or_date_str+'</span>';
+							html += 								'</li>';
+							html += 							'</ul>';
+							html += 						'</div>';
+							html += 					'</div>';
+							html += 					'<div class="box-review">';
+							html += 						'<div class="box-rating mb-3">';
+							html += 							'<strong>별점</strong>';
+							html += 							'<div class="rv_rating d-flex justify-content-center" >';
+							let maxIndex =  Number(review.rv_rating);
+							for(let i = 1; i <= maxIndex; i++){
+								html += 							'<i class="star fa-solid fa-star"></i>';
+							}
+							for(let i = maxIndex + 1 ; i <= 5; i++){
+								html += 							'<i class="fa-regular fa-star"></i>';
+							}
+							html += 							'</div>';
+							html += 						'</div>';
+							html += 						'<div class="box-review-content">';
+							html += 							'<strong>사용 후기</strong>';
+							html += 							'<div class="mt-2">';
+							html += 								'<textarea class="rv_content" rows="5" style="resize: none; width: 100%;" placeholder="10자 이상 작성해주세요">';
+							html += 									review.rv_content
+							html += 								'</textarea>';
+							html += 							'</div>';
+							html += 						'</div>';
+							html += 						'<div class="box-image text-right">';
+							html += 							'<a href="javascript:0;" class="btn btn-image">사진 선택</a>';
+							if(review.rv_image != '')
+								html += 						'<a href="javascript:0;" class="btn btn-del-image ml-2">사진 삭제</a>';
+							html += 							'<input type="file" style="display: none;" accept="image/jpg, image/jpeg, image/png, image/gif">';
+							html += 							'<div class="box-preview text-center mt-2">';
+							html += 								'<img class="preview" style="display: none;">';
+							if(review.rv_image != '')
+								html += 							'<img class="modiPreview" src="'+contextPath+review.rv_image_url+'">';
+							html += 							'</div>';
+							html += 						'</div>';
+							html += 					'</div>';
+							html += 				'</div>';  
+							html += 				'<div class="modal-footer">';
+							html += 					'<button type="button" class="btn btn-modify">리뷰 수정</button>';
+							html += 					'<button type="button" class="btn btn-modi-cancel" data-dismiss="modal">취소</button>';
 							html += 				'</div>';       
 							html += 			'</div>';
 							html += 		'</div>';
@@ -441,5 +590,46 @@ $(function(){
 		});
 	}//	
 	
+	//validateReviewInfo : 리뷰 정보 입력했는지 확인 ======================================================================
+	function validateReviewInfo(modalId, rv_rating, rv_content){
+	  //로그인 안했으면
+		if(user == ''){
+			if(confirm('Q&A를 수정하려면 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
+				location.href = '<%=request.getContextPath()%>/account/login';
+			return false;
+		}
+		//별점 선택 안했으면
+		if(rv_rating == 0){
+			alert('별점을 선택해주세요.')
+			return false;
+		}
+		if(rv_rating < 0 || rv_rating > 5){
+			alert('별점 1~5 사이에서 선택해주세요.')
+			return false;
+		}
+		//사용 후기 작성 안했으면
+		if(rv_content == '' || rv_content.length == 0){
+			alert('사용 후기를 작성해주세요.')
+			return false;
+		}
+		if(rv_content.length < 10){
+			alert('사용 후기는 최소 10자 이상 작성해주세요.')
+			return false;
+		}
+		return true;
+	}//
+	
+ 	//modifyReview : 리뷰 수정하기 ======================================================================
+	function modifyReview(data, modalId){
+		ajaxPostData(data, '/modify/review', function(data){
+			if(data.res){
+				$('.main .modal #'+modalId+' .btn-modi-close').click();
+				alert('리뷰를 수정했습니다.');
+				location.reload();
+			}
+			else
+				alert('리뷰 수정에 실패했습니다.');
+		});
+	}//
 </script>
 </html>

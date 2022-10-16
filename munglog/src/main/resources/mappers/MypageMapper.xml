@@ -44,7 +44,15 @@
 	</insert>
 	
 	<!-- update ************************************************************************************************* -->
-	
+	<!-- 리뷰 수정하기 -->
+	<update id="uploadReview">
+		update review
+			set rv_rating = #{rv_rating},
+				rv_content = #{rv_content},
+				rv_image = #{rv_image},
+				rv_report = #{rv_report}
+			where rv_num = #{rv_num}
+	</update>
 	<!-- delete ************************************************************************************************* -->
 	
 </mapper>

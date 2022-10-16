@@ -24,6 +24,14 @@ public class ReviewVO {
 		this.rv_image = rv_image;
 	}
 	
+	public ReviewVO(int rv_num, int rv_od_num, String rv_rating, String rv_content, String rv_image) {
+		this.rv_num = rv_num;
+		this.rv_od_num = rv_od_num;
+		this.rv_rating = rv_rating;
+		this.rv_content = rv_content;
+		this.rv_image = rv_image;
+	}
+	
 	public String getRv_image_url() {
 		return "/review/img" + rv_image;
 	}
