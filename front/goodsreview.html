@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>리뷰 보기</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.main{
+			width:100%; padding: 50px; display: block;
+		}
+		.main .box-title{
+			background-color: #ae8a68; border-radius: 5px;
+			padding: 20px; box-shadow: 3px 3px 3px 0 rgba(73, 67, 60, 0.2);
+			margin-bottom: 10px; font-size: 18px; font-weight: bold;
+		}
+		.main .box-title .fa-paw{margin-right: 6px;}
+		.main .box-title .box-message{
+			font-size: 12px; margin: 5px 0; padding-left: 24px;
+		}
+		.main .box-content{margin: 44px;}
+		.main .box-content .box-review .item-review{
+			padding: 30px; margin-bottom: 10px;
+   	 	border: 2px solid #ae8a68; border-radius: 5px;
+		}
+		.main .box-content .box-review .item-review .box-review-detail{
+			overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+   		 line-height: 20px;
+		}
+		.main .box-content .box-review .item-review .box-review-detail .rv_reg_date::before{
+			display: inline-block; width: 2px; height: 2px;
+    	margin: 0 6px; content: ""; vertical-align: 3px;
+    	background-color: #d8d8d8;
+		}
+		.main .box-content .box-review .item-review .box-review-content{
+			display: table; width: 100%; table-layout: fixed;
+		}
+		.main .box-content .box-review .item-review .box-review-content>div{
+			display: table-cell; vertical-align: top;
+		}
+		.main .box-content .box-review .item-review .box-review-content.more>div{display: block;}
+		.main .box-content .box-review .item-review .box-review-content .box-review-text .rv_content{
+			overflow: hidden; height: 100px;
+   		font-size: 14px; line-height: 22px; word-break: break-all;
+		}
+		.main .box-content .box-review .item-review .box-review-content .box-review-text .rv_content.more{height: auto;}
+		.main .box-content .box-review .item-review .box-review-content .box-review-image{
+    	width: 100px; height: 100px; padding-left: 10px; overflow: hidden;
+		}
+		.main .box-content .box-review .item-review .box-review-content .box-review-image.more{
+			width: 200px; height: 200px; margin: 10px auto;
+		}
+		.main .box-content .box-review .item-review .box-review-content .box-review-image .rv_image{
+			width: 100%; height: 100%; border: 1px solid #d8d8d8;
+		}
+		.main .box-content .box-review .item-review .box-button a:hover>small,
+		.main .box-content .box-review .item-review .box-button a:hover .fa-solid{color: #fb9600;}
+	</style>
+</head>
+<body>
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height: 100vh;">
+			<!-- main -------------------------------------------------------- -->
+			<div class="main">
+				<!-- 제목 -------------------------------------------------------- -->
+				<div class="box-title">
+					<i class="fa-solid fa-paw"></i><span>굿즈 리뷰</span>
+					<div class="box-message">멍친들이 작성한 굿즈 리뷰를 보고 구매에 참고하세요.</div>
+				</div>			
+				<div class="box-content">
+					<div class="box-review">
+						<ul class="list-review">
+							<li class="item-review">
+								<div class="box-review-detail">
+									<strong class="gs_name mr-2">케이스</strong>
+									<div class="box-rating mr-2" style="display: inline-block;">
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<strong class="rv_rating ml-1">5</strong>
+									</div>
+									<small class="mb_nickname">닉네임</small>
+									<small class="rv_reg_date">2022-10-16</small>
+								</div>
+								<div class="box-review-content mt-2">
+									<div class="box-review-text">
+										<p class="rv_content m-0">
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+										</p>
+									</div>
+									<div class="box-review-image">
+										<img class="rv_image" src="/akwl.jpg">
+									</div>
+								</div>
+								<div class="box-button mt-2 text-right" style="height: 26px;">
+									<a class="btn-more" href="javascript:0;">
+										<small>
+											리뷰 더보기<i class="fa-solid fa-chevron-down ml-1"></i>
+										</small>
+									</a>
+									<a class="btn-fold" href="javascript:0;" style="display: none;">
+										<small>
+											리뷰 접기<i class="fa-solid fa-chevron-up ml-1"></i>
+										</small>
+									</a>
+								</div>
+							</li>
+							<li class="item-review">
+								<div class="box-review-detail">
+									<strong class="gs_name mr-2">케이스</strong>
+									<div class="box-rating mr-2" style="display: inline-block;">
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<strong class="rv_rating ml-1">5</strong>
+									</div>
+									<small class="mb_nickname">닉네임</small>
+									<small class="rv_reg_date">2022-10-16</small>
+								</div>
+								<div class="box-review-content mt-2">
+									<div class="box-review-text">
+										<p class="rv_content m-0">
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+										</p>
+									</div>
+									<div class="box-review-image">
+										<img class="rv_image" src="/akwl.jpg">
+									</div>
+								</div>
+								<div class="box-button mt-2 text-right" style="height: 26px;">
+									<a class="btn-more" href="javascript:0;">
+										<small>
+											리뷰 더보기<i class="fa-solid fa-chevron-down ml-1"></i>
+										</small>
+									</a>
+									<a class="btn-fold" href="javascript:0;" style="display: none;">
+										<small>
+											리뷰 접기<i class="fa-solid fa-chevron-up ml-1"></i>
+										</small>
+									</a>
+								</div>
+							</li>
+							<li class="item-review">
+								<div class="box-review-detail">
+									<strong class="gs_name mr-2">케이스</strong>
+									<div class="box-rating mr-2" style="display: inline-block;">
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+										<strong class="rv_rating ml-1">5</strong>
+									</div>
+									<small class="mb_nickname">닉네임</small>
+									<small class="rv_reg_date">2022-10-16</small>
+								</div>
+								<div class="box-review-content mt-2">
+									<div class="box-review-text">
+										<p class="rv_content m-0">
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+											리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 내용리뷰 
+										</p>
+									</div>
+									<div class="box-review-image">
+										<img class="rv_image" src="/akwl.jpg">
+									</div>
+								</div>
+								<div class="box-button mt-2 text-right" style="height: 26px;">
+									<a class="btn-more" href="javascript:0;">
+										<small>
+											리뷰 더보기<i class="fa-solid fa-chevron-down ml-1"></i>
+										</small>
+									</a>
+									<a class="btn-fold" href="javascript:0;" style="display: none;">
+										<small>
+											리뷰 접기<i class="fa-solid fa-chevron-up ml-1"></i>
+										</small>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+  </div>
+	<script>
+		$(function(){
+			$('.btn-more').click(function(){
+				$(this).hide();
+				$('.btn-fold').show();
+				$('.box-review-image').addClass('more');
+				$('.box-review-content').addClass('more');
+				$('.rv_content').addClass('more');
+			})
+			$('.btn-fold').click(function(){
+				$(this).hide();
+				$('.btn-more').show();
+				$('.box-review-image').removeClass('more');
+				$('.box-review-content').removeClass('more');
+				$('.rv_content').removeClass('more');
+			})
+		})
+	</script> 
+</body>
+</html>
