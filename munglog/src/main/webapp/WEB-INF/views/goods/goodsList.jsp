@@ -112,7 +112,6 @@
 	let cri = {
 		page,
 		perPageNum : 20,
-		order : 'desc',
 		popularity : 0,
 		searchType : '',
 		keyword : ''
@@ -162,6 +161,19 @@
 				cri.searchType = searchType;
 				cri.keyword = keyword;			
 			}
+			getGoodsList(cri);
+		})//
+		
+		//sort 클릭 ====================================================================================
+		$('.main .box-sort .sort').click(function(){
+			//색 바꿈
+			$('.main .box-sort .sort').removeClass('select');
+			$(this).addClass('select');
+			let hasClass = $(this).hasClass('sort-latest');
+			if(hasClass)
+				cri.popularity = '0';
+			else 
+				cri.popularity = '1';
 			getGoodsList(cri);
 		})//
 	});		
