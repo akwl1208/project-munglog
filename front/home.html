@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>멍멍일지 홈</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://kit.fontawesome.com/38e579569f.js" crossorigin="anonymous"></script>
+	<style>
+		*{padding:0; margin: 0; color: #52443b;}
+		ul,li{list-style:none;}
+		a{text-decoration: none; color: #52443b;}
+		a:hover{text-decoration: none; color: #52443b;}
+		.main{
+			width:830px; padding: 50px 20px; display: block;
+		}
+		.side-main{
+			width:280px; padding: 50px 10px; display: block; 
+		}
+		/*aside ------------------------------------------------------------- */
+		.side-main .box-login,
+		.side-main .box-account{
+			border: 1px solid #52443b; border-radius: 5px;
+			padding: 20px 10px; background-color: #fff7ed;
+		}
+		.side-main .box-login .btn-login{
+			font-size: 18px; font-weight: bold; padding: 5px 0;
+			width: 100%; display: inline-block; border-radius: 5px;
+			border: none; background-color: #fb9600; color:#fff7ed;
+			text-align: center; margin: 20px 0;
+		}
+		.side-main .box-login .btn-login:hover{background-color:#ffa31c;}
+		.side-main .box-login .box-footer,
+		.side-main .box-account .box-service{font-size: 12px;}
+		.side-main .box-login .box-footer>div,
+		.side-main .box-account .box-user>a,
+		.side-main .box-account .box-user>div{display: inline-block;}
+		.side-main .box-login .box-footer>div>a .fa-solid{line-height: 16px;}
+		.side-main .box-login .box-footer>div>a:hover,
+		.side-main .box-account .box-user .link-profile-set:hover .fa-solid,
+		.side-main .box-account .box-point .mypoint .fa-solid,
+		.side-main .box-account .box-service>a:hover,
+		.side-main .box-account .box-service>a:hover .fa-solid{color: #fb9600;}
+		.side-main .box-login .box-footer .box-find .link-find-pw::before{
+			display: inline-block; width: 2px; height: 2px;
+    	margin: 0 6px; content: ""; vertical-align: 3px;
+    	background-color: #d8d8d8;
+		}
+		.side-main .box-account .box-user{margin-bottom: 10px;}
+		.side-main .box-account .box-user .thumb img{
+			border-radius: 50px; width: 60px; height: 60px;
+		}
+		.side-main .box-account .box-user .nickname{
+			height: 60px; line-height: 60px; padding-left: 10px;
+			font-weight: bold; overflow: hidden; text-overflow: ellipsis;
+		}
+		.side-main .box-account .box-user .link-profile-set .fa-solid{line-height: 60px;}
+		.side-main .box-account .box-point{
+			font-size: 18px; font-weight: bold; border-top: 1px solid #d8d8d8;
+			padding: 20px; border-bottom: 1px solid #d8d8d8;
+		}
+		.side-main .box-account .box-service{padding-top: 20px;}
+		.side-main .box-account .box-service .fa-solid{font-size: 24px;}
+		/*main ------------------------------------------------------------- */
+		.main .box-challenge{width: 100%; height: 300px;}
+		.main .box-challenge .img{width: 100%; height: 100%;} 
+		.main>div .box-header .title{
+			font-size: 20px; font-weight: 900;
+		}
+		.main>div .box-header .link:hover small{color: #fb9600;}
+		.main .box-log .list-log,
+		.main .box-goods .list-goods{
+			display: table; width: 100%; height: 300px; margin-top: 5px;
+		}
+		.main .box-log .list-log .item-log,
+		.main .box-goods .list-goods .item-goods{
+			display: inline-block; width: calc(20% - 10px); height: 148px;
+			position: relative; overflow: hidden; margin: 5px;
+		}
+		.main .box-log .list-log .item-log .link-log,
+		.main .box-goods .list-goods .item-goods .link-goods{
+			width: 100%; height: 100%; display: block; background-position: center center; 
+			background-size: cover; border: 1px solid #ececec;
+		}
+		.main .box-log .list-log .item-log .link-log:hover,
+		.main .box-goods .list-goods .item-goods .link-goods:hover{transform: scale(0.9);}
+
+	</style>
+</head>
+<body>
+	<div class="container clearfix" style="margin-top:125px;">
+		<div style="display:flex; min-width:1110px; min-height: 100vh;">
+			<!-- main -------------------------------------------------------- -->
+			<div class="main">
+				<div class="box-challeng mb-5">
+					<a href="#" class="link-challenge"><img src="/challengBanner.jpg"></a>
+				</div>
+				<div class="box-log mb-4">
+					<div class="box-header">
+						<span class="title mr-3"><i class="fa-solid fa-paw mr-2"></i>월간 인기 일지</span>
+						<a href="#" class="link link-feed"><small>더보기</small></a> 
+					</div>
+					<ul class="list-log">
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-log">
+							<a href="#" class="link-log" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="box-goods">
+					<div class="box-header">
+						<span class="title mr-4"><i class="fa-solid fa-paw mr-2"></i>베스트 굿즈 상품</span>
+						<a href="#" class="link link-goods"><small>더보기</small></a> 
+					</div>
+					<ul class="list-goods">
+						<li class="item-goods">
+							<a href="#" class="link-goods" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-goods">
+							<a href="#" class="link-goods" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-goods">
+							<a href="#" class="link-goods" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-goods">
+							<a href="#" class="link-goods" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+						<li class="item-goods">
+							<a href="#" class="link-goods" style="background-image: url(/akwl.jpg)"></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- aside -------------------------------------------------------- -->
+			<div class="side-main">
+				<div class="box-login">
+					<div class="box-header">
+						<small>만나서 반갑습니다. 멍멍일지입니다.</small>
+					</div>
+					<a href="#" class="btn-login">로그인</a>
+					<div class="box-footer clearfix">
+						<div class="box-find float-left">
+							<a href="#" class="link-find-id"><i class="fa-solid fa-lock mr-1"></i>아이디</a>
+							<a href="#" class="link-find-pw">비밀번호찾기</a>
+						</div>
+						<div class="box-signup float-right">
+							<a href="#" class="link-signup"><i class="fa-solid fa-dog mr-1"></i>회원가입</a>
+						</div>
+					</div>
+				</div>
+				<div class="box-account">
+					<div class="box-profile">
+						<div class="box-user d-flex" style="width: 100%;">
+							<div class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></div>
+							<div class="nickname">MUNG2MUNG2MUNG2MUNG2</div>
+							<a class="link-profile-set ml-1"><i class="fa-solid fa-gear"></i></a>
+						</div>
+					</div>
+					<div class="box-point clearfix pl-3 pr-3">
+						<a href="#" class="link-point">
+							<div class="mypoint float-left"><i class="fa-solid fa-bone mr-2"></i>내 멍멍포인트</div>
+							<div class="float-right"><span class="mypoint-amount" style="color: #fb9600;">100</span><span class="pl-1">P</span></div>
+						</a>
+					</div>
+					<div class="box-service d-flex">
+						<a href="#" class="link-mylog text-center flex-fill">
+							<i class="fa-solid fa-book mb-2 " style="display: block;"></i>나의 일지
+						</a>
+						<a href="#" class="link-mypage text-center flex-fill">
+							<i class="fa-solid fa-house mb-2" style="display: block;"></i>마이페이지
+						</a>
+						<a href="#" class="link-mypage text-center flex-fill">
+							<i class="fa-solid fa-screwdriver-wrench mb-2" style="display: block;"></i>관리자페이지
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+	<script>
+		$(function(){
+		})
+	</script> 
+</body>
+</html>
