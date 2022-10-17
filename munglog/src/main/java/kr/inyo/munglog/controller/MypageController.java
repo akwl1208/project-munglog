@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.service.MypageService;
 import kr.inyo.munglog.vo.MemberVO;
@@ -30,10 +32,12 @@ public class MypageController {
 	@Autowired
 	MypageService mypageService;
 	@Autowired
+	MemberService memberService;
+	@Autowired
 	MessageService messageService;
 	
-/* ajax 아님 ***************************************************************/
-	/* 마이페이지홈화면 ---------------------------------------------------------------*/
+/* ajax 아님 ****************************************************************************************************** */
+	/* 마이페이지홈화면 ----------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/mypage", method = RequestMethod.GET)
 	public ModelAndView mypageGet(ModelAndView mv) {
 		
@@ -41,11 +45,32 @@ public class MypageController {
 		return mv;
 	}//
 	
-	/* 주문/배송 ---------------------------------------------------------------*/
+	/* 주문/배송 -----------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/mypage/order", method = RequestMethod.GET)
 	public ModelAndView mypageOrderGet(ModelAndView mv) {
 		
 		mv.setViewName("/mypage/order");
+		return mv;
+	}//
+	
+	/* 회원정보 수정 ---------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/mypage/modifyAccount", method = RequestMethod.GET)
+	public ModelAndView mypageModifyAccountGet(ModelAndView mv) {
+		
+		mv.setViewName("/mypage/modifyAccount");
+		return mv;
+	}//
+	
+	@RequestMapping(value = "/mypage/modifyAccount", method = RequestMethod.POST)
+	public ModelAndView mypageModifyAccountPost(ModelAndView mv, MemberVO member,
+			HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = memberService.modifyAccount(member, user);
+		
+		if(res)
+			messageService.message(response, "회원정보가 수정되었습니다.", "/munglog/mypage");
+		else
+			messageService.message(response, "회원정보 수정에 실패했습니다.", "/munglog/mypage/modifyAccount");	
 		return mv;
 	}//
 	
@@ -106,5 +131,5 @@ public class MypageController {
 		
 		map.put("res", res);
 		return map;
-	}
+	}//
 }

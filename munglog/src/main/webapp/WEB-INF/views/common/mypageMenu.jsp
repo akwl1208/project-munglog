@@ -15,7 +15,9 @@
 		color: #402E32; font-size: 18px; font-weight: bold;
 		margin: 0 auto; text-align:center;
 	}
+	.side-main .menu-admin .box-title .fa-house{line-height:24px;}
 	.side-main .menu-admin .list-group{text-align: center;}
+	.side-main .menu-admin .list-group .list-group-item{padding: 0.5rem 1.25rem;}
 </style>
 </head>
 <!-- html ************************************************************************************************************ -->
@@ -23,11 +25,15 @@
 	<!-- box-profile -------------------------------------------------------- -->
 	<div class="menu-admin" style="width: 260px;">
 		<div class="box-title mb-3">
-			<i class="fa-solid fa-screwdriver-wrench mr-2"></i><span>마이페이지 메뉴</span>
+			<a href="<c:url value="/mypage"></c:url>" class="link-mypage">
+				<i class="fa-solid fa-house mr-2"></i><span>마이페이지</span>
+			</a>
 		</div>
 		<div class="list-group">
-			<h5>일지</h5>
-		  <h5 class="mt-2">굿즈</h5>
+			<strong class="mb-2">계정</strong>
+			<a href="<c:url value="/mypage/modifyAccount"></c:url>" class="list-group-item list-group-item-action">회원정보 수정</a>
+			<strong class="mt-2 mb-2">일지</strong>
+		  <strong class="mt-2 mb-2">굿즈</strong>
 		  <a href="<c:url value="/mypage/order"></c:url>" class="list-group-item list-group-item-action">주문/배송 조회</a>
 		</div>
 	</div>

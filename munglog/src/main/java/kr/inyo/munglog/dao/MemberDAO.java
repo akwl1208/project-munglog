@@ -35,7 +35,7 @@ public interface MemberDAO {
 	//세션 아이디 주고 이메일 정보 가져오기
 	String selectMemberEmail(String mb_session_id);
 	//회원정보 수정
-	void updateMember(MemberVO member);
+	boolean updateMember(MemberVO member);
 	//회원 정보 리스트 가져오기
 	ArrayList<MemberVO> getMemberList();
 	//회원 번호로 회원 정보 가져오기

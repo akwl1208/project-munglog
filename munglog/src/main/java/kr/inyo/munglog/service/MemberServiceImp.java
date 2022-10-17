@@ -466,4 +466,40 @@ public class MemberServiceImp implements MemberService {
 			return 0;
 		return memberDao.selectPointSum(user.getMb_num(), pi_process);
 	}
+	
+	/* modifyAccount : 회원정보 수정 -----------------------------------------------------------------------*/
+	@Override
+	public boolean modifyAccount(MemberVO member, MemberVO user) {
+		// 값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(member == null || member.getMb_email() == null || member.getMb_name() == null || member.getMb_phone() == null)
+			return false;
+		//활동 정지당한 회원이 아니면
+		if(!user.getMb_activity().equals("0"))
+			return false;
+		//이메일이 다르면
+		if(!member.getMb_email().equals(user.getMb_email()))
+			return false;
+		//이메일로 회원정보 가져오기
+		MemberVO dbMember = memberDao.selectMember(member.getMb_email());
+		if(dbMember == null)
+			return false;
+		//다른 회원 정보이면
+		if(dbMember.getMb_num() != user.getMb_num())
+			return false;
+		//이름과 핸드폰번호가 모두 동일한 회원이 있으면 안됨 -> 아이디 찾기
+		MemberVO isMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
+		if(isMember != null &&
+				(!isMember.getMb_name().equals(dbMember.getMb_name()) || !isMember.getMb_phone().equals(dbMember.getMb_phone())))
+			return false;
+		//비밀번호 수정이면 비밀번호 암호화
+		if(member.getMb_pw() != "" || member.getMb_pw().length() != 0) {
+			String encPw =passwordEncoder.encode(member.getMb_pw()); 
+			dbMember.setMb_pw(encPw);
+		}
+		dbMember.setMb_name(member.getMb_name());
+		dbMember.setMb_phone(member.getMb_phone());
+		return memberDao.updateMember(dbMember);
+	}
 }

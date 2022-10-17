@@ -42,4 +42,6 @@ public interface MemberService {
 	void LogAMonthPoint(MemberVO user);
 	//포인트 합계 가져오기
 	int getPointSum(MemberVO user, String pi_process);
+	//회원정보 수정
+	boolean modifyAccount(MemberVO member, MemberVO user);
 }

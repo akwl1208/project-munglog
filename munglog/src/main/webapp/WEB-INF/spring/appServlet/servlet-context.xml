@@ -72,6 +72,7 @@
 	    <beans:ref bean="guestInterceptor"/>
     </interceptor>
 		<interceptor>
+			<mapping path="/mypage/**"/>
 			<mapping path="/goods/qnaDetail"/>
 			<mapping path="/goods/registerQna"/>
 			<mapping path="/goods/order"/>
