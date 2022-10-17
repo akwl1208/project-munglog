@@ -11,6 +11,7 @@ public class ChallengeVO {
 	private String cl_year;
 	private String cl_month;
 	private String cl_theme;
+	private String cl_banner;
 	
 	//생성자
 	public ChallengeVO(String cl_year, String cl_month, String cl_theme) {
@@ -29,5 +30,8 @@ public class ChallengeVO {
 	public String getCl_thumb_url() {
 		return "/challenge/img" + cl_thumb;
 	}
-
+	
+	public String getCl_banner_url() {
+		return "/challenge/img" + cl_banner;
+	}
 }

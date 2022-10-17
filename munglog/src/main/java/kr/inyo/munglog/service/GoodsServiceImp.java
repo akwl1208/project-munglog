@@ -398,4 +398,10 @@ public class GoodsServiceImp implements GoodsService {
 			return 0;
 		return goodsDao.selectReviewTotalCount(cri);
 	}
+
+	//getBestGoodsList : 판매가 가장 많이 된 굿즈 5개 가져오기 ==========================================================================
+	@Override
+	public ArrayList<GoodsVO> getBestGoodsList() {
+		return goodsDao.selectBestGoodsList();
+	}
 }

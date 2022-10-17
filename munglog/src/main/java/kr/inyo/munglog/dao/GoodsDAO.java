@@ -30,6 +30,8 @@ public interface GoodsDAO {
 	GoodsVO selectGoods(int gs_num);
 	//굿즈 리스트 가져오기
 	ArrayList<GoodsVO> selectGoodsList();
+	//판매가 가장 많은 굿즈 가져오기
+	ArrayList<GoodsVO> selectBestGoodsList();
 
 	/* 옵션 ======================================================================================= */
 	//굿즈 번호로 옵션 리스트 가져오기
@@ -82,5 +84,4 @@ public interface GoodsDAO {
 	ArrayList<ReviewDTO> selectReviewList(Criteria cri);
 	//cri로 리뷰 총 개수 가져오기
 	int selectReviewTotalCount(Criteria cri);
-
 }

@@ -16,11 +16,11 @@
 <style type="text/css">
 *{padding:0; margin: 0;}
 .main{
-	width:830px; padding: 50px 20px; display: block;
-	}
+	width:800px; padding: 50px 20px; display: block;
+}
 .side-main{
-	width:280px; padding: 50px 10px; display: block;
-	}
+	width:310px; padding: 50px 10px; display: block;
+}
 </style>
 </head>
 <body>

@@ -53,5 +53,7 @@ public interface GoodsService {
 	ArrayList<ReviewDTO> getReviewList(Criteria cri);
 	//리뷰 총 개수 가져오기
 	int getReviewTotalCount(Criteria cri);
+	//판매가 가장 많은 굿즈 5개 가져오기
+	ArrayList<GoodsVO> getBestGoodsList();
 
 }

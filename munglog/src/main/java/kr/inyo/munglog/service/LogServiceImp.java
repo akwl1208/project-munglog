@@ -489,5 +489,11 @@ public class LogServiceImp implements LogService {
 		memberDao.insertPoint(user.getMb_num(),"적립",pointHistory,300);
 		return 2;
 	}
+	
+	/*getBestLogList : 지난 달을 기준으로 가장 하트가 많이 눌린 일지 가져오기 -----------------------------------------------------------*/
+	@Override
+	public ArrayList<LogVO> getBestLogList() {
+		return logDao.selectBestLogList(today);
+	}
 
 }

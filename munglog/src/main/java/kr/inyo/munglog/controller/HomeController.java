@@ -1,5 +1,7 @@
 package kr.inyo.munglog.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.service.GoodsService;
+import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
+import kr.inyo.munglog.vo.ChallengeVO;
+import kr.inyo.munglog.vo.GoodsVO;
+import kr.inyo.munglog.vo.LogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
@@ -27,14 +33,27 @@ public class HomeController {
 	@Autowired
 	MemberService memberService;
 	@Autowired
+	LogService logService;
+	@Autowired
 	GoodsService goodsService;
 	@Autowired
 	MessageService messageService;
+	
+	//기본으로 이번년도와 월로 설정
+	String thisYear = String.format("%tY", new Date());
+	String thisMonth = String.format("%tm", new Date());
 	
 /* ajax 아님 ***************************************************************/
 	/* 홈화면 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView home(ModelAndView mv) {
+		ChallengeVO challenge = logService.getChallenge(thisYear, thisMonth);
+		ArrayList<LogVO> logList = logService.getBestLogList();
+		ArrayList<GoodsVO> goodsList = goodsService.getBestGoodsList();
+		
+		mv.addObject("goodsList", goodsList);
+		mv.addObject("logList", logList);
+		mv.addObject("challenge", challenge);
 		mv.setViewName("/main/home");
 		return mv;
 	}

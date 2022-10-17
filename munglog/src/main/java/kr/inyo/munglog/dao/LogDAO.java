@@ -1,6 +1,7 @@
 package kr.inyo.munglog.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -43,6 +44,8 @@ public interface LogDAO {
 	void updateLogHeart(int lg_num);
 	//한달동안 일지가 등록된 날짜 개수 가져오기
 	int selectCountLogForAMonth(@Param("lg_mb_num")int mb_num, @Param("today")String today);
+	//지날 한달 동안 가장 좋아요를 많이 받은 10개의 일지 가져오기
+	ArrayList<LogVO> selectBestLogList(Date today);
 	
 	/* 피사체 ----------------------------------------------------------------------------------- */
 	//사진 속 피사체 추가
@@ -87,5 +90,6 @@ public interface LogDAO {
 	void insertParticipate(@Param("cl_num")int cl_num, @Param("lg_num")int lg_num);
 	//일지 번호 주고 챌린지 참여 정보 가져오기
 	ParticipateVO selectParticipateByLgNum(int lg_num);
+	
 	
 }
