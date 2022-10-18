@@ -29,7 +29,7 @@ public interface MemberDAO {
 	//회원정보 DB에저장
 	void insertMember(MemberVO member);
 	//이메일 정보주고 프로필 수정
-	void updateProfile(MemberVO member);
+	boolean updateProfile(MemberVO member);
 	//세션 정보 수정
 	void updateSession(MemberVO user);
 	//세션 아이디 주고 이메일 정보 가져오기
@@ -40,6 +40,8 @@ public interface MemberDAO {
 	ArrayList<MemberVO> getMemberList();
 	//회원 번호로 회원 정보 가져오기
 	MemberVO selectMemberByMbnum(int mb_num);
+	//닉네임으로 회원 정보 가져오기
+	MemberVO selectMemberByNickname(String mb_nickname);
 	
 	/* 포인트 ----------------------------------------------------------------------------------- */
 	//포인트 적립
@@ -54,6 +56,7 @@ public interface MemberDAO {
 	/* 강아지 ----------------------------------------------------------------------------------- */
 	//회원 정보 주고 강아지 정보 가져오기
 	DogVO selectDogHasBirth(int mb_num);
+	
 
 	
 	

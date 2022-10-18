@@ -3,6 +3,7 @@ package kr.inyo.munglog.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import javax.mail.internet.MimeMessage;
 
@@ -11,10 +12,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.dao.LogDAO;
 import kr.inyo.munglog.dao.MemberDAO;
+import kr.inyo.munglog.utils.MediaUtils;
+import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.PointVO;
@@ -41,6 +45,8 @@ public class MemberServiceImp implements MemberService {
 	String thisDay = String.format("%td", now);
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	String today = format.format(now);
+	//프로필 경로
+	String profileUploadPath = "D:\\git\\munglog\\profile";
 	
 /* 함수********************************************************************************************************************* */
 	//이메일 보내기-----------------------------------------------------------------------------------------------------------
@@ -501,5 +507,71 @@ public class MemberServiceImp implements MemberService {
 		dbMember.setMb_name(member.getMb_name());
 		dbMember.setMb_phone(member.getMb_phone());
 		return memberDao.updateMember(dbMember);
+	}
+	
+	/* checkNickname : 닉네임 중복 검사 -----------------------------------------------------------------------*/
+	@Override
+	public int checkNickname(MemberVO member, MemberVO user) {
+		//값이 없음
+		if(user == null || user.getMb_num() < 1 || user.getMb_nickname() == "")
+			return -1;
+		if(member == null || member.getMb_nickname() == "")
+			return -1;
+		//정규 표현식에 맞는지 확인
+		String nicknameRegex = "^(?=.*[A-Za-z0-9가-힣])[\\w가-힣-]{2,10}$";
+		String strictRegex = "^[M|m][U|u][N|n][G|g]\\d+$";
+		if(!Pattern.matches(nicknameRegex, member.getMb_nickname()))
+			return 0;
+		if(!member.getMb_nickname().equals(user.getMb_nickname()) && Pattern.matches(strictRegex, member.getMb_nickname()))
+			return 1;
+		//닉네임이 있는지 확인
+		MemberVO dbMember = memberDao.selectMemberByNickname(member.getMb_nickname());
+		if(!member.getMb_nickname().equals(user.getMb_nickname()) && dbMember != null)
+			return 2;
+		return 3;
+	}
+	
+	/* modifyProfile : 프로필 수정 -----------------------------------------------------------------------*/
+	@Override
+	public boolean modifyProfile(MultipartFile file, boolean delProfile, MemberVO member, MemberVO user) {
+		// 값 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(member == null || member.getMb_num() < 1 || member.getMb_nickname() == "")
+			return false;
+		if(member.getMb_num() != user.getMb_num())
+			return false;
+		//회원 정보 가져오기
+		MemberVO dbMember = memberDao.selectMemberByMbnum(member.getMb_num());
+		if(dbMember == null)
+			return false;
+		//프로필 사진 수정
+		//프로필 삭제면
+		if(!delProfile && file.getOriginalFilename() == "") {
+			//기존 프로필 사진 삭제(기본 프로필이 아니면)
+			if(!dbMember.getMb_profile().equals("/profile.png"))
+				UploadFileUtils.deleteFile(profileUploadPath, dbMember.getMb_profile());
+			dbMember.setMb_profile("/profile.png");
+		}
+		//파일이 있으면
+		if(file.getOriginalFilename() != "") {
+			//이미지 파일인지 확인
+			String originalName = file.getOriginalFilename();
+			String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
+			if(MediaUtils.getMediaType(formatName) == null)
+				return false;	
+			// 파일 업로드
+			try {
+				String mb_profile = UploadFileUtils.uploadFilePrefix(profileUploadPath, String.valueOf(dbMember.getMb_num()),
+						file.getOriginalFilename(), file.getBytes());
+				dbMember.setMb_profile(mb_profile);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		//프로필 수정
+		dbMember.setMb_nickname(member.getMb_nickname());
+		dbMember.setMb_greeting(member.getMb_greeting());
+		return memberDao.updateProfile(dbMember);
 	}
 }

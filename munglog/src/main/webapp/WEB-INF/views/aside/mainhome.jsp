@@ -76,7 +76,7 @@
 			<div class="box-user d-flex" style="width: 100%;">
 				<div class="thumb"><img src="<c:url value="${user.mb_profile_url}"></c:url>"></div>
 				<div class="nickname"><c:url value="${user.mb_nickname}"></c:url></div>
-				<a class="link-profile-set ml-1"><i class="fa-solid fa-gear"></i></a>
+				<a href ="<c:url value="/mypage/modifyProfile"></c:url>" class="link-profile-set ml-2"><i class="fa-solid fa-user-pen mr-1"></i></a>
 			</div>
 		</div>
 		<div class="box-point clearfix pl-3 pr-3">

@@ -2,6 +2,8 @@ package kr.inyo.munglog.service;
 
 import java.util.ArrayList;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
@@ -44,4 +46,8 @@ public interface MemberService {
 	int getPointSum(MemberVO user, String pi_process);
 	//회원정보 수정
 	boolean modifyAccount(MemberVO member, MemberVO user);
+	//닉네임 중복 검사
+	int checkNickname(MemberVO member, MemberVO user);
+	//프로필 수정
+	boolean modifyProfile(MultipartFile file, boolean delProfile, MemberVO member, MemberVO user);
 }
