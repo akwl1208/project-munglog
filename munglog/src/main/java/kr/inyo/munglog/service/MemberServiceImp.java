@@ -3,7 +3,6 @@ package kr.inyo.munglog.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import javax.mail.internet.MimeMessage;
 
@@ -12,13 +11,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dao.GoodsDAO;
 import kr.inyo.munglog.dao.LogDAO;
 import kr.inyo.munglog.dao.MemberDAO;
-import kr.inyo.munglog.utils.MediaUtils;
-import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.PointVO;
@@ -45,8 +41,6 @@ public class MemberServiceImp implements MemberService {
 	String thisDay = String.format("%td", now);
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	String today = format.format(now);
-	//프로필 경로
-	String profileUploadPath = "D:\\git\\munglog\\profile";
 	
 /* 함수********************************************************************************************************************* */
 	//이메일 보내기-----------------------------------------------------------------------------------------------------------
@@ -456,120 +450,21 @@ public class MemberServiceImp implements MemberService {
 			return;
 		//포인트 지급
 		memberDao.insertPoint(user.getMb_num(),"적립",history,500);
-	}
+	}//
 	
-	/* getPointSum : 포인트 합계 가져오기 -----------------------------------------------------------------------*/	
+	/* calcAvailablePoint : 사용 가능한 포인트 내역 가져오기 -----------------------------------------------------------------------*/	
 	@Override
-	public int getPointSum(MemberVO user, String pi_process) {
+	public int calcAvailablePoint(MemberVO user, MemberVO member) {
 		//값이 없으면
 		if(user == null || user.getMb_num() < 1)
 			return 0;
-		//활동 정지당한 회원이 아니면
-		if(!user.getMb_activity().equals("0"))
+		if(member == null || member.getMb_num() < 1)
 			return 0;
-		//적립/사용이 아니면
-		if(!pi_process.equals("적립") && !pi_process.equals("사용"))
+		if(user.getMb_num() != member.getMb_num())
 			return 0;
-		return memberDao.selectPointSum(user.getMb_num(), pi_process);
-	}
-	
-	/* modifyAccount : 회원정보 수정 -----------------------------------------------------------------------*/
-	@Override
-	public boolean modifyAccount(MemberVO member, MemberVO user) {
-		// 값이 없으면
-		if(user == null || user.getMb_num() < 1)
-			return false;
-		if(member == null || member.getMb_num() < 1 || member.getMb_email() == null || member.getMb_name() == null 
-				|| member.getMb_phone() == null)
-			return false;
-		//활동 정지당한 회원이 아니면
-		if(!user.getMb_activity().equals("0"))
-			return false;
-		//다른 회원이면
-		if(member.getMb_num() != user.getMb_num())
-			return false;
-		//이메일로 회원정보 가져오기
-		MemberVO dbMember = memberDao.selectMemberByMbnum(user.getMb_num());
-		if(dbMember == null)
-			return false;
-		//이름과 핸드폰번호가 모두 동일한 회원이 있으면 안됨 -> 아이디 찾기
-		MemberVO isMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
-		if(isMember != null &&
-				(!isMember.getMb_name().equals(dbMember.getMb_name()) || !isMember.getMb_phone().equals(dbMember.getMb_phone())))
-			return false;
-		//비밀번호 수정이면 비밀번호 암호화
-		if(member.getMb_pw() != "" || member.getMb_pw().length() != 0) {
-			String encPw =passwordEncoder.encode(member.getMb_pw()); 
-			dbMember.setMb_pw(encPw);
-		}
-		dbMember.setMb_name(member.getMb_name());
-		dbMember.setMb_phone(member.getMb_phone());
-		return memberDao.updateMember(dbMember);
-	}
-	
-	/* checkNickname : 닉네임 중복 검사 -----------------------------------------------------------------------*/
-	@Override
-	public int checkNickname(MemberVO member, MemberVO user) {
-		//값이 없음
-		if(user == null || user.getMb_num() < 1 || user.getMb_nickname() == "")
-			return -1;
-		if(member == null || member.getMb_nickname() == "")
-			return -1;
-		//정규 표현식에 맞는지 확인
-		String nicknameRegex = "^(?=.*[A-Za-z0-9가-힣])[\\w가-힣-]{2,10}$";
-		String strictRegex = "^[M|m][U|u][N|n][G|g]\\d+$";
-		if(!Pattern.matches(nicknameRegex, member.getMb_nickname()))
-			return 0;
-		if(!member.getMb_nickname().equals(user.getMb_nickname()) && Pattern.matches(strictRegex, member.getMb_nickname()))
-			return 1;
-		//닉네임이 있는지 확인
-		MemberVO dbMember = memberDao.selectMemberByNickname(member.getMb_nickname());
-		if(!member.getMb_nickname().equals(user.getMb_nickname()) && dbMember != null)
-			return 2;
-		return 3;
-	}
-	
-	/* modifyProfile : 프로필 수정 -----------------------------------------------------------------------*/
-	@Override
-	public boolean modifyProfile(MultipartFile file, boolean delProfile, MemberVO member, MemberVO user) {
-		// 값 없으면
-		if(user == null || user.getMb_num() < 1)
-			return false;
-		if(member == null || member.getMb_num() < 1 || member.getMb_nickname() == "")
-			return false;
-		if(member.getMb_num() != user.getMb_num())
-			return false;
-		//회원 정보 가져오기
-		MemberVO dbMember = memberDao.selectMemberByMbnum(member.getMb_num());
-		if(dbMember == null)
-			return false;
-		//프로필 사진 수정
-		//프로필 삭제면
-		if(!delProfile && file.getOriginalFilename() == "") {
-			//기존 프로필 사진 삭제(기본 프로필이 아니면)
-			if(!dbMember.getMb_profile().equals("/profile.png"))
-				UploadFileUtils.deleteFile(profileUploadPath, dbMember.getMb_profile());
-			dbMember.setMb_profile("/profile.png");
-		}
-		//파일이 있으면
-		if(file.getOriginalFilename() != "") {
-			//이미지 파일인지 확인
-			String originalName = file.getOriginalFilename();
-			String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
-			if(MediaUtils.getMediaType(formatName) == null)
-				return false;	
-			// 파일 업로드
-			try {
-				String mb_profile = UploadFileUtils.uploadFilePrefix(profileUploadPath, String.valueOf(dbMember.getMb_num()),
-						file.getOriginalFilename(), file.getBytes());
-				dbMember.setMb_profile(mb_profile);
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		//프로필 수정
-		dbMember.setMb_nickname(member.getMb_nickname());
-		dbMember.setMb_greeting(member.getMb_greeting());
-		return memberDao.updateProfile(dbMember);
-	}
+		//적립한 포인트
+		int savingPoint = memberDao.selectPointSum(user.getMb_num(), "적립");
+		int usePoint = memberDao.selectPointSum(user.getMb_num(), "사용");
+		return savingPoint - usePoint;
+	}//
 }

@@ -56,14 +56,14 @@ public class HomeController {
 		mv.addObject("challenge", challenge);
 		mv.setViewName("/main/home");
 		return mv;
-	}
+	}//
 	
 	/* 회원가입 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/account/signup", method = RequestMethod.GET)
 	public ModelAndView signupGet(ModelAndView mv) {
 		mv.setViewName("/account/signup");
 		return mv;
-	}
+	}//
 	
 	@RequestMapping(value = "/account/signup", method = RequestMethod.POST)
 	public ModelAndView signupPost(ModelAndView mv, MemberVO member,
@@ -76,7 +76,7 @@ public class HomeController {
 		else //회원가입 실패
 			messageService.message(response, "회원가입에 실패했습니다. 입력한 회원정보를 확인해주세요.", "/munglog/account/signup");
 		return mv;
-	}
+	}//
 	
 	/* 로그인 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/account/login", method = RequestMethod.GET)
@@ -87,7 +87,7 @@ public class HomeController {
 		
 		mv.setViewName("/account/login");
 		return mv;
-	}
+	}//
 	
 	@RequestMapping(value = "/account/login", method = RequestMethod.POST)
 	public ModelAndView loginPost(ModelAndView mv, MemberVO member) {
@@ -105,7 +105,7 @@ public class HomeController {
 			mv.setViewName("redirect:/");
 		}
 		return mv;
-	}
+	}//
 	
 	/* 로그아웃 ---------------------------------------------------------------*/
 	@RequestMapping(value="/logout")
@@ -113,7 +113,7 @@ public class HomeController {
 		session.removeAttribute("user");
     mv.setViewName("redirect:/");
     return mv;
-	}
+	}//
 	
   /* 아이디/비번찾기 ---------------------------------------------------------------*/
 	@RequestMapping(value= "/account/find", method=RequestMethod.GET)
@@ -121,7 +121,7 @@ public class HomeController {
 		mv.addObject("type", type);
 		mv.setViewName("/account/find");
     return mv;
-	}	
+	}//	
 	
 /* ajax ***************************************************************/
 	/* 이메일 중복검사 ---------------------------------------------------------------*/
@@ -132,7 +132,7 @@ public class HomeController {
 		boolean res = memberService.isMember(member);
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 이메일 보내기 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/send/code", method = RequestMethod.POST)
@@ -142,7 +142,7 @@ public class HomeController {
 		boolean res = memberService.sendVeriCode(member);
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 본인인증 삭제하기 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/delete/verification", method = RequestMethod.POST)
@@ -152,7 +152,7 @@ public class HomeController {
 		boolean res = memberService.deleteVerification(member);
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 본인인증 일치하는지 확인하기 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/check/code", method = RequestMethod.POST)
@@ -162,7 +162,7 @@ public class HomeController {
 		boolean res = memberService.checkCode(veri);
 		map.put("res", res);
 		return map;
-	}
+	}//
 	
 	/* 본인인증번호 실패횟수 증가하고 실패횟수 반환 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/count/failure", method = RequestMethod.POST)
@@ -175,7 +175,7 @@ public class HomeController {
 		int count = memberService.getFailureCount(veri);
 		map.put("count", count);
 		return map;
-	}
+	}//
 	
 	/* 회원인지 아닌지 확인 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/check/member", method = RequestMethod.POST)
@@ -185,7 +185,7 @@ public class HomeController {
 		boolean isMember = memberService.login(member);
 		map.put("res", isMember);
 		return map;
-	}
+	}//
 	
 	/* 세션 아이디로 이메일 가져오기 ---------------------------------------------------------------*/
 	@RequestMapping(value = "/get/email", method = RequestMethod.POST)
@@ -195,7 +195,7 @@ public class HomeController {
 		String email = memberService.getEmail(member);
 		map.put("email", email);
 		return map;
-	}
+	}//
 	
 	/* 이름과 핸드폰 번호로 이메일 가져오기(아이디 찾기) ---------------------------------------------------------------*/
 	@RequestMapping(value = "/find/email", method = RequestMethod.POST)
@@ -205,7 +205,7 @@ public class HomeController {
 		String email = memberService.findEmail(member);
 		map.put("email", email);
 		return map;
-	}
+	}//
 	
 	/* 비밀번호 재설정(비밀번호 찾기) ---------------------------------------------------------------*/
 	@RequestMapping(value = "/find/pw", method = RequestMethod.POST)
@@ -215,5 +215,18 @@ public class HomeController {
 		int res = memberService.findPw(member);
 		map.put("res", res);
 		return map;
-	}
+	}//
+	
+	/* 사용가능한 포인트 계산 ---------------------------------------------------------------*/
+	@RequestMapping(value = "/calculate/availablePoint", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> calcAvailablePoint(@RequestBody MemberVO member, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//사용가능한 포인트 계산
+    int availablePoint = memberService.calcAvailablePoint(user, member);
+    
+		map.put("availablePoint", availablePoint);
+		return map;
+	}//
 }

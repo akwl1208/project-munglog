@@ -2,8 +2,6 @@ package kr.inyo.munglog.service;
 
 import java.util.ArrayList;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.VerificationVO;
 
@@ -42,12 +40,6 @@ public interface MemberService {
 	void dogBirthdayPoint(MemberVO user);
 	//일지를 한달동안 올렸으면 포인트 적립
 	void LogAMonthPoint(MemberVO user);
-	//포인트 합계 가져오기
-	int getPointSum(MemberVO user, String pi_process);
-	//회원정보 수정
-	boolean modifyAccount(MemberVO member, MemberVO user);
-	//닉네임 중복 검사
-	int checkNickname(MemberVO member, MemberVO user);
-	//프로필 수정
-	boolean modifyProfile(MultipartFile file, boolean delProfile, MemberVO member, MemberVO user);
+	//사용가능한 포인트 계산
+	int calcAvailablePoint(MemberVO user, MemberVO member);
 }

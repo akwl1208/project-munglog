@@ -37,12 +37,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
     if(user != null) {
 	    HttpSession session = request.getSession();
 	    session.setAttribute("user", user);
-	    //적립된 포인트
-	    int savingPoint = memberService.getPointSum(user,"적립");
-	    //사용한 포인트
-	    int usePoint = memberService.getPointSum(user,"사용");
-	    //사용가능한 포인트
-	    user.setAvailablePoint(savingPoint-usePoint);
 	    //아이디 저장 선택 -----------------------------------------------------------
 	    if(user.isSaveId()) {
 	    	//쿠키 생성
