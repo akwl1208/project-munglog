@@ -36,6 +36,25 @@
 		select * from review where rv_od_num = #{rv_od_num}
 	</select>
 	
+	<!-- cri로 내 포인트 내역 가져오기 -->
+	<select id="selectMyPointList" resultType="kr.inyo.munglog.vo.PointVO">
+		select * from point 
+			where pi_mb_num = #{mb_num}
+			<if test = "searchType != ''">
+				and ${searchType} = #{keyword} 
+			</if>
+			order by pi_date desc
+			limit #{pageStart}, #{perPageNum}
+	</select>
+	
+	<select id="selectPointtotalCount" resultType="int">
+		select count(*) from point 
+			where pi_mb_num = #{mb_num}
+			<if test = "searchType != ''">
+				and ${searchType} = #{keyword} 
+			</if>
+	</select>
+	
 	<!-- insert *********************************************************************************************** -->
 	<!-- 리뷰 추가 -->
 	<insert id="insertReview">

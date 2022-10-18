@@ -8,6 +8,7 @@ import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OrderVO;
+import kr.inyo.munglog.vo.PointVO;
 import kr.inyo.munglog.vo.ReviewVO;
 
 public interface MypageService {
@@ -21,5 +22,14 @@ public interface MypageService {
 	boolean registerReview(MemberVO user, ReviewVO review, MultipartFile file);
 	//리뷰 수정하기
 	boolean modifyReview(MemberVO user, ReviewVO review, MultipartFile file, boolean delModiImage);
-
+	//회원정보 수정
+	boolean modifyAccount(MemberVO member, MemberVO user);
+	//닉네임 중복 검사
+	int checkNickname(MemberVO member, MemberVO user);
+	//프로필 수정
+	boolean modifyProfile(MultipartFile file, boolean delProfile, MemberVO member, MemberVO user);
+	//내 포인트 내역 가져오기
+	ArrayList<PointVO> getMyPointList(Criteria cri, MemberVO user);
+	//내 포인트 전체 개수 가져오기
+	int getPointTotalCount(Criteria cri);
 }

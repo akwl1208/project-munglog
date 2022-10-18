@@ -1,8 +1,10 @@
 package kr.inyo.munglog.service;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +16,7 @@ import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OrderVO;
+import kr.inyo.munglog.vo.PointVO;
 import kr.inyo.munglog.vo.ReviewVO;
 
 
@@ -24,8 +27,11 @@ public class MypageServiceImp implements MypageService {
 	MypageDAO mypageDao;
 	@Autowired
 	MemberDAO memberDao;
+	@Autowired
+	BCryptPasswordEncoder passwordEncoder;
 	
 	String reviewUploadPath = "D:\\git\\munglog\\review";
+	String profileUploadPath = "D:\\git\\munglog\\profile";
 
 /* 함수***************************************************************************************************************** */
 	// 이미지 파일인지 확인 ----------------------------------------------------------------------------
@@ -60,6 +66,7 @@ public class MypageServiceImp implements MypageService {
 			return false;
 		return true;
 	}//
+	
 /* override ********************************************************************************************************** */
 	// getMyOrderList : 내 주문 내역 리스트 가져오기 ================================================================
 	@Override
@@ -170,5 +177,125 @@ public class MypageServiceImp implements MypageService {
 		dbReview.setRv_rating(review.getRv_rating());
 		dbReview.setRv_content(review.getRv_content());
 		return mypageDao.uploadReview(dbReview);
+	}//
+	
+	/* modifyAccount : 회원정보 수정 -----------------------------------------------------------------------*/
+	@Override
+	public boolean modifyAccount(MemberVO member, MemberVO user) {
+		// 값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(member == null || member.getMb_num() < 1 || member.getMb_email() == null || member.getMb_name() == null 
+				|| member.getMb_phone() == null)
+			return false;
+		//활동 정지당한 회원이 아니면
+		if(!user.getMb_activity().equals("0"))
+			return false;
+		//다른 회원이면
+		if(member.getMb_num() != user.getMb_num())
+			return false;
+		//이메일로 회원정보 가져오기
+		MemberVO dbMember = memberDao.selectMemberByMbnum(user.getMb_num());
+		if(dbMember == null)
+			return false;
+		//이름과 핸드폰번호가 모두 동일한 회원이 있으면 안됨 -> 아이디 찾기
+		MemberVO isMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
+		if(isMember != null &&
+				(!isMember.getMb_name().equals(dbMember.getMb_name()) || !isMember.getMb_phone().equals(dbMember.getMb_phone())))
+			return false;
+		//비밀번호 수정이면 비밀번호 암호화
+		if(member.getMb_pw() != "" || member.getMb_pw().length() != 0) {
+			String encPw = passwordEncoder.encode(member.getMb_pw()); 
+			dbMember.setMb_pw(encPw);
+		}
+		dbMember.setMb_name(member.getMb_name());
+		dbMember.setMb_phone(member.getMb_phone());
+		return memberDao.updateMember(dbMember);
+	}
+	
+	/* checkNickname : 닉네임 중복 검사 -----------------------------------------------------------------------*/
+	@Override
+	public int checkNickname(MemberVO member, MemberVO user) {
+		//값이 없음
+		if(user == null || user.getMb_num() < 1 || user.getMb_nickname() == "")
+			return -1;
+		if(member == null || member.getMb_nickname() == "")
+			return -1;
+		//정규 표현식에 맞는지 확인
+		String nicknameRegex = "^(?=.*[A-Za-z0-9가-힣])[\\w가-힣-]{2,10}$";
+		String strictRegex = "^[M|m][U|u][N|n][G|g]\\d+$";
+		if(!Pattern.matches(nicknameRegex, member.getMb_nickname()))
+			return 0;
+		if(!member.getMb_nickname().equals(user.getMb_nickname()) && Pattern.matches(strictRegex, member.getMb_nickname()))
+			return 1;
+		//닉네임이 있는지 확인
+		MemberVO dbMember = memberDao.selectMemberByNickname(member.getMb_nickname());
+		if(!member.getMb_nickname().equals(user.getMb_nickname()) && dbMember != null)
+			return 2;
+		return 3;
+	}//
+	
+	/* modifyProfile : 프로필 수정 -----------------------------------------------------------------------*/
+	@Override
+	public boolean modifyProfile(MultipartFile file, boolean delProfile, MemberVO member, MemberVO user) {
+		// 값 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(member == null || member.getMb_num() < 1 || member.getMb_nickname() == "")
+			return false;
+		if(member.getMb_num() != user.getMb_num())
+			return false;
+		//회원 정보 가져오기
+		MemberVO dbMember = memberDao.selectMemberByMbnum(member.getMb_num());
+		if(dbMember == null)
+			return false;
+		//프로필 사진 수정
+		//프로필 삭제면
+		if(!delProfile && file.getOriginalFilename() == "") {
+			//기존 프로필 사진 삭제(기본 프로필이 아니면)
+			if(!dbMember.getMb_profile().equals("/profile.png"))
+				UploadFileUtils.deleteFile(profileUploadPath, dbMember.getMb_profile());
+			dbMember.setMb_profile("/profile.png");
+		}
+		//파일이 있으면
+		if(file.getOriginalFilename() != "") {
+			//이미지 파일인지 확인
+			if(!isImg(file))
+				return false;
+			// 파일 업로드
+			try {
+				String mb_profile = UploadFileUtils.uploadFilePrefix(profileUploadPath, String.valueOf(dbMember.getMb_num()),
+						file.getOriginalFilename(), file.getBytes());
+				dbMember.setMb_profile(mb_profile);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		//프로필 수정
+		dbMember.setMb_nickname(member.getMb_nickname());
+		dbMember.setMb_greeting(member.getMb_greeting());
+		return memberDao.updateProfile(dbMember);
+	}//
+	
+	//getMyPointList : 내 포인트 내역 라스트 가져오기 =========================================================================
+	@Override
+	public ArrayList<PointVO> getMyPointList(Criteria cri, MemberVO user) {
+		// 값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return null;
+		if(cri == null || cri.getMb_num() < 1)
+			return null;
+		//다른 회원이면
+		if(cri.getMb_num() != user.getMb_num())
+			return null;
+		return mypageDao.selectMyPointList(cri);
+	}
+
+	//getPointTotalCount : 내 포인트 전체 개수 가져오기 =========================================================================
+	@Override
+	public int getPointTotalCount(Criteria cri) {
+		if(cri == null || cri.getMb_num() < 1)
+			return 0;
+		return mypageDao.selectPointtotalCount(cri);
 	}
 }

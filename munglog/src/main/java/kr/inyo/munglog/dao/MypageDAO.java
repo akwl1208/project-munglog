@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.vo.OrderVO;
+import kr.inyo.munglog.vo.PointVO;
 import kr.inyo.munglog.vo.ReviewVO;
 
 public interface MypageDAO {
@@ -23,5 +24,11 @@ public interface MypageDAO {
 	boolean insertReview(ReviewVO review);
 	//리뷰 수정하기
 	boolean uploadReview(ReviewVO dbReview);
+	
+	/* 포인트 =========================================================================*/
+	//cri로 내 포인트 리스트 가져오기
+	ArrayList<PointVO> selectMyPointList(Criteria cri);
+	//cri로 포인트 전체 개수 가져오기
+	int selectPointtotalCount(Criteria cri);
 
 }

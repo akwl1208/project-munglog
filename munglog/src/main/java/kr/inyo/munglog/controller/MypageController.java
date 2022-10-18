@@ -19,11 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.pagination.PageMaker;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.service.MypageService;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OrderVO;
+import kr.inyo.munglog.vo.PointVO;
 import kr.inyo.munglog.vo.ReviewVO;
 
 @Controller
@@ -82,7 +84,7 @@ public class MypageController {
 	public ModelAndView mypageModifyAccountPost(ModelAndView mv, MemberVO member,
 			HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		boolean res = memberService.modifyAccount(member, user);
+		boolean res = mypageService.modifyAccount(member, user);
 		
 		if(res)
 			messageService.message(response, "회원정보가 수정되었습니다.", "/munglog/mypage");
@@ -109,12 +111,24 @@ public class MypageController {
 	public ModelAndView mypageModifyProfilePost(ModelAndView mv, MemberVO member, boolean delProfile,
 			MultipartFile file, HttpSession session, HttpServletResponse response) {
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		boolean res = memberService.modifyProfile(file, delProfile, member, user);
+		boolean res = mypageService.modifyProfile(file, delProfile, member, user);
 		
 		if(res)
 			messageService.message(response, "프로필 수정되었습니다.", "/munglog/mypage");
 		else
 			messageService.message(response, "프로필 수정에 실패했습니다.", "/munglog/mypage/modifyProfile");
+		return mv;
+	}//
+	
+	/* 포인트 내역 ---------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/mypage/point", method = RequestMethod.GET)
+	public ModelAndView mypagePointGet(ModelAndView mv, HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//회원이 아니거나 
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+
+		mv.setViewName("/mypage/point");
 		return mv;
 	}//
 	
@@ -182,9 +196,24 @@ public class MypageController {
 	public Map<Object, Object> checkNickname(@RequestBody MemberVO member, HttpSession session) {
 		HashMap<Object, Object> map = new HashMap<Object, Object>();
 		MemberVO user = (MemberVO)session.getAttribute("user");
-		int res = memberService.checkNickname(member, user);
+		int res = mypageService.checkNickname(member, user);
 		
 		map.put("res", res);
+		return map;
+	}//
+	
+	/* 내 포인트 가져오기 ------------------------------------------------------------------------------------------------------ */
+	@RequestMapping(value = "/get/myPointList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> myPointList(@RequestBody Criteria cri, HttpSession session) {
+		HashMap<Object, Object> map = new HashMap<Object, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		ArrayList<PointVO> pointList = mypageService.getMyPointList(cri, user);
+		int totalCount = mypageService.getPointTotalCount(cri);
+		PageMaker pm = new PageMaker(totalCount, 5, cri);
+		
+		map.put("pm", pm);
+		map.put("pointList", pointList);
 		return map;
 	}//
 }
