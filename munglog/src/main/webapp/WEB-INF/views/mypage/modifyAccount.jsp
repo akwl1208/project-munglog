@@ -126,7 +126,7 @@
 				}
 			},
       submitHandler : function(form){
-  			if(userMbEmail == '')
+  			if(mbEmail == '')
 					return false;
 				if(!checkPw){
 					alert('잘못된 접근입니다.');
@@ -151,7 +151,7 @@ $(function(){
 	//비밀번호 확인 클릭 ==================================================================================
 	$('.main .box-content .box-check .btn-check').click(function(){
 		//로그인 안했으면
-		if(userMbEmail == ''){
+		if(mbEmail == ''){
 			if(confirm('회원정보 수정은 로그인이 필요합니다. 로그인 화면으로 이동하겠습니까?'))
 				location.href = '<%=request.getContextPath()%>/account/login';
 			return;
