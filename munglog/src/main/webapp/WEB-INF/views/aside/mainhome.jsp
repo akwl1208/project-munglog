@@ -80,9 +80,9 @@
 			</div>
 		</div>
 		<div class="box-point clearfix pl-3 pr-3">
-			<a href="#" class="link-point">
+			<a href="<c:url value="/mypage/point"></c:url>" class="link-point">
 				<span class="mypoint float-left"><i class="fa-solid fa-bone mr-2"></i>내 멍멍포인트</span>
-				<span class="float-right"><span class="mypoint-amount" style="color: #fb9600;">${user.availablePoint}</span><span class="pl-1">P</span></span>
+				<span class="float-right"><span class="mypoint-amount" style="color: #fb9600;"></span><span class="pl-1">P</span></span>
 			</a>
 		</div>
 		<div class="box-service d-flex">
@@ -101,4 +101,21 @@
 	</div>
 </c:if>
 </body>
+<script>
+let user = '${user.mb_num}';
+$(function(){
+	$(document).ready(function(){
+		if(user != '')
+			calcAvailablePoint(user);
+	})//
+});
+
+//calcAvailablePoint : 나의 사용 가능한 포인트 가져오기 ======================================================================
+function calcAvailablePoint(mb_num){
+	let obj = {mb_num};
+	ajaxPost(false, obj, '/calculate/availablePoint', function(data){
+		$('.side-main .box-point .link-point .mypoint-amount').text(data.availablePoint);
+	});
+}//
+</script>
 </html>
