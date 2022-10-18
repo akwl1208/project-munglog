@@ -32,7 +32,7 @@
 		margin-top: 10px; text-align: right; font-size: 12px; cursor: pointer;
 	}
 	.side-main .box-profile .box-follow:hover,
-	.side-main .box-profile .box-edit:hover .btn-edit{color: #fb9600;}
+	.side-main .box-profile .box-edit:hover .link-profile{color: #fb9600;}
 	.side-main .box-profile .box-follow .icon-follow.select{color: #fb9600;}
 	/* box-friend -------------------------------------------------------------------------------- */
 	.side-main .box-friend .box-title{
@@ -72,7 +72,7 @@
 	<div class="box-profile " style="width: 260px;">
 		<!-- box-user(프로필사진,닉네임) -------------------------------------------------------- -->
 		<a class="box-user clearfix" href="#">
-			<span class="thumb"><img src="https://ssl.pstatic.net/static/common/myarea/myInfo.gif" alt="프로필사진"></span>
+			<span class="thumb"><img src="<c:url value="${member.mb_profile_url}"></c:url>"></span>
 			<span class="nickname">${member.mb_nickname}</span>
 		</a>
 		<!-- box-greeting(소개글) -------------------------------------------------------- -->
@@ -92,7 +92,7 @@
 		<!-- box-(프로필 수정) -------------------------------------------------------- -->
 		<c:if test="${user != null && (user.mb_num == member.mb_num)}">
 			<div class="box-edit">
-					<a class="btn-edit" href="#"><i class="fa-solid fa-user-pen mr-1"></i>프로필 수정</a>
+					<a class="link-profile" href="<c:url value="/mypage/modifyProfile"></c:url>"><i class="fa-solid fa-user-pen mr-1"></i>프로필 수정</a>
 			</div>
 		</c:if>
 	</div>
