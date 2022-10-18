@@ -142,7 +142,6 @@
 /* 이벤트 *********************************************************************************************************** */
 	$(function(){
 		$(document).ready(function(){
-			console.log(userLevel)
 			getQnaList(cri);
 		})//
 		
@@ -164,7 +163,6 @@
 			}
 			//관리자가 아닌 다른 회원이 보려고 하면
 			let mbNum = $(this).parents('tr').data('value');
-			console.log(userLevel)
 			if(userLevel != 'A' && userLevel != 'S' && (userMbNum != mbNum)){
 				alert('Q&A를 작성한 회원만 볼 수 있습니다.')	
 				e.preventDefault();	
