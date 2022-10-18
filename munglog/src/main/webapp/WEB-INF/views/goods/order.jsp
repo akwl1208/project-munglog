@@ -237,7 +237,7 @@
 							    <button class="btn-useAll" type="button">포인트 모두 사용</button>
 							  </div>
 							</div>
-							<div class="text-left">(사용가능한 포인트 : <span class="availablePoint mr-1">${user.availablePoint}</span>P)</div>
+							<div class="text-left">(사용가능한 포인트 : <span class="availablePoint mr-1"></span>P)</div>
 						</div>
 						<div class="message mt-3 text-left">
 							<small>
@@ -283,12 +283,16 @@
 <!-- script *********************************************************************************************************** -->
 <script>
 /* 변수 *********************************************************************************************************** */
+	let user = '${user.mb_num}';
+	let point = 0;
 	let recipientRegex = /^([가-힣]{1,10})|([a-zA-Z]{1,10})$/;
 	let phoneRegex = /^(\d{3,4})$/;
 	let postcodeRegex = /^(\d{5})$/;
 /* 이벤트 *********************************************************************************************************** */
 $(function(){
 	$(document).ready(function(){
+		point = calcAvailablePoint(user);
+		$('.main .box-content .box-point .availablePoint').text(point);
 		editTotal();
 		editPayment()
 	})//
@@ -348,7 +352,6 @@ $(function(){
    
    //포인트 모두 사용 클릭 =================================================================================
    $('.main .box-content .box-point .btn-useAll').click(function() {
-	   let point = '${user.availablePoint}';
 	   let totalPrice = $('.main .box-content .box-orderList tfoot .totalPrice').data('value');
 	   if(point < 1000){
 		   alert('포인트는 최소 1000P 이상일 때 사용가능합니다.')
@@ -389,7 +392,6 @@ $(function(){
 			 return;
 	   }
 		 //보유 금액보다 많으면
-		 let point = '${user.availablePoint}';
 		 if(Number(value) > Number(point)){
 			 alert('보유 포인트를 넘는 포인트를 사용할 수 없습니다.');
 			 $(this).val('0');
@@ -438,7 +440,7 @@ $(function(){
 		 let merchant_uid = makeOrderCode();
 		 //사용포인트
 		 let pointAmount = $('.main .box-content .box-point .usePoint').val();
-		 if(pointAmount > ${user.availablePoint}){
+		 if(pointAmount > point){
 			 alert('사용 포인트는 보유 포인트보다 많을 수 없습니다.')			
 			 return;
 		 }
@@ -590,7 +592,7 @@ $(function(){
 		}
 		//포인트
 		let pointAmount = $('.main .box-content .box-point .usePoint').val();
-		if(pointAmount > ${user.availablePoint}){
+		if(pointAmount > point){
 			alert('사용 포인트는 보유 포인트보다 많을 수 없습니다.')			
 			return false;
 		}
@@ -727,6 +729,16 @@ $(function(){
 		let mbNum = '${user.mb_num}';
 		let time = today.getTime();
 		return year + ''+ month + '' + date + mbNum + time;
-	}
+	}//
+	
+ 	//calcAvailablePoint : 나의 사용 가능한 포인트 가져오기 ======================================================================
+	function calcAvailablePoint(mb_num){
+		let obj = {mb_num};
+		let point = 0;
+		ajaxPost(false, obj, '/calculate/availablePoint', function(data){
+			point = data.availablePoint;
+		});
+		return point;
+	}//
 </script>
 </html>
