@@ -40,7 +40,7 @@
 	<div class="box-check" >
 		<div class="form-group">
 			<label>이메일</label>
-			<input type="text" class="form-control" value="${user.mb_email}" readonly>
+			<input type="text" class="form-control" value="${member.mb_email}" readonly>
 		</div>
 		<div class="form-group">
 			<label>비밀번호</label>
@@ -55,9 +55,10 @@
 			<div class="mb-2 text-right">
 				<small>비밀번호 수정을 원하지 않으면 입력하지 않고 회원정보 수정을 눌러주세요.</small>
 			</div>
+			<input type="text" name="mb_num" style="display:none;" value="${member.mb_num}"> 
 			<div class="form-group">
 				<label>이메일</label>
-				<input type="text" class="form-control" name="mb_email" value="${user.mb_email}" readonly>
+				<input type="text" class="form-control" name="mb_email" value="${member.mb_email}" readonly>
 			</div>
 			<div class="form-group">
 				<label>비밀번호</label>
@@ -71,12 +72,12 @@
 			</div>
 			<div class="form-group">
 				<label for="mb_name">이름</label>
-				<input type="text" class="form-control" value="${user.mb_name}" name="mb_name" id="mb_name">
+				<input type="text" class="form-control" value="${member.mb_name}" name="mb_name" id="mb_name">
 				<label class="error" for="mb_name"></label>
 			</div>
 			<div class="form-group">
 				<label for="mb_phone">핸드폰번호</label>
-				<input type="text" class="form-control" value="${user.mb_phone}" name="mb_phone" id="mb_phone">
+				<input type="text" class="form-control" value="${member.mb_phone}" name="mb_phone" id="mb_phone">
 				<label class="error" for="mb_phone"></label>
 			</div>
 			<button class="btn-modify col-12">회원정보 수정</button>
@@ -86,7 +87,7 @@
 </body>
 <!-- script *************************************************************************************** -->
 <script>
-	let userMbEmail = '${user.mb_email}';
+	let mbEmail = '${member.mb_email}';
 	let checkPw = false;
 	<!-- validate -------------------------------------------------------- -->
 	$(function(){
@@ -180,7 +181,7 @@ $(function(){
 	//checkPassword : 비밀번호 확인 =========================================================================
 	function checkPassword(password){
 		let obj = {
-			mb_email : userMbEmail,
+			mb_email : mbEmail,
 			mb_pw : password
 		};
 		ajaxPost(false, obj, '/check/member', function(data){

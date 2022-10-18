@@ -71,7 +71,9 @@ public class MypageController {
 		//회원이 아니거나 
 		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
 		
+		mv.addObject("member", member);
 		mv.setViewName("/mypage/modifyAccount");
 		return mv;
 	}//

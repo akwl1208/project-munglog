@@ -479,20 +479,18 @@ public class MemberServiceImp implements MemberService {
 		// 값이 없으면
 		if(user == null || user.getMb_num() < 1)
 			return false;
-		if(member == null || member.getMb_email() == null || member.getMb_name() == null || member.getMb_phone() == null)
+		if(member == null || member.getMb_num() < 1 || member.getMb_email() == null || member.getMb_name() == null 
+				|| member.getMb_phone() == null)
 			return false;
 		//활동 정지당한 회원이 아니면
 		if(!user.getMb_activity().equals("0"))
 			return false;
-		//이메일이 다르면
-		if(!member.getMb_email().equals(user.getMb_email()))
+		//다른 회원이면
+		if(member.getMb_num() != user.getMb_num())
 			return false;
 		//이메일로 회원정보 가져오기
-		MemberVO dbMember = memberDao.selectMember(member.getMb_email());
+		MemberVO dbMember = memberDao.selectMemberByMbnum(user.getMb_num());
 		if(dbMember == null)
-			return false;
-		//다른 회원 정보이면
-		if(dbMember.getMb_num() != user.getMb_num())
 			return false;
 		//이름과 핸드폰번호가 모두 동일한 회원이 있으면 안됨 -> 아이디 찾기
 		MemberVO isMember = memberDao.selectSameMember(member.getMb_name(),member.getMb_phone());
