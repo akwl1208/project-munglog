@@ -310,7 +310,7 @@ public class MypageServiceImp implements MypageService {
 		//값이 없으면
 		if(user == null || user.getMb_num() < 1)
 			return false;
-		if(dlist == null)
+		if(dlist == null || dlist.getDlist().size() > 3)
 			return false;
 		//강아지 정보 삭제 ---------------------------------------------------------------------------
 		if(delNums != null) {	
@@ -334,7 +334,7 @@ public class MypageServiceImp implements MypageService {
 			if(dog == null)
 				continue;
 			//이름 없으면 
-			if(dog.getDg_name() == "" || dog.getDg_name() == null)
+			if(dog.getDg_name().equals("") || dog.getDg_name() == null)
 				continue;
 			//새로 추가면 -------------------------------------------------------------------------------------
 			if(dog.getDg_num() == 0) {
@@ -345,7 +345,7 @@ public class MypageServiceImp implements MypageService {
 					continue;	
 				//강아지 정보 추가
 				dog.setDg_mb_num(user.getMb_num());
-				logDao.insertDog(dog);
+				mypageDao.insertDog(dog);
 			}
 			//기존 강아지 수정 -------------------------------------------------------------------------------------
 			else if(dog.getDg_num() != 0) {
@@ -367,4 +367,32 @@ public class MypageServiceImp implements MypageService {
 		}
 		return true;
 	}//
+	
+	/* insertDog : 회원의 강아지 정보 추가 ========================================================================== */
+	@Override
+	public boolean insertDog(MemberVO user, DogListVO dlist) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(dlist == null || dlist.getDlist().isEmpty() || dlist.getDlist().size() > 3)
+			return false;
+		//강아지 정보 가져오기
+		ArrayList<DogVO> dbDogList = logDao.selectDogList(user.getMb_num());
+		//이미 강아지가 있으면
+		if(!dbDogList.isEmpty())
+			return false;
+		//강아지 정보 추가
+		for(DogVO dog : dlist.getDlist()) {
+			//값이 없으면
+			if(dog == null)
+				continue;
+			//이름 없으면 
+			if(dog.getDg_name() == null)
+				continue;
+			//강아지 정보 추가
+			dog.setDg_mb_num(user.getMb_num());
+			mypageDao.insertDog(dog);
+		}
+		return true;
+	}
 }

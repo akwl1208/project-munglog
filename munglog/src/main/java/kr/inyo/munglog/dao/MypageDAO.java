@@ -37,5 +37,7 @@ public interface MypageDAO {
 	void deleteDog(int dg_num);
 	//강아지 정보 수정
 	void updateDog(DogVO dbDog);
+	//강아지 추가
+	void insertDog(DogVO dog);
 
 }

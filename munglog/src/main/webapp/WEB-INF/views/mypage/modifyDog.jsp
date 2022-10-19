@@ -22,7 +22,7 @@
 	}
 	.main .box-content .box-input{position : relative;}
 	.main .box-content .box-close{
-		position: absolute; top: 5px; right: 5px;
+		position: absolute; top: 5px; right: 5px; 
 	}
 	.main .box-content .box-input .error{
 		color: #fb9600; font-size: 12px;
@@ -31,7 +31,8 @@
 	.main .box-content .box-more{
 		text-align: center; color: #a04c00; margin-top: -18px;
 	}
-	.main .box-content .box-close .btn-close:hover{color: #fb9600;}
+	.main .box-content .box-more .btn-more:hover{cursor:pointer;}
+	.main .box-content .box-close .btn-close:hover{color: #fb9600; cursor:pointer;}
 	.main .box-content .btn-modify{
 		font-size: 18px; font-weight: bold; padding: 5px 0;
 		border: none; background-color: #fb9600;
@@ -203,8 +204,15 @@ $(function(){
 	})//
 	
 	//form 보내기 전 ====================================================================================
-	$('form').submit(function(e){
+	$('form').submit(function(){
+		$('.error').hide();
 		let pass = true;
+		let inputLength = $('.main .box-content .box-input').length;
+		//3개 생기면 더이상 박스 생성 막음
+		if(inputLength > 3){
+			alert('최대 3마리 등록가능합니다.');
+			return false;
+		}
 		$('.main .box-content .box-input').each(function(){
 			let name = $(this).find('.dg_name').val();
 			//이름 입력 안했으면 ----------------------------------------------------------------------------
@@ -259,6 +267,8 @@ $(function(){
 			}
 		});
 		if(!pass)
+			return false;
+		if(!confirm('강아지 정보를 수정하겠습니까?'))
 			return false;
 	})//
 });

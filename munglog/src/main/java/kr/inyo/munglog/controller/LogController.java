@@ -24,7 +24,6 @@ import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.vo.ChallengeVO;
-import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
@@ -48,27 +47,6 @@ public class LogController {
 	String thisMonth = String.format("%tm", today);
 
 /* ajax 아님 *************************************************************************************************************** */
-	/* 강아지 정보 등록 --------------------------------------------------------------------------------------------------------*/
-	@RequestMapping(value = "/log/register", method = RequestMethod.GET)
-	public ModelAndView logRegisterGet(ModelAndView mv) {
-		mv.setViewName("/log/register");
-		return mv;
-	}
-	
-	@RequestMapping(value = "/log/register", method = RequestMethod.POST)
-	public ModelAndView logRegisterPost(ModelAndView mv, DogListVO dlist,
-			HttpSession session, HttpServletResponse response) {
-		MemberVO user = (MemberVO)session.getAttribute("user");
-		int res = logService.insertDog(user, dlist);
-		if(res == 1)
-			messageService.message(response, "강아지 정보가 등록되었습니다.", "/munglog/log/mylog/"+user.getMb_num());
-		else if(res == 0)
-			messageService.message(response, "강아지는 최대 3마리까지 등록할 수 있습니다.", "/munglog/");
-		else if(res == -1)
-			messageService.message(response, "강아지 정보 등록에 실패했습니다. 다시 시도해주세요.","/munglog/log/register?mb_num="+user.getMb_num());
-		return mv;
-	}
-	
 	/* 나의 일지 ---------------------------------------------------------------------------------------------------------------*/
 	@RequestMapping(value = "/log/mylog/{mb_num}", method = RequestMethod.GET)
 	public ModelAndView logMylogGet(ModelAndView mv, @PathVariable("mb_num")int mb_num,
@@ -76,26 +54,22 @@ public class LogController {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//회원이 아니거나 
 		if(user == null)
-			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+			messageService.message(response, "로그인해주세요.", "/munglog/account/login");
 		//회원번호가 다르면 접근 할 수 없음
 		if(user.getMb_num() != mb_num)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		//강아지 정보가 없으면 강아지 정보 등록 페이지로
     ArrayList<DogVO> dogList = logService.getDogs(user);
-    if(dogList == null) {
-			mv.setViewName("redirect:/log/register");
-			return mv;
-    }
+    if(dogList.isEmpty())
+    	messageService.message(response, "강아지 정보를 등록해야 나의 일지를 사용할 수 있습니다.", "/munglog/mypage/registerDog");
 		//회원정보 가져옴
 		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
-		//강아지 정보 가져오기
-		ArrayList<DogVO> dList = logService.getDogs(user);
 		//사진이 등록된 년도 가져오기
 		ArrayList<String> regYearList = logService.getRegYearList(user);
 		
 		mv.addObject("member", member);
 		mv.addObject("regYearList", regYearList);
-		mv.addObject("dList", dList);
+		mv.addObject("dList", dogList);
 		mv.setViewName("/log/mylog");
 		return mv;
 	}
@@ -107,16 +81,14 @@ public class LogController {
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		//회원이 아니거나 
 		if(user == null)
-			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+			messageService.message(response, "로그인해주세요.", "/munglog/account/login");
 		//회원번호가 다르면 접근 할 수 없음
 		if(user.getMb_num() != mb_num)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/");
 		//강아지 정보가 없으면 강아지 정보 등록 페이지로
     ArrayList<DogVO> dogList = logService.getDogs(user);
-    if(dogList == null) {
-			mv.setViewName("redirect:/log/register");
-			return mv;
-    }
+    if(dogList.isEmpty())
+    	messageService.message(response, "강아지 정보를 등록해야 나의 일지를 사용할 수 있습니다.", "/munglog/mypage/registerDog");
 		//일지 전체 개수 가져오기
 		int totalCount = logService.getLogTotalCount(cri);
 		//criteria 재설정

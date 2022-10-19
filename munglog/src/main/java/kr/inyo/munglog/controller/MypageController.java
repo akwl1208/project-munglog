@@ -52,7 +52,9 @@ public class MypageController {
 		//회원이 아니거나 
 		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		ArrayList<DogVO> dogList = logService.getDogs(user);
 		
+		mv.addObject("dogList", dogList);
 		mv.setViewName("/mypage/mypageHome");
 		return mv;
 	}//
@@ -65,7 +67,9 @@ public class MypageController {
 		//회원이 아니거나 
 		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		ArrayList<DogVO> dogList = logService.getDogs(user);
 		
+		mv.addObject("dogList", dogList);
 		mv.setViewName("/mypage/order");
 		return mv;
 	}//
@@ -79,7 +83,9 @@ public class MypageController {
 		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
 		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
+		ArrayList<DogVO> dogList = logService.getDogs(user);
 		
+		mv.addObject("dogList", dogList);
 		mv.addObject("member", member);
 		mv.setViewName("/mypage/modifyAccount");
 		return mv;
@@ -106,7 +112,9 @@ public class MypageController {
 		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
 		MemberVO member = memberService.getMemberByMbnum(user.getMb_num());
+		ArrayList<DogVO> dogList = logService.getDogs(user);
 		
+		mv.addObject("dogList", dogList);
 		mv.addObject("member", member);
 		mv.setViewName("/mypage/modifyProfile");
 		return mv;
@@ -132,7 +140,9 @@ public class MypageController {
 		//회원이 아니거나 
 		if(user == null)
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
-
+		ArrayList<DogVO> dogList = logService.getDogs(user);
+		
+		mv.addObject("dogList", dogList);
 		mv.setViewName("/mypage/point");
 		return mv;
 	}//
@@ -161,6 +171,34 @@ public class MypageController {
 			messageService.message(response, "강아지 정보를 수정했습니다.", "/munglog/mypage");
 		else
 			messageService.message(response, "강아지 정보 수정에 실패했습니다.", "/munglog/mypage/modifyDog");
+		return mv;
+	}//
+	
+	/* 강아지 정보 등록 --------------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/mypage/registerDog", method = RequestMethod.GET)
+	public ModelAndView mypageRegisterDogGet(ModelAndView mv, HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		if(user == null)
+			messageService.message(response, "로그인해주세요.", "/munglog/account/login");
+		ArrayList<DogVO> dogList = logService.getDogs(user);
+		if(!dogList.isEmpty())
+			messageService.message(response, "이미 등록했습니다.", "/munglog/log/mylog/"+user.getMb_num());
+		
+		mv.addObject("dogList", dogList);
+		mv.setViewName("/mypage/registerDog");
+		return mv;
+	}//
+	
+	@RequestMapping(value = "/mypage/registerDog", method = RequestMethod.POST)
+	public ModelAndView mypageRegisterDogPost(ModelAndView mv, DogListVO dlist,
+			HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = mypageService.insertDog(user, dlist);
+		
+		if(res)
+			messageService.message(response, "강아지 정보가 등록되었습니다.", "/munglog/log/mylog/"+user.getMb_num());
+		else if(!res)
+			messageService.message(response, "강아지 정보 등록에 실패했습니다. 다시 시도해주세요.","/munglog/mypage/registerDog");
 		return mv;
 	}//
 	

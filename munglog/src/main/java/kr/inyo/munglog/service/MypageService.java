@@ -35,4 +35,6 @@ public interface MypageService {
 	int getPointTotalCount(Criteria cri);
 	//강아지 정보 수정
 	boolean modifyDog(MemberVO user, DogListVO dlist, int[] delNums);
+	//강아지 정보 추가
+	boolean insertDog(MemberVO user, DogListVO dlist);
 }

@@ -118,10 +118,10 @@
 					<div class="dropdown-menu dropdown-menu-right border-0" style="width:270px;">
 						<h5 class="dropdown-header">일지</h5>
 						<a class="dropdown-item" href="<c:url value="/log/feed"></c:url>">멍멍피드</a>
-						<a class="dropdown-item" 
-							href="<c:if test="${user != null}"><c:url value="/log/mylog/${user.mb_num}"></c:url></c:if>">	
-							나의 일지	
-						</a>
+						<a class="dropdown-item" href="
+							<c:if test="${user == null}"><c:url value="/account/login"></c:url></c:if>
+							<c:if test="${user != null}"><c:url value="/log/mylog/${user.mb_num}"></c:url></c:if>
+							">나의 일지</a>
 						<a class="dropdown-item" href="<c:url value="/log/challenge"></c:url>">챌린지</a>
 						<h5 class="dropdown-header">굿즈</h5>
 						<a class="dropdown-item" href="<c:url value="/goods"></c:url>">굿즈 보기</a>

@@ -13,7 +13,6 @@ import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
 import kr.inyo.munglog.vo.ChallengeVO;
-import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.FriendVO;
 import kr.inyo.munglog.vo.HeartVO;
@@ -65,40 +64,6 @@ public class LogServiceImp implements LogService {
 			return null;
 		//강아지 정보 가져오기
 		return logDao.selectDogList(user.getMb_num());
-	}
-	
-	/* insertDog : 회원의 강아지 정보 추가 ------------------------------------------------------------------------------------------*/
-	@Override
-	public int insertDog(MemberVO user, DogListVO dlist) {
-		//값이 없으면
-		if(user == null || dlist == null || user.getMb_num() < 1)
-			return -1;
-		//강아지 정보 가져오기
-		ArrayList<DogVO> dbDogList = logDao.selectDogList(user.getMb_num());
-		//이미 강아지가 3마리 추가됬으면
-		if(dbDogList.size() == 3)
-			return 0;
-		//최대 3마리 추가인데 이미 2마리 추가되어있는데 2마리를 추가한다고 하면?
-		if(dlist.getDlist().size() > (3 - dbDogList.size()))
-			return 0;
-		//3개 초과하면
-		if(dlist.getDlist().size() > 3)
-			return 0;
-		//강아지 정보 추가
-		for(int i=0; i<dlist.getDlist().size();i++) {
-			//강아지 정보 객체에 저장
-			DogVO dog = dlist.getDlist().get(i);
-			//값이 없으면
-			if(dog == null)
-				continue;
-			//이름 없으면 
-			if(dog.getDg_name() == null || dog.getDg_name().length() == 0)
-				continue;
-			//강아지 정보 추가
-			dog.setDg_mb_num(user.getMb_num());
-			logDao.insertDog(dog);
-		}
-		return 1;
 	}
 	
 	/* uploadLog : 일지 추가 ----------------------------------------------------------------------------------------------------*/

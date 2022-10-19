@@ -169,12 +169,6 @@
 		select * from dog where dg_num = #{dg_num}
 	</select>
 	<!-- insert *********************************************************** -->
-	<!-- 강아지 정보 추가 -->
-	<insert id="insertDog">
-		insert into dog(dg_mb_num, dg_name, dg_reg_num, dg_birth)
-			values(#{dg_mb_num}, #{dg_name}, #{dg_reg_num}, #{dg_birth})
-	</insert>
-	
 	<!-- 일지 추가 -->
 	<insert id="insertLog">
 		insert into log(lg_mb_num, lg_image) values(#{lg_mb_num}, #{lg_image})

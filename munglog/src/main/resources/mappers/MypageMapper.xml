@@ -62,6 +62,12 @@
 			values(#{rv_od_num},#{rv_rating},#{rv_content},#{rv_image})
 	</insert>
 	
+	<!-- 강아지 정보 추가 -->
+	<insert id="insertDog">
+		insert into dog(dg_mb_num, dg_name, dg_reg_num, dg_birth)
+			values(#{dg_mb_num}, #{dg_name}, #{dg_reg_num}, #{dg_birth})
+	</insert>
+	
 	<!-- update ************************************************************************************************* -->
 	<!-- 리뷰 수정하기 -->
 	<update id="updateReview">
