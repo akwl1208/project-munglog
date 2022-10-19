@@ -8,12 +8,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.inyo.munglog.dao.LogDAO;
 import kr.inyo.munglog.dao.MemberDAO;
 import kr.inyo.munglog.dao.MypageDAO;
 import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.utils.MediaUtils;
 import kr.inyo.munglog.utils.UploadFileUtils;
+import kr.inyo.munglog.vo.DogListVO;
+import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OrderVO;
 import kr.inyo.munglog.vo.PointVO;
@@ -27,6 +30,8 @@ public class MypageServiceImp implements MypageService {
 	MypageDAO mypageDao;
 	@Autowired
 	MemberDAO memberDao;
+	@Autowired
+	LogDAO logDao;
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
 	
@@ -176,7 +181,7 @@ public class MypageServiceImp implements MypageService {
 		//리뷰 수정하기
 		dbReview.setRv_rating(review.getRv_rating());
 		dbReview.setRv_content(review.getRv_content());
-		return mypageDao.uploadReview(dbReview);
+		return mypageDao.updateReview(dbReview);
 	}//
 	
 	/* modifyAccount : 회원정보 수정 -----------------------------------------------------------------------*/
@@ -298,4 +303,68 @@ public class MypageServiceImp implements MypageService {
 			return 0;
 		return mypageDao.selectPointtotalCount(cri);
 	}
+
+	//modifyDog : 강아지 정보 수정 =========================================================================
+	@Override
+	public boolean modifyDog(MemberVO user, DogListVO dlist, int[] delNums) {
+		//값이 없으면
+		if(user == null || user.getMb_num() < 1)
+			return false;
+		if(dlist == null)
+			return false;
+		//강아지 정보 삭제 ---------------------------------------------------------------------------
+		if(delNums != null) {	
+			for(int dgNum : delNums){
+				//값이 없으면
+				if(dgNum < 1)
+					continue;
+				//강아지 정보 확인 
+				DogVO dbDog = logDao.selectDog(dgNum);
+				if(dbDog == null)
+					continue;
+				if(dbDog.getDg_mb_num() != user.getMb_num())
+					continue;
+				//강아지 정보 삭제
+				mypageDao.deleteDog(dbDog.getDg_num());
+			}
+		}
+		//강아지 정보 수정 --------------------------------------------------------------------------------
+		for(DogVO dog : dlist.getDlist()) {
+			//값이 없으면
+			if(dog == null)
+				continue;
+			//이름 없으면 
+			if(dog.getDg_name() == "" || dog.getDg_name() == null)
+				continue;
+			//새로 추가면 -------------------------------------------------------------------------------------
+			if(dog.getDg_num() == 0) {
+				//강아지 정보 가져오기
+				ArrayList<DogVO> dbDogList = logDao.selectDogList(user.getMb_num());
+				//이미 강아지가 3마리 추가됬으면
+				if(dbDogList.size() >= 3)
+					continue;	
+				//강아지 정보 추가
+				dog.setDg_mb_num(user.getMb_num());
+				logDao.insertDog(dog);
+			}
+			//기존 강아지 수정 -------------------------------------------------------------------------------------
+			else if(dog.getDg_num() != 0) {
+				//강아지 정보 확인 
+				DogVO dbDog = logDao.selectDog(dog.getDg_num());
+				if(dbDog == null)
+					continue;
+				if(dbDog.getDg_mb_num() != user.getMb_num())
+					continue;
+				//값 재설정
+				dbDog.setDg_name(dog.getDg_name());
+				//등록번호와 생일은 수정 못함
+				if(dbDog.getDg_reg_num().equals(""))
+					dbDog.setDg_reg_num(dog.getDg_reg_num());
+				if(dbDog.getDg_birth() == null)
+					dbDog.setDg_birth(dog.getDg_birth());
+				mypageDao.updateDog(dbDog);
+			}
+		}
+		return true;
+	}//
 }

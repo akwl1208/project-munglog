@@ -64,7 +64,7 @@
 	
 	<!-- update ************************************************************************************************* -->
 	<!-- 리뷰 수정하기 -->
-	<update id="uploadReview">
+	<update id="updateReview">
 		update review
 			set rv_rating = #{rv_rating},
 				rv_content = #{rv_content},
@@ -72,6 +72,19 @@
 				rv_report = #{rv_report}
 			where rv_num = #{rv_num}
 	</update>
-	<!-- delete ************************************************************************************************* -->
 	
+	<!-- 강아지 정보 수정 -->
+	<update id="updateDog">
+		update dog
+			set dg_name = #{dg_name},
+				dg_reg_num = #{dg_reg_num},
+				dg_birth = #{dg_birth}
+			where dg_num = #{dg_num}
+	</update>
+	
+	<!-- delete ************************************************************************************************* -->
+	<!-- 강아지 정보 삭제 -->
+	<delete id="deleteDog">
+		delete from dog where dg_num = #{dg_num}
+	</delete>
 </mapper>

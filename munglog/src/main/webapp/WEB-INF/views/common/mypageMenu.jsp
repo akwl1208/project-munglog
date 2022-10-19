@@ -35,6 +35,7 @@
 			<a href="<c:url value="/mypage/modifyProfile"></c:url>" class="list-group-item list-group-item-action">프로필 수정</a>
 			<a href="<c:url value="/mypage/point"></c:url>" class="list-group-item list-group-item-action">포인트 내역</a>
 			<strong class="mt-2 mb-2">일지</strong>
+			<a href="<c:url value="/mypage/modifyDog"></c:url>" class="list-group-item list-group-item-action">강아지 정보 수정</a>
 		  <strong class="mt-2 mb-2">굿즈</strong>
 		  <a href="<c:url value="/mypage/order"></c:url>" class="list-group-item list-group-item-action">주문/배송 조회</a>
 		</div>

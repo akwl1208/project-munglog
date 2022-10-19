@@ -164,11 +164,15 @@
 			limit 0 ,10;
 	</select>
 	
+	<!-- 강아지 번호로 강아지 정보 가져오기 -->
+	<select id="selectDog" resultType="kr.inyo.munglog.vo.DogVO">
+		select * from dog where dg_num = #{dg_num}
+	</select>
 	<!-- insert *********************************************************** -->
 	<!-- 강아지 정보 추가 -->
 	<insert id="insertDog">
 		insert into dog(dg_mb_num, dg_name, dg_reg_num, dg_birth)
-			values(#{dg_mb_num}, #{dog.dg_name}, #{dog.dg_reg_num}, #{dog.dg_birth})
+			values(#{dg_mb_num}, #{dg_name}, #{dg_reg_num}, #{dg_birth})
 	</insert>
 	
 	<!-- 일지 추가 -->

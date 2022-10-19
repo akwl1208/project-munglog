@@ -20,9 +20,12 @@ import org.springframework.web.servlet.ModelAndView;
 import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
 import kr.inyo.munglog.pagination.PageMaker;
+import kr.inyo.munglog.service.LogService;
 import kr.inyo.munglog.service.MemberService;
 import kr.inyo.munglog.service.MessageService;
 import kr.inyo.munglog.service.MypageService;
+import kr.inyo.munglog.vo.DogListVO;
+import kr.inyo.munglog.vo.DogVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OrderVO;
 import kr.inyo.munglog.vo.PointVO;
@@ -35,6 +38,8 @@ public class MypageController {
 	MypageService mypageService;
 	@Autowired
 	MemberService memberService;
+	@Autowired
+	LogService logService;
 	@Autowired
 	MessageService messageService;
 	
@@ -129,6 +134,33 @@ public class MypageController {
 			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
 
 		mv.setViewName("/mypage/point");
+		return mv;
+	}//
+	
+	/* 강아지 정보 수정 ---------------------------------------------------------------------------------------------------*/
+	@RequestMapping(value = "/mypage/modifyDog", method = RequestMethod.GET)
+	public ModelAndView mypageModifyDogGet(ModelAndView mv, HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		//회원이 아니거나 
+		if(user == null)
+			messageService.message(response, "접근할 수 없습니다.", "/munglog/account/login");
+		ArrayList<DogVO> dogList = logService.getDogs(user);
+		
+		mv.addObject("dogList", dogList);
+		mv.setViewName("/mypage/modifyDog");
+		return mv;
+	}//
+	
+	@RequestMapping(value = "/mypage/modifyDog", method = RequestMethod.POST)
+	public ModelAndView mypageModifyDogPost(ModelAndView mv, DogListVO dlist, int[] delNums,
+			HttpSession session, HttpServletResponse response) {
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		boolean res = mypageService.modifyDog(user, dlist, delNums);
+		
+		if(res)
+			messageService.message(response, "강아지 정보를 수정했습니다.", "/munglog/mypage");
+		else
+			messageService.message(response, "강아지 정보 수정에 실패했습니다.", "/munglog/mypage/modifyDog");
 		return mv;
 	}//
 	

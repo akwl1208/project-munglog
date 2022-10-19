@@ -21,7 +21,9 @@ public interface LogDAO {
 	//회원 번호 주고 강아지들 정보 가져오기
 	ArrayList<DogVO> selectDogList(int dg_mb_num);
 	//강아지 추가
-	void insertDog(@Param("dog")DogVO dog, @Param("dg_mb_num")int mb_num);
+	void insertDog(DogVO dog);
+	//강아지 정보로 강아지 가져오기
+	DogVO selectDog(int dgNum);
 	
 	/* 일지 ----------------------------------------------------------------------------------- */
 	//일지 추가
@@ -90,6 +92,7 @@ public interface LogDAO {
 	void insertParticipate(@Param("cl_num")int cl_num, @Param("lg_num")int lg_num);
 	//일지 번호 주고 챌린지 참여 정보 가져오기
 	ParticipateVO selectParticipateByLgNum(int lg_num);
+	
 	
 	
 }

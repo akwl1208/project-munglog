@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.inyo.munglog.dto.MyOrderDTO;
 import kr.inyo.munglog.pagination.Criteria;
+import kr.inyo.munglog.vo.DogListVO;
 import kr.inyo.munglog.vo.MemberVO;
 import kr.inyo.munglog.vo.OrderVO;
 import kr.inyo.munglog.vo.PointVO;
@@ -32,4 +33,6 @@ public interface MypageService {
 	ArrayList<PointVO> getMyPointList(Criteria cri, MemberVO user);
 	//내 포인트 전체 개수 가져오기
 	int getPointTotalCount(Criteria cri);
+	//강아지 정보 수정
+	boolean modifyDog(MemberVO user, DogListVO dlist, int[] delNums);
 }

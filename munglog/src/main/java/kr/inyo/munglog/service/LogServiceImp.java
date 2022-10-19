@@ -61,15 +61,10 @@ public class LogServiceImp implements LogService {
 	@Override
 	public ArrayList<DogVO> getDogs(MemberVO user) {
 		//값이 없으면
-		if(user == null)
-			return null;
-		if(user.getMb_num() < 1)
+		if(user == null || user.getMb_num() < 1)
 			return null;
 		//강아지 정보 가져오기
-		ArrayList<DogVO> dbDogList = logDao.selectDogList(user.getMb_num());
-		if(dbDogList.isEmpty())
-			return null;
-		return dbDogList;
+		return logDao.selectDogList(user.getMb_num());
 	}
 	
 	/* insertDog : 회원의 강아지 정보 추가 ------------------------------------------------------------------------------------------*/
@@ -100,7 +95,8 @@ public class LogServiceImp implements LogService {
 			if(dog.getDg_name() == null || dog.getDg_name().length() == 0)
 				continue;
 			//강아지 정보 추가
-			logDao.insertDog(dog, user.getMb_num());
+			dog.setDg_mb_num(user.getMb_num());
+			logDao.insertDog(dog);
 		}
 		return 1;
 	}
